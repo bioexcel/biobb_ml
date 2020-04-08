@@ -1,0 +1,1230 @@
+working_dir_path: /tmp/biobb/unitests
+
+gmx_cluster:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_pdb_path: output_pdb.pdb
+    ref_output_pdb_path: file:test_reference_dir/gromacs/ref_cluster.pdb
+  properties:
+    fit_selection: System
+    output_selection: System
+    dista: False
+    method: linkage
+    cutoff: 0.1
+
+gmx_cluster_docker:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_pdb_path: output_pdb.pdb
+    ref_output_pdb_path: file:test_reference_dir/gromacs/ref_cluster.container.pdb
+  properties:
+    fit_selection: System
+    output_selection: System
+    dista: False
+    method: linkage
+    cutoff: 0.1
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_cluster_singularity:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_pdb_path: output_pdb.pdb
+    ref_output_pdb_path: file:test_reference_dir/gromacs/ref_cluster.container.pdb
+  properties:
+    fit_selection: System
+    output_selection: System
+    dista: False
+    method: linkage
+    cutoff: 0.1
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_rms:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rms.xvg
+  properties:
+    selection: System
+
+gmx_rms_docker:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rms.container.xvg
+  properties:
+    selection: System
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_rms_singularity:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rms.container.xvg
+  properties:
+    selection: System
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_energy:
+  paths:
+    input_energy_path: file:test_data_dir/gromacs/energy.edr
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_energy.xvg
+  properties:
+    terms: [Potential, Pressure]
+
+gmx_energy_docker:
+  paths:
+    input_energy_path: file:test_data_dir/gromacs/energy.edr
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_energy.container.xvg
+  properties:
+    terms: [Potential, Pressure]
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_energy_singularity:
+  paths:
+    input_energy_path: file:test_data_dir/gromacs/energy.edr
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_energy.container.xvg
+  properties:
+    terms: [Potential, Pressure]
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_rgyr:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rgyr.xvg
+  properties:
+    selection: System
+
+gmx_rgyr_docker:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rgyr.container.xvg
+  properties:
+    selection: System
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_rgyr_singularity:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_structure_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_xvg_path: output.xvg
+    ref_output_xvg_path: file:test_reference_dir/gromacs/ref_rgyr.container.xvg
+  properties:
+    selection: System
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_trjconv_str:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_path: output.pdb
+    ref_output_str_path: file:test_reference_dir/gromacs/ref_trjconv.str.pdb
+  properties:
+    selection: System
+
+gmx_trjconv_str_docker:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_path: output.pdb
+    ref_output_str_path: file:test_reference_dir/gromacs/ref_trjconv.str.container.pdb
+  properties:
+    selection: System
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_trjconv_str_singularity:
+  paths:
+    input_structure_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_path: output.pdb
+    ref_output_str_path: file:test_reference_dir/gromacs/ref_trjconv.str.container.pdb
+  properties:
+    selection: System
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_trjconv_str_ens:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_ens_path: output.zip
+    ref_output_str_ens_path: file:test_reference_dir/gromacs/ref_trjconv.str.ens.zip
+  properties:
+    selection: System
+    start: 0
+    end: 10
+    dt: 1
+    output_name: output
+    output_type: pdb
+
+gmx_trjconv_str_ens_docker:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_ens_path: output.zip
+    ref_output_str_ens_path: file:test_reference_dir/gromacs/ref_trjconv.str.ens.container.zip
+  properties:
+    selection: System
+    start: 0
+    end: 10
+    dt: 1
+    output_name: output
+    output_type: pdb
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_trjconv_str_ens_singularity:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_str_ens_path: output.zip
+    ref_output_str_ens_path: file:test_reference_dir/gromacs/ref_trjconv.str.ens.container.zip
+  properties:
+    selection: System
+    start: 0
+    end: 10
+    dt: 1
+    output_name: output
+    output_type: pdb
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_trjconv_trj:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_trjconv.trj.xtc
+  properties:
+    selection: System
+    start: 0
+    end: 0
+    dt: 0
+
+gmx_trjconv_trj_docker:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_trjconv.trj.container.xtc
+  properties:
+    selection: System
+    start: 0
+    end: 0
+    dt: 0
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_trjconv_trj_singularity:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_trjconv.trj.container.xtc
+  properties:
+    selection: System
+    start: 0
+    end: 0
+    dt: 0
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+gmx_image:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_image.xtc
+  properties:
+    fit_selection: System
+    center_selection: System
+    output_selection: System
+    pbc: mol
+    center: True
+    fit: rot+trans
+    ur: compact
+
+gmx_image_docker:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_image.container.xtc
+  properties:
+    fit_selection: System
+    center_selection: System
+    output_selection: System
+    pbc: mol
+    center: True
+    fit: rot+trans
+    ur: compact
+    container_path: docker
+    container_image: gromacs/gromacs:latest
+    container_volume_path: /tmp
+
+gmx_image_singularity:
+  paths:
+    input_traj_path: file:test_data_dir/gromacs/trajectory.trr
+    input_top_path: file:test_data_dir/gromacs/topology.tpr
+    input_index_path: file:test_data_dir/gromacs/index.ndx
+    output_traj_path: output.xtc
+    ref_output_traj_path: file:test_reference_dir/gromacs/ref_image.container.xtc
+  properties:
+    fit_selection: System
+    center_selection: System
+    output_selection: System
+    pbc: mol
+    center: True
+    fit: rot+trans
+    ur: compact
+    container_path: singularity
+    container_image: gromacs.sif
+    container_volume_path: /tmp
+
+cpptraj_input:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.in.netcdf
+
+cpptraj_convert:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.convert.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_convert_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.convert.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_convert_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.convert.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_average:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.average.pdb
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+
+cpptraj_average_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.average.container.pdb
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_average_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.average.container.pdb
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_dry:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.dry.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_dry_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.dry.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_dry_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.dry.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_image:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.image.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_image_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.image.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_image_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.image.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_mask:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.mask.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_mask_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.mask.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_mask_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.mask.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_slice:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.slice.netcdf
+  properties:
+    in_parameters:
+      start: 2
+      end: 20
+      step: 2
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_slice_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.slice.container.netcdf
+  properties:
+    in_parameters:
+      start: 2
+      end: 20
+      step: 2
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_slice_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.slice.container.netcdf
+  properties:
+    in_parameters:
+      start: 2
+      end: 20
+      step: 2
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_snapshot:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.snapshot.pdb
+  properties:
+    in_parameters:
+      snapshot: 12
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+
+cpptraj_snapshot_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.snapshot.container.pdb
+  properties:
+    in_parameters:
+      snapshot: 12
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_snapshot_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.pdb
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.snapshot.container.pdb
+  properties:
+    in_parameters:
+      snapshot: 12
+      mask: c-alpha
+    out_parameters:
+      format: pdb
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_strip:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.strip.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+
+cpptraj_strip_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.strip.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_strip_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.netcdf
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.strip.container.netcdf
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    out_parameters:
+      format: netcdf
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rgyr:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rgyr.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+
+cpptraj_rgyr_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rgyr.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rgyr_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rgyr.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rms_first:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.first.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+
+cpptraj_rms_first_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rms_first_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rms_average:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.average.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+
+cpptraj_rms_average_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rms_average_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rms_experimental:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.experimental.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+
+cpptraj_rms_experimental_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+  container_path: docker
+  container_image: afandiadib/ambertools:serial
+  container_volume_path: /tmp
+
+cpptraj_rms_experimental_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rms.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+  container_path: singularity
+  container_image: ambertools.sif
+  container_volume_path: /tmp
+
+cpptraj_rmsf_first:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.first.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+
+cpptraj_rmsf_first_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rmsf_first_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rmsf_average:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.average.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+
+cpptraj_rmsf_average_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rmsf_average_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_rmsf_experimental:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.experimental.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+
+cpptraj_rmsf_experimental_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_rmsf_experimental_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.rmsf.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_bfactor_first:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.first.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+
+cpptraj_bfactor_first_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_bfactor_first_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.first.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: first
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_bfactor_average:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.average.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+
+cpptraj_bfactor_average_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_bfactor_average_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.average.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: average
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+
+cpptraj_bfactor_experimental:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.experimental.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+
+cpptraj_bfactor_experimental_docker:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+    container_path: docker
+    container_image: afandiadib/ambertools:serial
+    container_volume_path: /tmp
+
+cpptraj_bfactor_experimental_singularity:
+  paths:
+    input_top_path: file:test_data_dir/ambertools/cpptraj.parm.top
+    input_traj_path: file:test_data_dir/ambertools/cpptraj.traj.dcd
+    input_exp_path: file:test_data_dir/ambertools/experimental.1e5t.pdb
+    output_cpptraj_path: output.dat
+    ref_output_cpptraj_path: file:test_reference_dir/ambertools/ref_cpptraj.bfactor.experimental.container.dat
+  properties:
+    in_parameters:
+      start: 1
+      end: -1
+      step: 1
+      mask: c-alpha
+      reference: experimental
+    container_path: singularity
+    container_image: ambertools.sif
+    container_volume_path: /tmp
+

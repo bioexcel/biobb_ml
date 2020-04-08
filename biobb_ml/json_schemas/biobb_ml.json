@@ -1,0 +1,39 @@
+{
+    "_id": "biobb_ml",
+    "desc": "Biobb_ml is the Biobb module collection to perform machine learning predictions.",
+    "github": "https://github.com/bioexcel/biobb_ml",
+    "readthedocs": "https://biobb-ml.readthedocs.io/en/latest/",
+    "conda": "",
+    "docker": "",
+    "singularity": "",
+    "version": "3.0.0",
+    "tools" : [
+        {
+            "block" : "LinearRegression", 
+            "tool" : "sklearn.linear_model.LinearRegression", 
+            "desc" : "Trains and tests a given dataset and calculates coefficients for a linear regression.",
+            "exec" : "linear_regression"
+        },
+        {
+            "block" : "DummyVariables", 
+            "tool" : "In house?", 
+            "desc" : "",
+            "exec" : "dummy_variables"
+        }
+    ],
+    "dep_pypi" : [
+        "install_requires=['biobb_common==3.0.0']", 
+        "python_requires='==3.7.*'"
+    ], 
+    "dep_conda" : [
+        "python ==3.7.*", 
+        "biobb_common ==3.0.0", 
+        "scikit-learn ==0.22.2.post1",
+        "pandas ==1.0.3"
+    ],
+    "keywords" : [
+        "analysis", 
+        "ambertools", 
+        "gromacs"
+    ]
+}
