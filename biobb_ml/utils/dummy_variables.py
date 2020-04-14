@@ -76,7 +76,10 @@ class DummyVariables():
 
         # map dummy variables
         fu.log('Mapping dummy variables', out_log, self.global_log)
-        data = pd.get_dummies(data, drop_first=True, columns = self.columns)
+        cols = None
+        if self.columns is not None:
+            cols = self.columns
+        data = pd.get_dummies(data, drop_first=True, columns = cols)
 
         # save to csv
         fu.log('Saving results to %s\n' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)

@@ -113,6 +113,8 @@ class LinearRegression():
         # the inputs are everything BUT the target or dependent variable, so we can simply drop it
         inputs = data.drop([self.target],axis=1)
 
+        #inputs = data.drop(['Body'],axis=1)
+
         t_inputs = inputs
         # scale dataset
         if self.scale:
