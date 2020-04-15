@@ -4,6 +4,7 @@
 import argparse
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
@@ -182,6 +183,13 @@ class LinearRegression():
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
         fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+
+        # create test plot
+        fu.log('Creating plot with testing data', out_log, self.global_log)
+        plt.scatter(y_test, y_hat_test, alpha=0.2)
+        plt.xlabel('targets',size=18)
+        plt.ylabel('predictions',size=18)
+        plt.savefig('testing_plot.png', dpi=150)
 
         # prediction
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
