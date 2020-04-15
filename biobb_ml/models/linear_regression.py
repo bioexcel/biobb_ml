@@ -110,10 +110,8 @@ class LinearRegression():
 
         # declare inputs and targets
         targets = data[self.target]
-        # the inputs are everything BUT the target or dependent variable, so we can simply drop it
-        inputs = data.drop([self.target],axis=1)
-
-        #inputs = data.drop(['Body'],axis=1)
+        # the inputs are all the independent variables
+        inputs = data.filter(self.independent_vars)
 
         t_inputs = inputs
         # scale dataset
@@ -162,6 +160,7 @@ class LinearRegression():
         coefs_table['coefficient'] = c
         p = [0]
         p.extend(p_values)
+        
         coefs_table['p-value'] = p
         fu.log('Calculating scores and coefficients\n\nR2 AND ADJUSTED R2\n\n%s\n\nP-VALUES\n\n%s\n' % (r2_table, coefs_table), out_log, self.global_log)
         # TODO: SAVE TO TEMPORARY??????
