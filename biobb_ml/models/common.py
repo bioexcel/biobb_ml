@@ -11,7 +11,7 @@ def check_input_path(path, argument, out_log, classname):
 		fu.log(classname + ': Unexisting %s file, exiting' % argument, out_log)
 		raise SystemExit(classname + ': Unexisting %s file' % argument)
 	file_extension = PurePath(path).suffix
-	if not is_valid_file(file_extension[1:]):
+	if not is_valid_file(file_extension[1:], argument):
 		fu.log(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument), out_log)
 		raise SystemExit(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument))
 	return path
@@ -24,15 +24,20 @@ def check_output_path(path, argument, optional, out_log, classname):
 		fu.log(classname + ': Unexisting  %s folder, exiting' % argument, out_log)
 		raise SystemExit(classname + ': Unexisting  %s folder' % argument)
 	file_extension = PurePath(path).suffix
-	if not is_valid_file(file_extension[1:]):
+	if not is_valid_file(file_extension[1:], argument):
 		fu.log(classname + ': Format %s in  %s file is not compatible' % (file_extension[1:], argument), out_log)
 		raise SystemExit(classname + ': Format %s in  %s file is not compatible' % (file_extension[1:], argument))
 	return path
 
-def is_valid_file(ext):
-	""" Checks if input format is compatible """
-	formats = 'csv'
-	return ext in formats
+def is_valid_file(ext, argument):
+	""" Checks if file format is compatible """
+	formats = {
+		'input_dataset_path': ['csv'],
+		'output_results_path': ['csv'],
+		'output_test_table_path': ['csv'],
+		'output_test_plot_path': ['png']
+	}
+	return ext in formats[argument]
 
 # UTILITIES
 
