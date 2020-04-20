@@ -33,11 +33,19 @@ def is_valid_file(ext, argument):
 	""" Checks if file format is compatible """
 	formats = {
 		'input_dataset_path': ['csv'],
+		'output_dataset_path': ['csv'],
 		'output_results_path': ['csv'],
 		'output_test_table_path': ['csv'],
 		'output_test_plot_path': ['png']
 	}
 	return ext in formats[argument]
+
+def check_mandatory_property(property, name, out_log, classname):
+	if not property:
+		fu.log(classname + ': Unexisting  %s property, exiting' % name, out_log)
+		raise SystemExit(classname + ': Unexisting  %s property' % name)
+	return property
+
 
 # UTILITIES
 
