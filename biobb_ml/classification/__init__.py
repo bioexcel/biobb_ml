@@ -1,2 +1,2 @@
 name = "classification"
-__all__ = []
+__all__ = ["logistic_regression"]
