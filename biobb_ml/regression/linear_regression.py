@@ -8,13 +8,12 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
-#from statsmodels.stats.outliers_influence import variance_inflation_factor
 from sklearn import linear_model
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.models.common import *
+from biobb_ml.regression.common import *
 
 
 class LinearRegression():
@@ -33,8 +32,6 @@ class LinearRegression():
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
-            * **random_state** (*int*) - (42) The seed used by the random number generator.
-            * **shuffle** (*bool*) - (True) Whether or not to shuffle the data before splitting.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -55,8 +52,6 @@ class LinearRegression():
         self.scale = properties.get('scale', True)
         self.predictions = properties.get('predictions', [])
         self.test_size = properties.get('test_size', 0.2)
-        self.random_state = properties.get('random_state', 42)
-        self.shuffle = properties.get('shuffle', True)
         self.properties = properties
 
         # Properties common in all BB
@@ -99,17 +94,6 @@ class LinearRegression():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
-        # *********************************************
-        # variance inflation factor
-        # List with all features where we want to check for multicollinearity
-        '''feats = data[self.independent_vars]
-        vif_table = pd.DataFrame()
-        vif_table["variable"] = feats.columns
-        # here we make use of the variance_inflation_factor, which will basically output the respective VIFs 
-        vif_table["VIF"] = [variance_inflation_factor(feats.values, i) for i in range(feats.shape[1])]
-        fu.log('Calculating variance inflation factor (VIF) for independent variables\n\nVARIANCE INFLATION FACTOR\n\n%s\n' % vif_table, out_log, self.global_log)'''
-        # *********************************************
-
         # declare inputs and targets
         targets = data[self.target]
         # the inputs are all the independent variables
@@ -125,7 +109,7 @@ class LinearRegression():
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=self.random_state)
+        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=42)
 
         # regression
         fu.log('Training dataset applying linear regression', out_log, self.global_log)

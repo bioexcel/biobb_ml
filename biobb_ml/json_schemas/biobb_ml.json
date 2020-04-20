@@ -30,7 +30,6 @@
         "biobb_common ==3.0.0", 
         "scikit-learn ==0.22.2.post1",
         "pandas ==1.0.3",
-        "statsmodels ==0.11.1",
         "matplotlib ==3.2.1"
     ],
     "keywords" : [

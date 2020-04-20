@@ -1,14 +1,14 @@
-models package
+regression package
 =====================
 
 Submodules
 -----------
 
 
-models.linear_regression module
+regression.linear_regression module
 ----------------------------------
 
-.. automodule:: models.linear_regression
+.. automodule:: regression.linear_regression
     :members:
     :undoc-members:
     :show-inheritance:
