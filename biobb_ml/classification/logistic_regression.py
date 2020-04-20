@@ -2,7 +2,6 @@
 
 """Module containing the LogisticRegression class and the command line interface."""
 import argparse
-import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
@@ -137,13 +136,13 @@ class LogisticRegression():
         y_test = y_test.reset_index(drop=True)
         # add real values to predicted ones in test_table table
         test_table['target'] = y_test
-        # check total accuracy in test table
+        # check total precision in test table
         success = 0
         for index, row in test_table.iterrows():
             if row['target'] == row['prediction']:
                 success += 1
-        accuracy = (success / test_table.shape[0]) * 100
-        fu.log('Checking test data\n\nTEST DATA\n\n%s\n\nTesting accuracy: %s\n' % (test_table, accuracy), out_log, self.global_log)
+        precision = (success / test_table.shape[0]) * 100
+        fu.log('Checking test data\n\nTEST DATA\n\n%s\n\nTesting precision: %s\n' % (test_table, precision), out_log, self.global_log)
     
         if(self.io_dict["out"]["output_test_table_path"]): 
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
@@ -161,9 +160,9 @@ class LogisticRegression():
         fu.log('Calculating confusion matrix\n\n%s\n\n%s\n' % (cm_type, cnf_matrix), out_log, self.global_log)
 
         # plot confusion matrix
-        if(self.io_dict["out"]["output_confusion_matrix_path"]): 
+        if self.io_dict["out"]["output_confusion_matrix_path"]: 
+            plot = plotBinaryClassifier(logreg, yhat_prob, cnf_matrix, x_test, y_test, normalize=self.normalize_cm)
             fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_confusion_matrix_path"], out_log, self.global_log)
-            plot = plot_confusion_matrix(cnf_matrix, classes = [self.target + '=1', self.target + '=0'], normalize = self.normalize_cm,  title = 'Confusion matrix')
             plot.savefig(self.io_dict["out"]["output_confusion_matrix_path"], dpi=150)
 
         # prediction

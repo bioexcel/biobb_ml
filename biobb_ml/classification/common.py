@@ -1,8 +1,11 @@
 """ Common functions for package biobb_analysis.ambertools """
 from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
+import seaborn as sns
 import itertools
 import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_curve, auc
 from biobb_common.tools import file_utils as fu
 
 # CHECK PARAMETERS
@@ -51,35 +54,81 @@ def check_mandatory_property(property, name, out_log, classname):
 
 # UTILITIES
 
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
-    plt.figure()
-
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
+def plotBinaryClassifier(model, proba, cm, x, y, normalize=False, labels=['Positives','Negatives'], cmticks=[0,1], get_plot = True):
+    '''
+    Visualize the performance of  a Logistic Regression Binary Classifier.
+    https://towardsdatascience.com/how-to-interpret-a-binary-logistic-regressor-with-scikit-learn-6d56c5783b49
+    '''
+    #model predicts probabilities of positive class
+    p = proba
+    if len(model.classes_)!=2:
+        raise ValueError('A binary class problem is required')
+    if model.classes_[1] == 1:
+        pos_p = p[:,1]
+    elif model.classes_[0] == 1:
+        pos_p = p[:,0]
+    
+    #FIGURE
+    plt.figure(figsize=[15,4])
+    
+    #1 -- Confusion matrix
+    plt.subplot(131)
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix', size=15)
     plt.colorbar()
-    tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
-    plt.yticks(tick_marks, classes)
+    tick_marks = np.arange(len(cmticks))
+    plt.xticks(tick_marks, cmticks)
+    plt.yticks(tick_marks, cmticks)
+
+    cmlabels = [
+    	['True Negatives', 'False Positives'],
+        ['False Negatives', 'True Positives']
+    ]
 
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
+        plt.text(j, i, format(cm[i, j], fmt) + "\n" + cmlabels[i][j],
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-
+    plt.ylabel('True Values', size=13)
+    plt.xlabel('Predicted Values', size=13)
+      
+    #2 -- Distributions of Predicted Probabilities of both classes
+    df = pd.DataFrame({'probPos':pos_p, 'target': y})
+    plt.subplot(132)
+    plt.hist(df[df.target==1].probPos, density=True, bins=25,
+             alpha=.5, color='green',  label=labels[0])
+    plt.hist(df[df.target==0].probPos, density=True, bins=25,
+             alpha=.5, color='red', label=labels[1])
+    plt.axvline(.5, color='blue', linestyle='--', label='Boundary')
+    plt.xlim([0,1])
+    plt.title('Distributions of Predictions', size=15)
+    plt.xlabel('Positive Probability (predicted)', size=13)
+    plt.ylabel('Samples (normalized scale)', size=13)
+    plt.legend(loc="upper right")
+    
+    #3 -- ROC curve with annotated decision point
+    fp_rates, tp_rates, _ = roc_curve(y,p[:,1])
+    roc_auc = auc(fp_rates, tp_rates)
+    plt.subplot(133)
+    plt.plot(fp_rates, tp_rates, color='green',
+             lw=1, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], lw=1, linestyle='--', color='grey')
+    #plot current decision point:
+    tn, fp, fn, tp = [i for i in cm.ravel()]
+    plt.plot(fp/(fp+tn), tp/(tp+fn), 'bo', markersize=8, label='Decision Point')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', size=13)
+    plt.ylabel('True Positive Rate', size=13)
+    plt.title('ROC Curve', size=15)
+    plt.legend(loc="lower right")
+    plt.subplots_adjust(wspace=.3)
+    
     return plt
+
 
 def get_list_of_predictors(predictions):
 	p = []
