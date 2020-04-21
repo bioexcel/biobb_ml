@@ -94,6 +94,7 @@ class PolynomialRegression():
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        pd.set_option('display.float_format', lambda x: '%.6f' % x)
 
         # declare inputs and targets
         targets = data[self.target]
