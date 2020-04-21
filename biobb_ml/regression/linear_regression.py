@@ -4,10 +4,10 @@
 import argparse
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
+from sklearn.metrics import mean_squared_error
 from sklearn import linear_model
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -25,7 +25,7 @@ class LinearRegression():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_test_plot_path (str) (Optional): Path to the test plot file. Accepted formats: png.
+        output_plot_path (str) (Optional): Path to the plot file that makes a comparison between prediction and target data. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
@@ -37,13 +37,13 @@ class LinearRegression():
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_test_table_path=None, output_test_plot_path=None, properties=None, **kwargs) -> None:
+                 output_results_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_test_plot_path": output_test_plot_path } 
+            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -68,7 +68,7 @@ class LinearRegression():
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_test_plot_path"] = check_output_path(self.io_dict["out"]["output_test_plot_path"],"output_test_plot_path", True, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -85,7 +85,7 @@ class LinearRegression():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_test_plot_path"]]
+            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -116,7 +116,10 @@ class LinearRegression():
         reg = linear_model.LinearRegression()
         reg.fit(x_train, y_train)
 
-        # scores and coefficients
+        # scores and coefficients train
+        y_hat_train = reg.predict(x_train)
+        rmse = (np.sqrt(mean_squared_error(y_train, y_hat_train)))
+        rss = np.mean((y_hat_train - y_train) ** 2)
         score = reg.score(x_train, y_train)
         bias = reg.intercept_
         coef = reg.coef_
@@ -127,8 +130,8 @@ class LinearRegression():
 
         # r-squared
         r2_table = pd.DataFrame()
-        r2_table["feature"] = ['R-squared','Adj. R-squared']
-        r2_table['coefficient'] = [score, adj_r2]
+        r2_table["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
+        r2_table['coefficient'] = [score, adj_r2, rmse, rss]
 
         # p-values
         cols = ['bias']
@@ -142,7 +145,7 @@ class LinearRegression():
         p.extend(p_values)
         
         coefs_table['p-value'] = p
-        fu.log('Calculating scores and coefficients for training dataset\n\nR2 AND ADJUSTED R2\n\n%s\n\nP-VALUES\n\n%s\n' % (r2_table, coefs_table), out_log, self.global_log)
+        fu.log('Calculating scores and coefficients for training dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n\nCOEFFS & P-VALUES\n\n%s\n' % (r2_table, coefs_table), out_log, self.global_log)
 
         # testing
         # predict data from x_test
@@ -160,23 +163,34 @@ class LinearRegression():
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
         fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+        
+        # scores and coefficients test
+        r2_test = reg.score(x_test, y_test)
+        adj_r2_test = adjusted_r2(x_test, y_test, r2_test)
+        rmse_test = np.sqrt(mean_squared_error(y_test, y_hat_test))
+        rss_test = np.mean((y_hat_test - y_test) ** 2)
 
-        coeffs_test = 'Residual sum of squares: %.2f\nVariance score: %.2f' % (np.mean((y_hat_test - y_test) ** 2), reg.score(x_test, y_test))
-        fu.log('Calculating scores and coefficients for testing dataset\n\nCOEFFICIENTS\n\n%s\n' % coeffs_test, out_log, self.global_log)
+        # r-squared
+        pd.set_option('display.float_format', lambda x: '%.6f' % x)
+        r2_table_test = pd.DataFrame()
+        r2_table_test["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
+        r2_table_test['coefficient'] = [r2_test, adj_r2_test, rmse_test, rss_test]
+
+        fu.log('Calculating scores and coefficients for testing dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n' % r2_table_test, out_log, self.global_log)
 
         if(self.io_dict["out"]["output_test_table_path"]): 
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # create test plot
-        if(self.io_dict["out"]["output_test_plot_path"]): 
-            fu.log('Saving testing plot to %s' % self.io_dict["out"]["output_test_plot_path"], out_log, self.global_log)
-            plt.scatter(y_test, y_hat_test, alpha=0.2)
-            plt.xlabel('targets',size=18)
-            plt.ylabel('predictions',size=18)
-            plt.savefig(self.io_dict["out"]["output_test_plot_path"], dpi=150)
+        if(self.io_dict["out"]["output_plot_path"]): 
+            fu.log('Saving testing plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
+            plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
+
 
         # prediction
+        pd.set_option('display.float_format', lambda x: '%.2f' % x)
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
         new_data = new_data_table
         if self.scale:
@@ -199,7 +213,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_test_plot_path', required=False, help='Path to the test plot file. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the plot file that makes a comparison between prediction and target data. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
@@ -209,7 +223,7 @@ def main():
     LinearRegression(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
-                   output_test_plot_path=args.output_test_plot_path, 
+                   output_plot_path=args.output_plot_path, 
                    properties=properties).launch()
 
 if __name__ == '__main__':

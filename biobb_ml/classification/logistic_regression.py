@@ -2,10 +2,10 @@
 
 """Module containing the LogisticRegression class and the command line interface."""
 import argparse
+import io
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.metrics import log_loss
+from sklearn.metrics import confusion_matrix, classification_report, log_loss, accuracy_score
 from sklearn import linear_model
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -23,7 +23,7 @@ class LogisticRegression():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_confusion_matrix_path (str) (Optional): Path to the confusion matrix plot file. Accepted formats: png.
+        output_plot_path (str) (Optional): Path to the binary classifier evaluator plot file. Includes confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
@@ -38,13 +38,13 @@ class LogisticRegression():
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_test_table_path=None, output_confusion_matrix_path=None, properties=None, **kwargs) -> None:
+                 output_results_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_confusion_matrix_path": output_confusion_matrix_path } 
+            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -72,7 +72,7 @@ class LogisticRegression():
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_confusion_matrix_path"] = check_output_path(self.io_dict["out"]["output_confusion_matrix_path"],"output_confusion_matrix_path", True, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -89,7 +89,7 @@ class LogisticRegression():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_confusion_matrix_path"]]
+            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -119,34 +119,41 @@ class LogisticRegression():
         fu.log('Training dataset applying logistic regression', out_log, self.global_log)
         logreg = linear_model.LogisticRegression(C = self.c_parameter, solver = self.solver)
         logreg.fit(x_train,y_train)
+        y_hat_train = logreg.predict(x_train)
+        # classification report
+        cr_train = classification_report(y_train, y_hat_train)
+        # log loss
+        yhat_prob_train = logreg.predict_proba(x_train)
+        l_loss_train = log_loss(y_train, yhat_prob_train)
+        fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %s\n' % (cr_train, l_loss_train), out_log, self.global_log)
+
+        # compute confusion matrix
+        cnf_matrix_train = confusion_matrix(y_train, y_hat_train, labels=[1,0])
+        np.set_printoptions(precision=2)
+        if self.normalize_cm:
+            cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
+            cm_type = 'NORMALIZED CONFUSION MATRIX'
+        else:
+            cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
+
+        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
 
         # testing
         # predict data from x_test
-        fu.log('Testing', out_log, self.global_log)
         y_hat_test = logreg.predict(x_test)
+        test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
+        # reset y_test (problem with old indexes column)
+        y_test = y_test.reset_index(drop=True)
+        # add real values to predicted ones in test_table table
+        test_table['target'] = y_test
+        fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+
         # classification report
         cr = classification_report(y_test, y_hat_test)
         # log loss
         yhat_prob = logreg.predict_proba(x_test)
         l_loss = log_loss(y_test, yhat_prob)
         fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %s\n' % (cr, l_loss), out_log, self.global_log)
-
-        test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
-        # reset y_test (problem with old indexes column)
-        y_test = y_test.reset_index(drop=True)
-        # add real values to predicted ones in test_table table
-        test_table['target'] = y_test
-        # check total precision in test table
-        success = 0
-        for index, row in test_table.iterrows():
-            if row['target'] == row['prediction']:
-                success += 1
-        precision = (success / test_table.shape[0]) * 100
-        fu.log('Checking test data\n\nTEST DATA\n\n%s\n\nTesting precision: %s\n' % (test_table, precision), out_log, self.global_log)
-    
-        if(self.io_dict["out"]["output_test_table_path"]): 
-            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
-            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # compute confusion matrix
         cnf_matrix = confusion_matrix(y_test, y_hat_test, labels=[1,0])
@@ -157,13 +164,17 @@ class LogisticRegression():
         else:
             cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
 
-        fu.log('Calculating confusion matrix\n\n%s\n\n%s\n' % (cm_type, cnf_matrix), out_log, self.global_log)
+        fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix), out_log, self.global_log)
 
-        # plot confusion matrix
-        if self.io_dict["out"]["output_confusion_matrix_path"]: 
-            plot = plotBinaryClassifier(logreg, yhat_prob, cnf_matrix, x_test, y_test, normalize=self.normalize_cm)
-            fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_confusion_matrix_path"], out_log, self.global_log)
-            plot.savefig(self.io_dict["out"]["output_confusion_matrix_path"], dpi=150)
+        if(self.io_dict["out"]["output_test_table_path"]): 
+            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
+            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
+
+        # plot binary classifier
+        if self.io_dict["out"]["output_plot_path"]: 
+            plot = plotBinaryClassifier(logreg, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
+            fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # prediction
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
@@ -189,7 +200,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_confusion_matrix_path', required=False, help='Path to the confusion matrix plot file. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the binary classifier evaluator plot file. Includes confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
@@ -199,7 +210,7 @@ def main():
     LogisticRegression(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
-                   output_confusion_matrix_path=args.output_confusion_matrix_path, 
+                   output_plot_path=args.output_plot_path, 
                    properties=properties).launch()
 
 if __name__ == '__main__':

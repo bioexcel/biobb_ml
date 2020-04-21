@@ -1,4 +1,5 @@
 """ Common functions for package biobb_analysis.ambertools """
+import matplotlib.pyplot as plt
 from pathlib import Path, PurePath
 from biobb_common.tools import file_utils as fu
 
@@ -35,7 +36,7 @@ def is_valid_file(ext, argument):
 		'output_dataset_path': ['csv'],
 		'output_results_path': ['csv'],
 		'output_test_table_path': ['csv'],
-		'output_test_plot_path': ['png']
+		'output_plot_path': ['png']
 	}
 	return ext in formats[argument]
 
@@ -63,4 +64,23 @@ def get_list_of_predictors(predictions):
 		p.append(a)
 	return p
 
+def plotResults(y_train, y_hat_train, y_test, y_hat_test):
 
+	#FIGURE
+    plt.figure(figsize=[12,5])
+
+    plt.subplot(121)
+    plt.title('Train', size=15)
+    plt.scatter(y_train, y_hat_train, alpha=0.2)
+    plt.xlabel('targets',size=18)
+    plt.ylabel('predictions',size=18)
+
+    plt.subplot(122)
+    plt.title('Test', size=15)
+    plt.scatter(y_test, y_hat_test, alpha=0.2)
+    plt.xlabel('targets',size=18)
+    plt.ylabel('predictions',size=18)
+
+    plt.subplots_adjust(wspace=.3, hspace=.3)
+    
+    return plt
