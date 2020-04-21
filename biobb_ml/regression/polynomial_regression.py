@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-"""Module containing the LinearRegression class and the command line interface."""
+"""Module containing the PolynomialRegression class and the command line interface."""
 import argparse
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
 from sklearn.metrics import mean_squared_error
@@ -15,10 +15,9 @@ from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.regression.common import *
 
-
-class LinearRegression():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a linear regression.
-    Wrapper of the sklearn.linear_model.LinearRegression module
+class PolynomialRegression():
+    """Trains and tests a given dataset and calculates coefficients and predictions for a polynomial regression.
+    Wrapper of the sklearn.linear_model.LinearRegression module with PolynomialFeatures
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html>'_. 
 
     Args:
@@ -28,6 +27,7 @@ class LinearRegression():
         output_plot_path (str) (Optional): Path to the plot file that makes a comparison between prediction and target data. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
+            * **degree** (*int*) - (2) Polynomial degree.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
@@ -48,6 +48,7 @@ class LinearRegression():
 
         # Properties specific for BB
         self.independent_vars = properties.get('independent_vars', [])
+        self.degree = properties.get('degree', 2)
         self.target = properties.get('target', '')
         self.scale = properties.get('scale', True)
         self.predictions = properties.get('predictions', [])
@@ -72,7 +73,7 @@ class LinearRegression():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the LinearRegression module."""
+        """Launches the execution of the PolynomialRegression module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -109,22 +110,24 @@ class LinearRegression():
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=5)
+        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=42)
 
         # regression
-        fu.log('Training dataset applying linear regression', out_log, self.global_log)
+        fu.log('Training dataset applying polynomial regression', out_log, self.global_log)
+        poly_features = PolynomialFeatures(degree=self.degree)
+        x_train_poly = poly_features.fit_transform(x_train)
         reg = linear_model.LinearRegression()
-        reg.fit(x_train, y_train)
+        reg.fit(x_train_poly, y_train)
 
         # scores and coefficients train
-        y_hat_train = reg.predict(x_train)
+        y_hat_train = reg.predict(x_train_poly)
         rmse = (np.sqrt(mean_squared_error(y_train, y_hat_train)))
         rss = np.mean((y_hat_train - y_train) ** 2)
-        score = reg.score(x_train, y_train)
+        score = reg.score(x_train_poly, y_train)
         bias = reg.intercept_
         coef = reg.coef_
         coef = [ '%.3f' % item for item in coef ]
-        adj_r2 = adjusted_r2(x_train, y_train, score)
+        adj_r2 = adjusted_r2(x_train_poly, y_train, score)
         p_values = f_regression(x_train, y_train)[1]
         p_values = [ '%.3f' % item for item in p_values ]
 
@@ -132,24 +135,13 @@ class LinearRegression():
         r2_table = pd.DataFrame()
         r2_table["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
         r2_table['coefficient'] = [score, adj_r2, rmse, rss]
-
-        # p-values
-        cols = ['bias']
-        cols.extend(self.independent_vars)
-        coefs_table = pd.DataFrame(cols, columns=['feature'])
-        c = [round(bias, 3)]
-        c.extend(coef)
-        c = list(map(float, c))
-        coefs_table['coefficient'] = c
-        p = [0]
-        p.extend(p_values)
         
-        coefs_table['p-value'] = p
-        fu.log('Calculating scores and coefficients for training dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n\nCOEFFS & P-VALUES\n\n%s\n' % (r2_table, coefs_table), out_log, self.global_log)
+        fu.log('Calculating scores and coefficients for training dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n' % r2_table, out_log, self.global_log)
 
         # testing
         # predict data from x_test
-        y_hat_test = reg.predict(x_test)
+        x_test_poly = poly_features.fit_transform(x_test)
+        y_hat_test = reg.predict(x_test_poly)
         test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
         # reset y_test (problem with old indexes column)
         y_test = y_test.reset_index(drop=True)
@@ -165,8 +157,8 @@ class LinearRegression():
         fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
         
         # scores and coefficients test
-        r2_test = reg.score(x_test, y_test)
-        adj_r2_test = adjusted_r2(x_test, y_test, r2_test)
+        r2_test = reg.score(x_test_poly, y_test)
+        adj_r2_test = adjusted_r2(x_test_poly, y_test, r2_test)
         rmse_test = np.sqrt(mean_squared_error(y_test, y_hat_test))
         rss_test = np.mean((y_hat_test - y_test) ** 2)
 
@@ -188,14 +180,14 @@ class LinearRegression():
             plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
-
         # prediction
         pd.set_option('display.float_format', lambda x: '%.2f' % x)
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
         new_data = new_data_table
         if self.scale:
             new_data = scaler.transform(new_data_table)
-        p = reg.predict(new_data)
+        new_data_poly = poly_features.fit_transform(new_data)
+        p = reg.predict(new_data_poly)
         p = np.around(p, 2)
         new_data_table[self.target] = p
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
@@ -205,7 +197,7 @@ class LinearRegression():
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a linear regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a polynomial regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -220,7 +212,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    LinearRegression(input_dataset_path=args.input_dataset_path,
+    PolynomialRegression(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
