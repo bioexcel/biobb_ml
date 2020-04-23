@@ -128,7 +128,7 @@ class LogisticRegression():
         fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr_train, l_loss_train), out_log, self.global_log)
 
         # compute confusion matrix
-        cnf_matrix_train = confusion_matrix(y_train, y_hat_train, labels=[1,0])
+        cnf_matrix_train = confusion_matrix(y_train, y_hat_train)
         np.set_printoptions(precision=2)
         if self.normalize_cm:
             cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
@@ -156,7 +156,7 @@ class LogisticRegression():
         fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr, l_loss), out_log, self.global_log)
 
         # compute confusion matrix
-        cnf_matrix = confusion_matrix(y_test, y_hat_test, labels=[1,0])
+        cnf_matrix = confusion_matrix(y_test, y_hat_test)
         np.set_printoptions(precision=2)
         if self.normalize_cm:
             cnf_matrix = cnf_matrix.astype('float') / cnf_matrix.sum(axis=1)[:, np.newaxis]
