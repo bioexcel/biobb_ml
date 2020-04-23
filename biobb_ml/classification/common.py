@@ -197,6 +197,55 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     
     return plt
 
+def plotMultipleCM(cm_train, cm_test, normalize, values):
+    
+    #FIGURE
+    plt.figure(figsize=[8,4])
+    
+    #1 -- Confusion matrix train
+    plt.subplot(121)
+    plt.imshow(cm_train, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix Train', size=15)
+    plt.colorbar()
+    tick_marks = np.arange(len(values))
+    plt.xticks(tick_marks, values)
+    plt.yticks(tick_marks, values)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm_train.max() / 2.
+    for i, j in itertools.product(range(cm_train.shape[0]), range(cm_train.shape[1])):
+        if i == j: help_txt = "True " + str(values[i])
+        else: help_txt = "False" + str(values[i])
+        plt.text(j, i, format(cm_train[i, j], fmt) + "\n" + help_txt,
+                 horizontalalignment="center",
+                 color="white" if cm_train[i, j] > thresh else "black")
+
+    plt.ylabel('True Values', size=13)
+    plt.xlabel('Predicted Values', size=13)
+
+    #2 -- Confusion matrix test
+    plt.subplot(122)
+    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix Test', size=15)
+    plt.colorbar()
+    tick_marks = np.arange(len(values))
+    plt.xticks(tick_marks, values)
+    plt.yticks(tick_marks, values)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm_test.max() / 2.
+    for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
+        if i == j: help_txt = "True " + str(values[i])
+        else: help_txt = "False" + str(values[i])
+        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + help_txt,
+                 horizontalalignment="center",
+                 color="white" if cm_test[i, j] > thresh else "black")
+
+    plt.ylabel('True Values', size=13)
+    plt.xlabel('Predicted Values', size=13)
+
+    return plt
+
 
 def get_list_of_predictors(predictions):
 	p = []

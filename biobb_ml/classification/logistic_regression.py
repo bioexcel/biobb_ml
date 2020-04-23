@@ -5,7 +5,7 @@ import argparse
 import io
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report, log_loss, accuracy_score
+from sklearn.metrics import confusion_matrix, classification_report, log_loss
 from sklearn import linear_model
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -125,7 +125,7 @@ class LogisticRegression():
         # log loss
         yhat_prob_train = logreg.predict_proba(x_train)
         l_loss_train = log_loss(y_train, yhat_prob_train)
-        fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %s\n' % (cr_train, l_loss_train), out_log, self.global_log)
+        fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr_train, l_loss_train), out_log, self.global_log)
 
         # compute confusion matrix
         cnf_matrix_train = confusion_matrix(y_train, y_hat_train, labels=[1,0])
@@ -153,7 +153,7 @@ class LogisticRegression():
         # log loss
         yhat_prob = logreg.predict_proba(x_test)
         l_loss = log_loss(y_test, yhat_prob)
-        fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %s\n' % (cr, l_loss), out_log, self.global_log)
+        fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr, l_loss), out_log, self.global_log)
 
         # compute confusion matrix
         cnf_matrix = confusion_matrix(y_test, y_hat_test, labels=[1,0])
