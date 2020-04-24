@@ -169,12 +169,16 @@ class KNeighborsPredict():
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
-        # plot binary classifier
+        # plot 
         if self.io_dict["out"]["output_plot_path"]: 
             vs = targets.unique().tolist()
             vs.sort()
-            plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
-            fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            if len(vs) > 2:
+                plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
+                fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            else:
+                plot = plotBinaryClassifier(kneigh, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
+                fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # prediction
