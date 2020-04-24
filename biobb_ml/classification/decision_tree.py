@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-"""Module containing the DecisionTrees class and the command line interface."""
+"""Module containing the DecisionTree class and the command line interface."""
 import argparse
 import io
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report, log_loss, accuracy_score
 from sklearn.tree import DecisionTreeClassifier
@@ -13,7 +12,7 @@ from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
-class DecisionTrees():
+class DecisionTree():
     """Trains and tests a given dataset and calculates coefficients and predictions for a decision tree classification.
     Wrapper of the sklearn.tree.DecisionTreeClassifier module
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html>'_. 
@@ -25,9 +24,8 @@ class DecisionTrees():
         output_plot_path (str) (Optional): Path to the binary classifier evaluator plot file. Includes confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
-            * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **criterion** (*string*) - ("entropy") The function to measure the quality of a split. Supported criteria are "gini" for the Gini impurity and "entropy" for the information gain. Values: gini, entropy.
+            * **criterion** (*string*) - ("gini") The function to measure the quality of a split. Supported criteria are "gini" for the Gini impurity and "entropy" for the information gain. Values: gini, entropy.
             * **max_depth** (*int*) - (4) The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
@@ -49,8 +47,7 @@ class DecisionTrees():
         # Properties specific for BB
         self.independent_vars = properties.get('independent_vars', [])
         self.target = properties.get('target', '')
-        self.scale = properties.get('scale', True)
-        self.criterion = properties.get('criterion', 'entropy')
+        self.criterion = properties.get('criterion', 'gini')
         self.max_depth = properties.get('max_depth', 4)
         self.normalize_cm =  properties.get('normalize_cm', False)
         self.predictions = properties.get('predictions', [])
@@ -75,7 +72,7 @@ class DecisionTrees():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the DecisionTrees module."""
+        """Launches the execution of the DecisionTree module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -100,15 +97,7 @@ class DecisionTrees():
         # declare inputs and targets
         targets = data[self.target]
         # the inputs are all the independent variables
-        inputs = data.filter(self.independent_vars)
-
-        t_inputs = inputs
-        # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_inputs)
-            t_inputs = scaler.transform(t_inputs)
+        t_inputs = data.filter(self.independent_vars)
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
@@ -118,7 +107,25 @@ class DecisionTrees():
         fu.log('Training dataset applying decision tree classification', out_log, self.global_log)
         tree = DecisionTreeClassifier(criterion = self.criterion, max_depth = self.max_depth)
         tree.fit(x_train,y_train)
-        
+        y_hat_train = tree.predict(x_train)
+        # classification report
+        cr_train = classification_report(y_train, y_hat_train)
+        # log loss
+        yhat_prob_train = tree.predict_proba(x_train)
+        l_loss_train = log_loss(y_train, yhat_prob_train)
+        fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr_train, l_loss_train), out_log, self.global_log)
+
+        # compute confusion matrix
+        cnf_matrix_train = confusion_matrix(y_train, y_hat_train)
+        np.set_printoptions(precision=2)
+        if self.normalize_cm:
+            cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
+            cm_type = 'NORMALIZED CONFUSION MATRIX'
+        else:
+            cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
+
+        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
+
         # testing
         # predict data from x_test
         y_hat_test = tree.predict(x_test)
@@ -156,18 +163,16 @@ class DecisionTrees():
             vs = targets.unique().tolist()
             vs.sort()
             if len(vs) > 2:
-                plot = plotMultipleCMTest(cnf_matrix, self.normalize_cm, vs)
+                plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
                 fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             else:
-                plot = plotBinaryClassifierTest(tree, yhat_prob, cnf_matrix, y_test, normalize=self.normalize_cm)
+                plot = plotBinaryClassifier(tree, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # prediction
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
         new_data = new_data_table
-        if self.scale:
-            new_data = scaler.transform(new_data_table)
         p = tree.predict(new_data)
         p = np.around(p, 2)
 
@@ -194,7 +199,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    DecisionTrees(input_dataset_path=args.input_dataset_path,
+    DecisionTree(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
