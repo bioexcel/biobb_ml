@@ -25,7 +25,7 @@ class LinearRegression():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the plot file that makes a comparison between prediction and target data. Accepted formats: png.
+        output_plot_path (str) (Optional): Residual plot checks the error between actual values and predicted values. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
@@ -185,7 +185,7 @@ class LinearRegression():
 
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
-            fu.log('Saving testing plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
@@ -214,7 +214,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Path to the plot file that makes a comparison between prediction and target data. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Residual plot checks the error between actual values and predicted values. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
