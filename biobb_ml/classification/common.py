@@ -197,6 +197,85 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     
     return plt
 
+def plotBinaryClassifierTest(model, proba_test, cm_test, y_test, normalize=False, labels=['Positives','Negatives'], cmticks=[0,1], get_plot = True):
+    '''
+    Visualize the performance of  a Logistic Regression Binary Classifier.
+    https://towardsdatascience.com/how-to-interpret-a-binary-logistic-regressor-with-scikit-learn-6d56c5783b49
+    '''
+    
+    #FIGURE
+    plt.figure(figsize=[15,4])
+    
+    # TESTING
+
+    #model predicts probabilities of positive class
+    p = proba_test
+    if len(model.classes_)!=2:
+        raise ValueError('A binary class problem is required')
+    if model.classes_[1] == 1:
+        pos_p = p[:,1]
+    elif model.classes_[0] == 1:
+        pos_p = p[:,0]
+    
+    #1 -- Confusion matrix test
+    plt.subplot(131)
+    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix Test', size=15)
+    plt.colorbar()
+    tick_marks = np.arange(len(cmticks))
+    plt.xticks(tick_marks, cmticks)
+    plt.yticks(tick_marks, cmticks)
+
+    cmlabels = [
+        ['True Negatives', 'False Positives'],
+        ['False Negatives', 'True Positives']
+    ]
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm_test.max() / 2.
+    for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
+        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + cmlabels[i][j],
+                 horizontalalignment="center",
+                 color="white" if cm_test[i, j] > thresh else "black")
+
+    plt.ylabel('True Values', size=13)
+    plt.xlabel('Predicted Values', size=13)
+      
+    #2 -- Distributions of Predicted Probabilities of both classes test
+    df = pd.DataFrame({'probPos':pos_p, 'target': y_test})
+    plt.subplot(132)
+    plt.hist(df[df.target==1].probPos, density=True, bins=25,
+             alpha=.5, color='green',  label=labels[0])
+    plt.hist(df[df.target==0].probPos, density=True, bins=25,
+             alpha=.5, color='red', label=labels[1])
+    plt.axvline(.5, color='blue', linestyle='--', label='Boundary')
+    plt.xlim([0,1])
+    plt.title('Distributions of Predictions Test', size=15)
+    plt.xlabel('Positive Probability (predicted)', size=13)
+    plt.ylabel('Samples (normalized scale)', size=13)
+    plt.legend(loc="upper right")
+    
+    #3 -- ROC curve with annotated decision point test
+    fp_rates, tp_rates, _ = roc_curve(y_test,p[:,1])
+    roc_auc = auc(fp_rates, tp_rates)
+    plt.subplot(133)
+    plt.plot(fp_rates, tp_rates, color='green',
+             lw=1, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], lw=1, linestyle='--', color='grey')
+    #plot current decision point:
+    tn, fp, fn, tp = [i for i in cm_test.ravel()]
+    plt.plot(fp/(fp+tn), tp/(tp+fn), 'bo', markersize=8, label='Decision Point')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', size=13)
+    plt.ylabel('True Positive Rate', size=13)
+    plt.title('ROC Curve Test', size=15)
+    plt.legend(loc="lower right")
+
+    plt.subplots_adjust(wspace=.3, hspace=.5)
+    
+    return plt
+
 def plotMultipleCM(cm_train, cm_test, normalize, values):
     
     #FIGURE
@@ -225,6 +304,33 @@ def plotMultipleCM(cm_train, cm_test, normalize, values):
 
     #2 -- Confusion matrix test
     plt.subplot(122)
+    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion Matrix Test', size=15)
+    plt.colorbar()
+    tick_marks = np.arange(len(values))
+    plt.xticks(tick_marks, values)
+    plt.yticks(tick_marks, values)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm_test.max() / 2.
+    for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
+        if i == j: help_txt = "True " + str(values[i])
+        else: help_txt = "False" + str(values[i])
+        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + help_txt,
+                 horizontalalignment="center",
+                 color="white" if cm_test[i, j] > thresh else "black")
+
+    plt.ylabel('True Values', size=13)
+    plt.xlabel('Predicted Values', size=13)
+
+    return plt
+
+def plotMultipleCMTest(cm_test, normalize, values):
+    
+    #FIGURE
+    plt.figure(figsize=[4,4])
+
+    #2 -- Confusion matrix test
     plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion Matrix Test', size=15)
     plt.colorbar()

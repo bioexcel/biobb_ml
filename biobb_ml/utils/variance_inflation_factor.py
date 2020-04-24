@@ -8,7 +8,7 @@ from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.regression.common import *
+from biobb_ml.utils.common import *
 
 
 class VariaceinflationFactor():

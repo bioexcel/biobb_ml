@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the DummyVariables class and the command line interface."""
+"""Module containing the MapVariables class and the command line interface."""
 import argparse
 import pandas as pd
 from biobb_common.configuration import  settings
@@ -10,7 +10,7 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.utils.common import *
 
 
-class DummyVariables():
+class MapVariables():
     """Maps dummy variables from a given dataset.
 
     Args:
@@ -52,7 +52,7 @@ class DummyVariables():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the DummyVariables module."""
+        """Launches the execution of the MapVariables module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -75,11 +75,11 @@ class DummyVariables():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
         # map dummy variables
-        fu.log('Mapping dummy variables', out_log, self.global_log)
-        cols = None
-        if self.columns is not None:
-            cols = self.columns
-        data = pd.get_dummies(data, drop_first=True, columns = cols)
+        fu.log('Mapping variables', out_log, self.global_log)
+        for c in self.columns:
+            lst = data[c].unique().tolist()
+            dct = {lst[i]: i for i in range(0, len(lst))} 
+            data[c] = data[c].map(dct)
 
         # save to csv
         fu.log('Saving results to %s\n' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
@@ -101,7 +101,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    DummyVariables(input_dataset_path=args.input_dataset_path,
+    MapVariables(input_dataset_path=args.input_dataset_path,
                    output_dataset_path=args.output_dataset_path,
                    properties=properties).launch()
 

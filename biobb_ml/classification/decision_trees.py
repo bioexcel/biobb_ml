@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 
-"""Module containing the KNeighborsPredict class and the command line interface."""
+"""Module containing the DecisionTrees class and the command line interface."""
 import argparse
 import io
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report, log_loss
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, classification_report, log_loss, accuracy_score
+from sklearn.tree import DecisionTreeClassifier
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
-class KNeighborsPredict():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a k-nearest neighbors classification.
-    Wrapper of the sklearn.neighbors.KNeighborsClassifier module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>'_. 
+class DecisionTrees():
+    """Trains and tests a given dataset and calculates coefficients and predictions for a decision tree classification.
+    Wrapper of the sklearn.tree.DecisionTreeClassifier module
+    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
@@ -27,8 +27,8 @@ class KNeighborsPredict():
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean, manhattan, chebyshev, minkowski, wminkowski, seuclidean, mahalanobi.
-            * **n_neighbors** (*int*) - (6) Number of neighbors to use by default for kneighbors queries.
+            * **criterion** (*string*) - ("entropy") The function to measure the quality of a split. Supported criteria are "gini" for the Gini impurity and "entropy" for the information gain. Values: gini, entropy.
+            * **max_depth** (*int*) - (4) The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
@@ -50,8 +50,8 @@ class KNeighborsPredict():
         self.independent_vars = properties.get('independent_vars', [])
         self.target = properties.get('target', '')
         self.scale = properties.get('scale', True)
-        self.metric = properties.get('metric', 'minkowski')
-        self.n_neighbors = properties.get('n_neighbors', 6)
+        self.criterion = properties.get('criterion', 'entropy')
+        self.max_depth = properties.get('max_depth', 4)
         self.normalize_cm =  properties.get('normalize_cm', False)
         self.predictions = properties.get('predictions', [])
         self.test_size = properties.get('test_size', 0.2)
@@ -75,7 +75,7 @@ class KNeighborsPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the KNeighborsPredict module."""
+        """Launches the execution of the DecisionTrees module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -115,31 +115,13 @@ class KNeighborsPredict():
         x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=4)
 
         # classification
-        fu.log('Training dataset applying k neighbors classification', out_log, self.global_log)
-        kneigh = KNeighborsClassifier(n_neighbors = self.n_neighbors)
-        kneigh.fit(x_train,y_train)
-        y_hat_train = kneigh.predict(x_train)
-        # classification report
-        cr_train = classification_report(y_train, y_hat_train)
-        # log loss
-        yhat_prob_train = kneigh.predict_proba(x_train)
-        l_loss_train = log_loss(y_train, yhat_prob_train)
-        fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr_train, l_loss_train), out_log, self.global_log)
-
-        # compute confusion matrix
-        cnf_matrix_train = confusion_matrix(y_train, y_hat_train)
-        np.set_printoptions(precision=2)
-        if self.normalize_cm:
-            cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
-            cm_type = 'NORMALIZED CONFUSION MATRIX'
-        else:
-            cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
-
-        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
-
+        fu.log('Training dataset applying decision tree classification', out_log, self.global_log)
+        tree = DecisionTreeClassifier(criterion = self.criterion, max_depth = self.max_depth)
+        tree.fit(x_train,y_train)
+        
         # testing
         # predict data from x_test
-        y_hat_test = kneigh.predict(x_test)
+        y_hat_test = tree.predict(x_test)
         test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
         # reset y_test (problem with old indexes column)
         y_test = y_test.reset_index(drop=True)
@@ -150,7 +132,7 @@ class KNeighborsPredict():
         # classification report
         cr = classification_report(y_test, y_hat_test)
         # log loss
-        yhat_prob = kneigh.predict_proba(x_test)
+        yhat_prob = tree.predict_proba(x_test)
         l_loss = log_loss(y_test, yhat_prob)
         fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr, l_loss), out_log, self.global_log)
 
@@ -174,10 +156,10 @@ class KNeighborsPredict():
             vs = targets.unique().tolist()
             vs.sort()
             if len(vs) > 2:
-                plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
+                plot = plotMultipleCMTest(cnf_matrix, self.normalize_cm, vs)
                 fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             else:
-                plot = plotBinaryClassifier(kneigh, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
+                plot = plotBinaryClassifierTest(tree, yhat_prob, cnf_matrix, y_test, normalize=self.normalize_cm)
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
@@ -186,7 +168,7 @@ class KNeighborsPredict():
         new_data = new_data_table
         if self.scale:
             new_data = scaler.transform(new_data_table)
-        p = kneigh.predict(new_data)
+        p = tree.predict(new_data)
         p = np.around(p, 2)
 
         new_data_table[self.target] = p
@@ -197,7 +179,7 @@ class KNeighborsPredict():
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a logistic regression k-nearest neighbors classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a decision tree classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -212,7 +194,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    KNeighborsPredict(input_dataset_path=args.input_dataset_path,
+    DecisionTrees(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 

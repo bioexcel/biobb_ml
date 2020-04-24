@@ -5,7 +5,7 @@ import argparse
 import io
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, log_loss, accuracy_score
+from sklearn.metrics import classification_report, log_loss
 from sklearn.neighbors import KNeighborsClassifier
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
