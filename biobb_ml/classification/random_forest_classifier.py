@@ -21,7 +21,7 @@ class RandomForestClassifier():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the binary classifier evaluator plot file. Includes confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. Accepted formats: png.
+        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
@@ -192,7 +192,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Path to the binary classifier evaluator plot file. Includes confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
