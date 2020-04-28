@@ -153,6 +153,7 @@ class KNeighborsTraining():
             plt.fill_between(range(1, self.max_neighbors + 1), test_accuracy - std_acc, test_accuracy + std_acc, alpha = 0.10)
             plt.plot(neighbors, train_accuracy)
             plt.plot(neighbors, test_accuracy)
+            plt.axvline(x=best_k, c='red')
             plt.legend(('Training Accuracy', 'Testing accuracy', '+/- 3xstd'))
             plt.xlabel('Number of neighbors')
             plt.ylabel('Accuracy')
