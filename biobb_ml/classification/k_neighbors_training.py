@@ -158,6 +158,7 @@ class KNeighborsTraining():
             plt.xlabel('Number of neighbors')
             plt.ylabel('Accuracy')
             plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
+            plt.tight_layout()
 
         return 0
 

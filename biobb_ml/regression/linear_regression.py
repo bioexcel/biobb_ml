@@ -4,6 +4,7 @@
 import argparse
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
@@ -14,7 +15,7 @@ from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.regression.common import *
-
+sns.set()
 
 class LinearRegression():
     """Trains and tests a given dataset and calculates coefficients and predictions for a linear regression.

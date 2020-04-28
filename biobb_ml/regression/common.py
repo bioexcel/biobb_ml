@@ -67,7 +67,7 @@ def get_list_of_predictors(predictions):
 def plotResults(y_train, y_hat_train, y_test, y_hat_test):
 
 	#FIGURE
-    plt.figure(figsize=[12,5])
+    plt.figure(figsize=[8,4])
 
     plt.subplot(121)
     plt.title('Train', size=15)
@@ -81,6 +81,6 @@ def plotResults(y_train, y_hat_train, y_test, y_hat_test):
     plt.xlabel('targets',size=18)
     plt.ylabel('predictions',size=18)
 
-    plt.subplots_adjust(wspace=.3, hspace=.3)
+    plt.tight_layout()
     
     return plt

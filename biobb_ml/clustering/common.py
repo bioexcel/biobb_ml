@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import itertools
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import KMeans
 from random import sample
 from math import isnan
 from biobb_common.tools import file_utils as fu
+sns.set()
 
 # CHECK PARAMETERS
 
@@ -42,6 +44,7 @@ def is_valid_file(ext, argument):
 		'input_dataset_path': ['csv'],
 		'output_wcss_path': ['csv'],
 		'output_gap_path': ['csv'],
+		'output_results_path': ['csv'],
 		'output_plot_path': ['png']
 	}
 	return ext in formats[argument]
@@ -164,6 +167,6 @@ def plotKmeansTrain(max_clusters, wcss, gap, best_k, best_g):
     plt.ylabel('Gap')
     plt.xlabel('Cluster')
     plt.axvline(x=best_g, c='red')
-    plt.subplots_adjust(wspace=.4, hspace=.8)
+    plt.tight_layout()
 
     return plt

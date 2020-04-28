@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import itertools
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.metrics import roc_curve, auc
 from biobb_common.tools import file_utils as fu
+sns.set()
 
 # CHECK PARAMETERS
 
@@ -75,27 +77,17 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     
     #1 -- Confusion matrix train
     plt.subplot(231)
-    plt.imshow(cm_train, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion Matrix Train', size=15)
-    plt.colorbar()
-    tick_marks = np.arange(len(cmticks))
-    plt.xticks(tick_marks, cmticks)
-    plt.yticks(tick_marks, cmticks)
-
-    cmlabels = [
-    	['True Negatives', 'False Positives'],
-        ['False Negatives', 'True Positives']
-    ]
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm_train.max() / 2.
-    for i, j in itertools.product(range(cm_train.shape[0]), range(cm_train.shape[1])):
-        plt.text(j, i, format(cm_train[i, j], fmt) + "\n" + cmlabels[i][j],
-                 horizontalalignment="center",
-                 color="white" if cm_train[i, j] > thresh else "black")
-
+    group_names = ['True Negatives', 'False Positives', 'False Negatives', 'True Positives']
+    group_counts = ["{0:0.0f}".format(value) for value in
+                    cm_train.flatten()]
+    labels_cfm = [f"{v1}\n{v2}" for v1, v2 in
+              zip(group_counts, group_names)]
+    labels_cfm = np.asarray(labels_cfm).reshape(2,2)
+    sns.heatmap(cm_train, annot=labels_cfm, fmt='', cmap='Blues', square=True, annot_kws={"fontsize":9})
     plt.ylabel('True Values', size=13)
     plt.xlabel('Predicted Values', size=13)
+    plt.yticks(rotation=0) 
       
     #2 -- Distributions of Predicted Probabilities of both classes train
     df = pd.DataFrame({'probPos':pos_p, 'target': y_train})
@@ -141,27 +133,17 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     
     #1 -- Confusion matrix test
     plt.subplot(234)
-    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion Matrix Test', size=15)
-    plt.colorbar()
-    tick_marks = np.arange(len(cmticks))
-    plt.xticks(tick_marks, cmticks)
-    plt.yticks(tick_marks, cmticks)
-
-    cmlabels = [
-    	['True Negatives', 'False Positives'],
-        ['False Negatives', 'True Positives']
-    ]
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm_test.max() / 2.
-    for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
-        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + cmlabels[i][j],
-                 horizontalalignment="center",
-                 color="white" if cm_test[i, j] > thresh else "black")
-
+    group_names = ['True Negatives', 'False Positives', 'False Negatives', 'True Positives']
+    group_counts = ["{0:0.0f}".format(value) for value in
+                    cm_test.flatten()]
+    labels_cfm = [f"{v1}\n{v2}" for v1, v2 in
+              zip(group_counts, group_names)]
+    labels_cfm = np.asarray(labels_cfm).reshape(2,2)
+    sns.heatmap(cm_test, annot=labels_cfm, fmt='', cmap='Blues', square=True, annot_kws={"fontsize":9})
     plt.ylabel('True Values', size=13)
     plt.xlabel('Predicted Values', size=13)
+    plt.yticks(rotation=0) 
       
     #2 -- Distributions of Predicted Probabilities of both classes test
     df = pd.DataFrame({'probPos':pos_p, 'target': y_test})
@@ -193,7 +175,8 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     plt.ylabel('True Positive Rate', size=13)
     plt.title('ROC Curve Test', size=15)
     plt.legend(loc="lower right")
-    plt.subplots_adjust(wspace=.3, hspace=.5)
+    
+    plt.tight_layout()
     
     return plt
 
@@ -272,7 +255,7 @@ def plotBinaryClassifierTest(model, proba_test, cm_test, y_test, normalize=False
     plt.title('ROC Curve Test', size=15)
     plt.legend(loc="lower right")
 
-    plt.subplots_adjust(wspace=.3, hspace=.5)
+    plt.tight_layout()
     
     return plt
 
@@ -283,72 +266,35 @@ def plotMultipleCM(cm_train, cm_test, normalize, values):
     
     #1 -- Confusion matrix train
     plt.subplot(121)
-    plt.imshow(cm_train, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion Matrix Train', size=15)
-    plt.colorbar()
-    tick_marks = np.arange(len(values))
-    plt.xticks(tick_marks, values)
-    plt.yticks(tick_marks, values)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm_train.max() / 2.
+    group_counts = ["{0:0.0f}".format(value) for value in cm_train.flatten()]
+    group_names = []
     for i, j in itertools.product(range(cm_train.shape[0]), range(cm_train.shape[1])):
-        if i == j: help_txt = "True " + str(values[i])
-        else: help_txt = "False" + str(values[i])
-        plt.text(j, i, format(cm_train[i, j], fmt) + "\n" + help_txt,
-                 horizontalalignment="center",
-                 color="white" if cm_train[i, j] > thresh else "black")
-
+        if i == j: group_names.append("True " + str(values[i]))
+        else: group_names.append("False " + str(values[i]))
+    labels_cfm = [f"{v1}\n{v2}" for v1, v2 in zip(group_counts, group_names)]
+    labels_cfm = np.asarray(labels_cfm).reshape(cm_train.shape[0],cm_train.shape[1])
+    sns.heatmap(cm_train, annot=labels_cfm, fmt='', cmap='Blues', xticklabels=values, yticklabels=values, square=True, annot_kws={"fontsize":9})
     plt.ylabel('True Values', size=13)
     plt.xlabel('Predicted Values', size=13)
+    plt.yticks(rotation=0) 
 
     #2 -- Confusion matrix test
     plt.subplot(122)
-    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion Matrix Test', size=15)
-    plt.colorbar()
-    tick_marks = np.arange(len(values))
-    plt.xticks(tick_marks, values)
-    plt.yticks(tick_marks, values)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm_test.max() / 2.
+    group_counts = ["{0:0.0f}".format(value) for value in cm_test.flatten()]
+    group_names = []
     for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
-        if i == j: help_txt = "True " + str(values[i])
-        else: help_txt = "False" + str(values[i])
-        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + help_txt,
-                 horizontalalignment="center",
-                 color="white" if cm_test[i, j] > thresh else "black")
-
+        if i == j: group_names.append("True " + str(values[i]))
+        else: group_names.append("False " + str(values[i]))
+    labels_cfm = [f"{v1}\n{v2}" for v1, v2 in zip(group_counts, group_names)]
+    labels_cfm = np.asarray(labels_cfm).reshape(cm_test.shape[0],cm_test.shape[1])
+    sns.heatmap(cm_test, annot=labels_cfm, fmt='', cmap='Blues', xticklabels=values, yticklabels=values, square=True, annot_kws={"fontsize":9})
     plt.ylabel('True Values', size=13)
     plt.xlabel('Predicted Values', size=13)
+    plt.yticks(rotation=0) 
 
-    return plt
-
-def plotMultipleCMTest(cm_test, normalize, values):
-    
-    #FIGURE
-    plt.figure(figsize=[4,4])
-
-    #2 -- Confusion matrix test
-    plt.imshow(cm_test, interpolation='nearest', cmap=plt.cm.Blues)
-    plt.title('Confusion Matrix Test', size=15)
-    plt.colorbar()
-    tick_marks = np.arange(len(values))
-    plt.xticks(tick_marks, values)
-    plt.yticks(tick_marks, values)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm_test.max() / 2.
-    for i, j in itertools.product(range(cm_test.shape[0]), range(cm_test.shape[1])):
-        if i == j: help_txt = "True " + str(values[i])
-        else: help_txt = "False" + str(values[i])
-        plt.text(j, i, format(cm_test[i, j], fmt) + "\n" + help_txt,
-                 horizontalalignment="center",
-                 color="white" if cm_test[i, j] > thresh else "black")
-
-    plt.ylabel('True Values', size=13)
-    plt.xlabel('Predicted Values', size=13)
+    plt.tight_layout()
 
     return plt
 
