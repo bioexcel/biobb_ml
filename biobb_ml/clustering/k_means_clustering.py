@@ -115,7 +115,7 @@ class KMeansClustering():
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         clusters.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
-        plt.scatter(clusters['sepal_length'],clusters['sepal_width'],c=clusters['cluster'],cmap='rainbow')
+        """plt.scatter(clusters['sepal_length'],clusters['sepal_width'],c=clusters['cluster'],cmap='rainbow')
         plt.show()
 
         fig = plt.figure(figsize=(8, 6))
@@ -129,26 +129,6 @@ class KMeansClustering():
         ax.set_xlabel('petal_length')
         ax.set_ylabel('petal_width')
         ax.set_zlabel('sepal_length')
-        plt.show()
-
-
-        # Correlation Matrix Heatmap
-        # https://towardsdatascience.com/the-art-of-effective-visualization-of-multi-dimensional-data-6c7202990c57
-        """f, ax = plt.subplots()
-        corr = data.corr()
-        hm = sns.heatmap(round(corr,2), annot=True, ax=ax, cmap="coolwarm",fmt='.2f',
-                         linewidths=.05)
-        f.subplots_adjust(top=0.93)
-        t= f.suptitle('Attributes Correlation Matrix', fontsize=14)
-        plt.show()
-
-        cols = ['petal_length', 'petal_width', 'sepal_length', 'sepal_width']
-        pp = sns.pairplot(data[cols], height=1.8, aspect=1.8,
-                          plot_kws=dict(edgecolor="k", linewidth=0.5),
-                          diag_kind="kde", diag_kws=dict(shade=True))
-        fig = pp.fig 
-        fig.subplots_adjust(top=0.93, wspace=0.3)
-        t = fig.suptitle('Attributes Pairwise Plots', fontsize=14)
         plt.show()"""
 
         # wcss plot

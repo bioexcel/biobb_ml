@@ -33,7 +33,8 @@ def is_valid_file(ext, argument):
 	""" Checks if file format is compatible """
 	formats = {
 		'input_dataset_path': ['csv'],
-		'output_dataset_path': ['csv']
+		'output_dataset_path': ['csv'],
+		'output_plot_path': ['png']
 	}
 	return ext in formats[argument]
 
