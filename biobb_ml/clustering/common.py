@@ -7,6 +7,8 @@ import pandas as pd
 import seaborn as sns
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import silhouette_score
 from random import sample
 from math import isnan
 from biobb_common.tools import file_utils as fu
@@ -73,7 +75,7 @@ def get_best_K(wcss):
 	distToLine = np.sqrt(np.sum(vecToLine ** 2, axis=1))
 	idxOfBestPoint = np.argmax(distToLine)
 
-	return idxOfBestPoint + 1
+	return idxOfBestPoint + 1, np.argmax(distToLine)
 
 # hopkins test
 # https://matevzkunaver.wordpress.com/2017/06/20/hopkins-test-for-cluster-tendency/
@@ -101,9 +103,20 @@ def hopkins(X):
  
     return H
 
+# compute exlbow
+def getWCSSKMeans(max_clusters, t_predictors):
+    wcss = []
+    for i in range(1,max_clusters + 1):
+        kmeans = KMeans(i)
+        kmeans.fit(t_predictors)
+        wcss_iter = kmeans.inertia_
+        wcss.append(wcss_iter)
+
+    return wcss
+
 # compute gap
 # https://anaconda.org/milesgranger/gap-statistic/notebook
-def optimalK(data, nrefs=3, maxClusters=15):
+def getGapKMeans(data, nrefs=3, maxClusters=15):
     """
     Calculates KMeans optimal K using Gap Statistic from Tibshirani, Walther, Hastie
     Params:
@@ -148,12 +161,32 @@ def optimalK(data, nrefs=3, maxClusters=15):
 
     return (gaps.argmax() + 1, resultsdf)  # Plus 1 because index of 0 means 1 cluster is optimal, index 2 = 3 clusters are optimal
 
+def getSilhouettheKMeans(X, max_clusters):
+    # Run clustering with different k and check the metrics
+    silhouette_list = []
+
+    k_list = list(range(2,max_clusters + 1))
+    for p in k_list:
+
+        clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
+
+        clusterer.fit(X)
+        # The higher (up to 1) the better
+        s = round(silhouette_score(X, clusterer.labels_), 4)
+
+        silhouette_list.append(s)
+
+    k_list.insert(0,1)
+    silhouette_list.insert(0,0)
+
+    return silhouette_list, k_list
+
 # plot elbow & gap
-def plotKmeansTrain(max_clusters, wcss, gap, best_k, best_g):
+def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
     number_clusters = range(1, max_clusters + 1)
-    plt.figure(figsize=[8,4])
+    plt.figure(figsize=[15,4])
     #1 -- WCSS
-    plt.subplot(121)
+    plt.subplot(131)
     plt.title('The Elbow Method', size=15)
     plt.plot(number_clusters, wcss, '-o')
     plt.xlabel('Cluster')
@@ -161,12 +194,21 @@ def plotKmeansTrain(max_clusters, wcss, gap, best_k, best_g):
     plt.axvline(x=best_k, c='red')
 
     #2 -- GAP
-    plt.subplot(122)
+    plt.subplot(132)
     plt.title('Gap Statistics', size=15)
     plt.plot(number_clusters, gap, '-o')
     plt.ylabel('Gap')
     plt.xlabel('Cluster')
     plt.axvline(x=best_g, c='red')
+
+    #3 -- SILHOUETTE
+    plt.subplot(133)
+    plt.title('Silhouette', size=15)
+    plt.plot(number_clusters, sil, '-o')
+    plt.ylabel('Silhouette score')
+    plt.xlabel('Cluster')
+    plt.axvline(x=best_s, c='red')
+
     plt.tight_layout()
 
     return plt
