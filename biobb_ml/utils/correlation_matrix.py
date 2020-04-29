@@ -75,13 +75,19 @@ class CorrelationMatrix():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
         fu.log('Parsing dataset', out_log, self.global_log)
-        if data.shape[1] < 10: s = None
-        elif data.shape[1] >= 10 and data.shape[1] < 20: s = (12,12)
-        elif data.shape[1] >= 20: s = (16,16)
+        if data.shape[1] < 10: 
+            s = None
+            fs = 12
+        elif data.shape[1] >= 10 and data.shape[1] < 20: 
+            s = (12,12)
+            fs = 9
+        elif data.shape[1] >= 20: 
+            s = (16,16)
+            fs = 7
 
         f, ax = plt.subplots(figsize=s)
         corr = data.corr()
-        hm = sns.heatmap(round(corr,2), annot=True, ax=ax, cmap='Blues', fmt='.2f', square=True )
+        hm = sns.heatmap(round(corr,2), annot=True, ax=ax, cmap='Blues', fmt='.2f', square=True, annot_kws={"fontsize":fs} )
         f.subplots_adjust(top=0.93)
         t= f.suptitle('Attributes Correlation Matrix', fontsize=14)
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])

@@ -25,6 +25,7 @@ class KMeansClustering():
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.
+            * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -43,6 +44,7 @@ class KMeansClustering():
         self.predictors = properties.get('predictors', [])
         self.scale = properties.get('scale', True)
         self.clusters = properties.get('clusters', 3)
+        self.plots = properties.get('plots', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -115,27 +117,19 @@ class KMeansClustering():
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         clusters.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
-        """plt.scatter(clusters['sepal_length'],clusters['sepal_width'],c=clusters['cluster'],cmap='rainbow')
-        plt.show()
+        if self.io_dict["out"]["output_plot_path"] and self.plots: 
+            new_plots = []
+            i = 0
+            for plot in self.plots:
+                if len(plot['features']) == 2 or len(plot['features']) == 3:
+                    new_plots.append(plot)
+                    i += 1
+                if i == 6:
+                    break
 
-        fig = plt.figure(figsize=(8, 6))
-        ax = fig.add_subplot(111, projection='3d')
-
-        xs = clusters['petal_length']
-        ys = clusters['petal_width']
-        zs = clusters['sepal_length']
-        ax.scatter(xs, ys, zs, s=50, alpha=0.6, c=clusters['cluster'],cmap='rainbow')
-
-        ax.set_xlabel('petal_length')
-        ax.set_ylabel('petal_width')
-        ax.set_zlabel('sepal_length')
-        plt.show()"""
-
-        # wcss plot
-        """if self.io_dict["out"]["output_plot_path"]: 
-            fu.log('Saving methods plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            plot = plotKmeansTrain(self.max_clusters, wcss, gap['gap'], best_k, best_g)
-            plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)"""
+            plot = plotKmeansCluster(new_plots, clusters)
+            fu.log('Saving output plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         return 0
 

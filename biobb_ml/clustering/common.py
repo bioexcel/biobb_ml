@@ -170,3 +170,48 @@ def plotKmeansTrain(max_clusters, wcss, gap, best_k, best_g):
     plt.tight_layout()
 
     return plt
+
+def plotKmeansCluster(new_plots, clusters):
+    if len(new_plots) == 1: 
+        fs = (6,6)
+        ps = 110
+    elif len(new_plots) == 2: 
+        fs = (10,6)
+        ps = 120
+    elif len(new_plots) == 3: 
+        fs = (15,4)
+        ps = 130
+    else:  
+        fs = (15,8)
+        ps = 230
+
+    plt.figure(figsize=fs)
+
+    for i, plot in enumerate(new_plots):
+
+        position = ps + i + 1
+
+        if len(plot['features']) == 2:
+            plt.subplot(position)
+            plt.scatter(clusters[plot['features'][0]],clusters[plot['features'][1]],c=clusters['cluster'],cmap='rainbow')
+            plt.title(plot['title'], size=15)
+            plt.xlabel(plot['features'][0], size=13)
+            plt.ylabel(plot['features'][1], size=13)
+
+        if len(plot['features']) == 3:
+            ax = plt.subplot(position, projection='3d')
+
+            xs = clusters[plot['features'][0]]
+            ys = clusters[plot['features'][1]]
+            zs = clusters[plot['features'][2]]
+            ax.scatter(xs, ys, zs, s=50, alpha=0.6, c=clusters['cluster'],cmap='rainbow')
+
+            ax.set_xlabel(plot['features'][0])
+            ax.set_ylabel(plot['features'][1])
+            ax.set_zlabel(plot['features'][2])
+
+            plt.title(plot['title'], size=15)
+
+    plt.tight_layout()
+
+    return plt
