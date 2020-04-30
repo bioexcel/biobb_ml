@@ -19,6 +19,7 @@ class CorrelationMatrix():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_plot_path (str): Path to the correlation matrix plot. Accepted formats: png.
         properties (dic):
+            * **features** (*list*) - ([]) List with all features to compare.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -34,6 +35,7 @@ class CorrelationMatrix():
         }
 
         # Properties specific for BB
+        self.features = properties.get('features', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -74,6 +76,8 @@ class CorrelationMatrix():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
+        if self.features: data = data.filter(self.features)
+
         fu.log('Parsing dataset', out_log, self.global_log)
         if data.shape[1] < 10: 
             s = None
@@ -93,7 +97,7 @@ class CorrelationMatrix():
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
         plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
-        fu.log('Saving Pairwise Plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+        fu.log('Saving Correlation Matrix Plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
 
 
         return 0

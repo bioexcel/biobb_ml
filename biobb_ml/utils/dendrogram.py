@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the PairwiseComparison class and the command line interface."""
+"""Module containing the Dendrogram class and the command line interface."""
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,12 +12,12 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.utils.common import *
 
 
-class PairwiseComparison():
-    """Generates a pairwise comparison from a given dataset.
+class Dendrogram():
+    """Generates a dendrogram from a given dataset.
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_plot_path (str): Path to the pairwise comparison plot. Accepted formats: png.
+        output_plot_path (str): Path to the dendrogram plot. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - ([]) List with all features to compare.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -54,7 +54,7 @@ class PairwiseComparison():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PairwiseComparison module."""
+        """Launches the execution of the Dendrogram module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -76,37 +76,32 @@ class PairwiseComparison():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
-        fu.log('Parsing dataset', out_log, self.global_log)
-        if not self.features: cols = data[data.columns]
-        else: cols = data.filter(self.features)
-        pp = sns.pairplot(cols, height=1.8, aspect=1.8,
-                          plot_kws=dict(edgecolor="k", linewidth=0.5),
-                          diag_kind="kde", diag_kws=dict(shade=True))
-        fig = pp.fig 
-        fig.subplots_adjust(top=0.93, wspace=0.3)
-        t = fig.suptitle('Attributes Pairwise Plots', fontsize=14)
-        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        if self.features: data = data.filter(self.features)
+
+        fu.log('Generating dendrogram', out_log, self.global_log)
+
+        sns.clustermap(data, cmap='Blues')
 
         plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
-        fu.log('Saving Pairwise Plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+        fu.log('Saving Dendrogram Plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
 
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Generates a pairwise comparison from a given dataset", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Generates a dendrogram from a given dataset", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_plot_path', required=True, help='Path to the pairwise comparison plot. Accepted formats: png.')
+    required_args.add_argument('--output_plot_path', required=True, help='Path to the dendrogram plot. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PairwiseComparison(input_dataset_path=args.input_dataset_path,
+    Dendrogram(input_dataset_path=args.input_dataset_path,
                    output_plot_path=args.output_plot_path,
                    properties=properties).launch()
 
