@@ -103,20 +103,21 @@ def hopkins(X):
  
     return H
 
-# compute exlbow
-def getWCSSKMeans(max_clusters, t_predictors):
+# compute elbow
+def getWCSS(method, max_clusters, t_predictors):
     wcss = []
     for i in range(1,max_clusters + 1):
-        kmeans = KMeans(i)
-        kmeans.fit(t_predictors)
-        wcss_iter = kmeans.inertia_
+        if method == 'kmeans': clusterer = KMeans(i)
+        elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=i, linkage="average")
+        clusterer.fit(t_predictors)
+        wcss_iter = clusterer.inertia_
         wcss.append(wcss_iter)
 
     return wcss
 
 # compute gap
 # https://anaconda.org/milesgranger/gap-statistic/notebook
-def getGapKMeans(data, nrefs=3, maxClusters=15):
+def getGap(method, data, nrefs=3, maxClusters=15):
     """
     Calculates KMeans optimal K using Gap Statistic from Tibshirani, Walther, Hastie
     Params:
@@ -139,17 +140,17 @@ def getGapKMeans(data, nrefs=3, maxClusters=15):
             randomReference = np.random.random_sample(size=data.shape)
             
             # Fit to it
-            km = KMeans(k)
-            km.fit(randomReference)
+            clusterer = KMeans(k)
+            clusterer.fit(randomReference)
             
-            refDisp = km.inertia_
+            refDisp = clusterer.inertia_
             refDisps[i] = refDisp
 
         # Fit cluster to original data and create dispersion
-        km = KMeans(k)
-        km.fit(data)
+        clusterer = KMeans(k)
+        clusterer.fit(data)
         
-        origDisp = km.inertia_
+        origDisp = clusterer.inertia_
 
         # Calculate gap statistic
         gap = np.log(np.mean(refDisps)) - np.log(origDisp)
@@ -161,14 +162,15 @@ def getGapKMeans(data, nrefs=3, maxClusters=15):
 
     return (gaps.argmax() + 1, resultsdf)  # Plus 1 because index of 0 means 1 cluster is optimal, index 2 = 3 clusters are optimal
 
-def getSilhouettheKMeans(X, max_clusters):
+def getSilhouetthe(method, X, max_clusters):
     # Run clustering with different k and check the metrics
     silhouette_list = []
 
     k_list = list(range(2,max_clusters + 1))
     for p in k_list:
 
-        clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
+        if method == 'kmeans': clusterer = KMeans(p)
+        elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
 
         clusterer.fit(X)
         # The higher (up to 1) the better
@@ -181,7 +183,7 @@ def getSilhouettheKMeans(X, max_clusters):
 
     return silhouette_list, k_list
 
-# plot elbow & gap
+# plot elbow, gap & silhouette
 def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
     number_clusters = range(1, max_clusters + 1)
     plt.figure(figsize=[15,4])
@@ -253,6 +255,22 @@ def plotKmeansCluster(new_plots, clusters):
             ax.set_zlabel(plot['features'][2])
 
             plt.title(plot['title'], size=15)
+
+    plt.tight_layout()
+
+    return plt
+
+
+# plot elbow, gap & silhouette
+def plotAgglomerativeTrain(max_clusters, sil, best_s):
+    number_clusters = range(1, max_clusters + 1)
+    plt.figure()
+    #1 -- SILHOUETTE
+    plt.title('Silhouette', size=15)
+    plt.plot(number_clusters, sil, '-o')
+    plt.ylabel('Silhouette score')
+    plt.xlabel('Cluster')
+    plt.axvline(x=best_s, c='red')
 
     plt.tight_layout()
 

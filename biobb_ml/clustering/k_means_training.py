@@ -100,7 +100,7 @@ class KMeansTraining():
 
         # calculate wcss for each cluster
         fu.log('Calculating Within-Clusters Sum of Squares (WCSS) for each %d clusters' % self.max_clusters, out_log, self.global_log)
-        wcss = getWCSSKMeans(self.max_clusters, t_predictors)
+        wcss = getWCSS('kmeans', self.max_clusters, t_predictors)
             
         # wcss table
         wcss_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'WCSS': wcss})
@@ -111,7 +111,7 @@ class KMeansTraining():
         fu.log('Best Cluster according to the Elbow Method is %d' % best_k, out_log, self.global_log)
 
         # calculate gap
-        best_g, gap = getGapKMeans(t_predictors, nrefs=5, maxClusters=(self.max_clusters + 1))
+        best_g, gap = getGap('kmeans', t_predictors, nrefs=5, maxClusters=(self.max_clusters + 1))
 
         # gap table
         gap_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'GAP': gap['gap']})
@@ -121,7 +121,7 @@ class KMeansTraining():
         fu.log('Best Cluster according to the Gap Statistics Method is %d' % best_g, out_log, self.global_log)
 
         # calculate silhouette
-        silhouette_list, s_list = getSilhouettheKMeans(t_predictors, self.max_clusters)
+        silhouette_list, s_list = getSilhouetthe('kmeans', t_predictors, self.max_clusters)
 
         # silhouette table
         silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})

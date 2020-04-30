@@ -100,70 +100,28 @@ class AgglomerativeTraining():
             scaler.fit(t_predictors)
             t_predictors = scaler.transform(t_predictors)
 
-        # to find the best k number of clusters
-        X = t_predictors
-        # Run clustering with different k and check the metrics
-        silhouette_list = []
+        # calculate silhouette
+        silhouette_list, s_list = getSilhouetthe('agglomerative', t_predictors, self.max_clusters)
 
-        k_list = list(range(2,self.max_clusters + 1))
-        for p in k_list:
+        # silhouette table
+        silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})
+        fu.log('Calculating Silhouette for each cluster\n\nSILHOUETTE TABLE\n\n%s\n' % silhouette_table.to_string(index=False), out_log, self.global_log)
 
-            clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
-
-            clusterer.fit(X)
-            # The higher (up to 1) the better
-            s = round(silhouette_score(X, clusterer.labels_), 4)
-
-            silhouette_list.append(s)
-
-        k_list.insert(0,1)
-        silhouette_list.insert(0,0)
-
-        # The higher (up to 1) the better
+        # get best cluster silhouette method
         key = silhouette_list.index(max(silhouette_list))
-        k = k_list.__getitem__(key)
+        best_s = s_list.__getitem__(key)
+        fu.log('Best Cluster according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
 
-        print("Best silhouette =", max(silhouette_list), " for k=", k)
-
-        exit()
-
-        # calculate wcss for each cluster
-        fu.log('Calculating Within-Clusters Sum of Squares (WCSS) for each %d clusters' % self.max_clusters, out_log, self.global_log)
-        wcss = []
-        for i in range(1,self.max_clusters + 1):
-            kmeans = KMeans(i)
-            kmeans.fit(t_predictors)
-            wcss_iter = kmeans.inertia_
-            wcss.append(wcss_iter)
-            
-        # wcss table
-        wcss_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'WCSS': wcss})
-        fu.log('Calculating WCSS for each cluster\n\nWCSS TABLE\n\n%s\n' % wcss_table.to_string(index=False), out_log, self.global_log)
-
-        
-
-        # get best cluster elbow method
-        best_k = get_best_K(wcss)
-        fu.log('Best Cluster according to the Elbow Method is %d' % best_k, out_log, self.global_log)
-
-        # calculate gap
-        best_g, gap = optimalK(t_predictors, nrefs=5, maxClusters=(self.max_clusters + 1))
-
-        # gap table
-        gap_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'GAP': gap['gap']})
-        fu.log('Calculating Gap for each cluster\n\nGAP TABLE\n\n%s\n' % gap_table.to_string(index=False), out_log, self.global_log)
-
-        # save gap table
-        fu.log('Saving Gap results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        gap_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
-
-        # log best cluster gap method
-        fu.log('Best Cluster according to the Gap Statistics Method is %d' % best_g, out_log, self.global_log)
+        # save results table
+        results_table = pd.DataFrame(data={'method': ['silhouette'], 'coefficient': [max(silhouette_list)], 'cluster': [best_s]})
+        fu.log('Gathering results\n\nRESULTS TABLE\n\n%s\n' % results_table.to_string(index=False), out_log, self.global_log)
+        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        results_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         # wcss plot
         if self.io_dict["out"]["output_plot_path"]: 
             fu.log('Saving methods plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            plot = plotKmeansTrain(self.max_clusters, wcss, gap['gap'], best_k, best_g)
+            plot = plotAgglomerativeTrain(self.max_clusters, silhouette_list, best_s)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         return 0
