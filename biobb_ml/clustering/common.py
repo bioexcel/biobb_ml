@@ -1,6 +1,7 @@
 """ Common functions for package biobb_analysis.ambertools """
 from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import itertools
 import numpy as np
 import pandas as pd
@@ -237,10 +238,25 @@ def plotCluster(new_plots, clusters):
 
         if len(plot['features']) == 2:
             plt.subplot(position)
-            plt.scatter(clusters[plot['features'][0]],clusters[plot['features'][1]],c=clusters['cluster'],cmap='rainbow')
+            colors = plt.get_cmap('rainbow')(np.linspace(0.0, 1.0, len(set(clusters['cluster']))))
+            outliers = False
+            for clust_number in set(clusters['cluster']):
+                # outliers in grey
+                if clust_number == -1:
+                    outliers = True
+                    c=([0.4,0.4,0.4]) 
+                else:
+                    c = colors[clust_number]
+                clust_set = clusters[clusters.cluster == clust_number]
+                plt.scatter(clust_set[plot['features'][0]], clust_set[plot['features'][1]], color =c, s= 20, alpha = 0.85)      
             plt.title(plot['title'], size=15)
             plt.xlabel(plot['features'][0], size=13)
             plt.ylabel(plot['features'][1], size=13)
+
+            if outliers:
+                custom_lines = [Line2D([0], [0], marker='o', color=([0,0,0,0]), label='Outliers',
+                          markerfacecolor=([0.4,0.4,0.4]), markersize=10)]
+                plt.legend(custom_lines, ['Outliers'])
 
         if len(plot['features']) == 3:
             ax = plt.subplot(position, projection='3d')

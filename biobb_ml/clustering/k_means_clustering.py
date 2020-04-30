@@ -3,7 +3,6 @@
 """Module containing the KMeansClustering class and the command line interface."""
 import argparse
 import io
-import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
