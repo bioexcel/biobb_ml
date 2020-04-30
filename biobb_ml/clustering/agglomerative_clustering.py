@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the KMeansClustering class and the command line interface."""
+"""Module containing the AgglClustering class and the command line interface."""
 import argparse
 import io
 import seaborn as sns
@@ -12,10 +12,10 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.clustering.common import *
 
 
-class KMeansClustering():
-    """Clusters a given dataset with k-means clustering method.
-    Wrapper of the sklearn.cluster.KMeans module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>'_. 
+class AgglClustering():
+    """Clusters a given dataset with agglomerative clustering method.
+    Wrapper of the sklearn.cluster.AgglomerativeClustering module
+    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
@@ -25,6 +25,7 @@ class KMeansClustering():
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.
+            * **linkage** (*int*) - ("ward") The linkage criterion determines which distance to use between sets of observation. The algorithm will merge the pairs of cluster that minimize this criterion. Values: ward, complete, average, single.
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -44,6 +45,7 @@ class KMeansClustering():
         self.predictors = properties.get('predictors', [])
         self.scale = properties.get('scale', True)
         self.clusters = properties.get('clusters', 3)
+        self.linkage = properties.get('linkage', 'ward')
         self.plots = properties.get('plots', [])
         self.properties = properties
 
@@ -64,7 +66,7 @@ class KMeansClustering():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the KMeansClustering module."""
+        """Launches the execution of the AgglClustering module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -101,15 +103,15 @@ class KMeansClustering():
             scaler.fit(t_predictors)
             t_predictors = scaler.transform(t_predictors)
 
-        # create a k-means object with self.clusters clusters
-        kmeans = KMeans(self.clusters)
+        # create an agglomerative clustering object with self.clusters clusters
+        agglom = AgglomerativeClustering(n_clusters = self.clusters, linkage = self.linkage)
         # fit the data
-        kmeans.fit(t_predictors)
+        agglom.fit(t_predictors)
 
         # create a copy of data, so we can see the clusters next to the original data
         clusters = data.copy()
         # predict the cluster for each observation
-        clusters['cluster'] = kmeans.fit_predict(t_predictors)
+        clusters['cluster'] = agglom.fit_predict(t_predictors)
 
         fu.log('Calculating results\n\nCLUSTERING TABLE\n\n%s\n' % clusters, out_log, self.global_log)
 
@@ -148,7 +150,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    KMeansClustering(input_dataset_path=args.input_dataset_path,
+    AgglClustering(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()

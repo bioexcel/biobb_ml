@@ -215,7 +215,7 @@ def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
 
     return plt
 
-def plotKmeansCluster(new_plots, clusters):
+def plotCluster(new_plots, clusters):
     if len(new_plots) == 1: 
         fs = (6,6)
         ps = 110
