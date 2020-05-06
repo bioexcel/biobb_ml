@@ -1,2 +1,2 @@
 name = "utils"
-__all__ = ["dummy_variables", "variance_inflation_factor"]
+__all__ = ["correlation_matrix", "dendrogram","dummy_variables", "map_variables","pairwise_comparison", "variance_inflation_factor"]
