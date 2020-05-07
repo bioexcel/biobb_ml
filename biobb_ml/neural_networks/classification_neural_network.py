@@ -17,20 +17,26 @@ sns.set()
 
 class ClassificationNeuralNetwork():
     """Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.
-    Wrapper of the TensorFlow Keras API
-    Visit the 'TensorFlow Keras official website <https://www.tensorflow.org/guide/keras>'_. 
+    Wrapper of the TensorFlow Keras Sequential model
+    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, accuracy, MAE and MSE plots. Accepted formats: png.
+        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
             * **test_size** (*float*) - (0.1) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
+            * **output_layer_activation** (*string*) - ("softmax") Activation function to use in the output layer. Values: sigmoid, tanh, relu, softmax.
+            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
+            * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
+            * **batch_size** (*int*) - (100) Number of samples per gradient update.
+            * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -48,9 +54,15 @@ class ClassificationNeuralNetwork():
         # Properties specific for BB
         self.features = properties.get('features', [])
         self.target = properties.get('target', '')
-        self.predictions = properties.get('predictions', [])
         self.validation_size = properties.get('validation_size', 0.1)
         self.test_size = properties.get('test_size', 0.1)
+        self.hidden_layers = properties.get('hidden_layers', [])
+        self.output_layer_activation = properties.get('output_layer_activation', 'softmax')
+        self.optimizer = properties.get('optimizer', 'Adam')
+        self.learning_rate = properties.get('learning_rate', 0.02)
+        self.batch_size = properties.get('batch_size', 100)
+        self.max_epochs = properties.get('max_epochs', 100)
+        self.predictions = properties.get('predictions', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -68,6 +80,25 @@ class ClassificationNeuralNetwork():
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+
+    def build_model(self, input_shape, output_size):
+        # create model
+        model = tf.keras.Sequential([])
+
+        # if no hidden_layers provided, create manually a hidden layer with default values
+        if not self.hidden_layers:
+            self.hidden_layers = [ { 'size': 50, 'activation': 'relu' } ]
+
+        # generate hidden_layers
+        for i,layer in enumerate(self.hidden_layers):
+            if i == 0:
+                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], input_shape = input_shape)) # 1st hidden layer
+            else:
+                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation']))
+
+        model.add(tf.keras.layers.Dense(output_size, activation='softmax')) # output layer
+
+        return model
 
     @launchlogger
     def launch(self) -> int:
@@ -97,210 +128,112 @@ class ClassificationNeuralNetwork():
         # the inputs are all the independent variables
         inputs = data.filter(self.features)
 
+        # scale dataset
         fu.log('Scaling dataset', out_log, self.global_log)
         scaled_inputs = scale(inputs)
 
+        # shuffle dataset
+        fu.log('Shuffling dataset', out_log, self.global_log)
         shuffled_indices = np.arange(scaled_inputs.shape[0])
         np.random.shuffle(shuffled_indices)
-
         shuffled_inputs = scaled_inputs[shuffled_indices]
         shuffled_targets = targets[shuffled_indices]
 
-        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
-        
-        #print(X_train.shape, X_test.shape)
-
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=(self.validation_size/(1-self.test_size)), random_state=1)
-
-        # Set the input and output sizes
-        output_size = np.unique(y_train).size
-        # Use same hidden layer size for both hidden layers. Not a necessity.
-        hidden_layer_size = 50
-
-        # TODO
-        # LOGS
-        # custom hidden_layer_size & activation (S45_L312/Course-Notes-Section-6.pdf) for n layers (dictionary)
-        # create n layers in for loop: http://localhost:8888/notebooks/S50_L351/TensorFlow_MNIST_All_Exercises.ipynb
-        # activation for output layer
-        # COMPILE: optimizer & loss
-        # SUMMARY
-        # TEST TABLE (test values + predicted values in (0,1) probability column)
-        # SCORES TABLE (accuracies, losses, etc)
-        # RESULTS TABLE (results in yml file)
-        # PLOTS
-            
-        # define how the model will look like
-        model = tf.keras.Sequential([
-            # tf.keras.layers.Dense is basically implementing: output = activation(dot(input, weight) + bias)
-            # it takes several arguments, but the most important ones for us are the hidden_layer_size and the activation function
-            tf.keras.layers.Dense(hidden_layer_size, activation='relu', input_shape=(X_train.shape[1],)), # 1st hidden layer
-            tf.keras.layers.Dense(hidden_layer_size, activation='relu'), # 2nd hidden layer
-            # the final layer is no different, we just make sure to activate it with softmax
-            tf.keras.layers.Dense(output_size, activation='softmax') # output layer
-        ])
-
-        ### Choose the optimizer and the loss function
-
-        # we define the optimizer we'd like to use, 
-        # the loss function, 
-        # and the metrics we are interested in obtaining at each iteration
-        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy','mae', 'mse'])
-
-        #print(model.summary())
-
-        ### Training
-        # That's where we train the model we have built.
-
-        # set the batch size
-        batch_size = 100
-
-        # set a maximum number of training epochs
-        max_epochs = 100
-
-        # set an early stopping mechanism
-        # let's set patience=2, to be a bit tolerant against random validation loss increases
-        early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
-
-        # fit the model
-        # note that this time the train, validation and test data are not iterable
-        mf = model.fit(X_train, # train inputs
-          y_train, # train targets
-          batch_size=batch_size, # batch size
-          epochs=max_epochs, # epochs that we will train for (assuming early stopping doesn't kick in)
-          # callbacks are functions called by a task when a task is completed
-          # task here is to check if val_loss is increasing
-          callbacks=[early_stopping], # early stopping
-          validation_data=(X_val, y_val), # validation data
-          verbose = 1 # making sure we get enough information about the training process
-          )
-
-        print(model.summary())
-
-        print(mf.history)
-
-        exit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # declare inputs and targets
-        targets = data[self.target]
-        # the inputs are all the independent variables
-        inputs = data.filter(self.independent_vars)
-
-        t_inputs = inputs
-        # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_inputs)
-            t_inputs = scaler.transform(t_inputs)
-
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=5)
-
-        # regression
-        fu.log('Training dataset applying linear regression', out_log, self.global_log)
-        reg = linear_model.ClassificationNeuralNetwork()
-        reg.fit(x_train, y_train)
-
-        # scores and coefficients train
-        y_hat_train = reg.predict(x_train)
-        rmse = (np.sqrt(mean_squared_error(y_train, y_hat_train)))
-        rss = np.mean((y_hat_train - y_train) ** 2)
-        score = reg.score(x_train, y_train)
-        bias = reg.intercept_
-        coef = reg.coef_
-        coef = [ '%.3f' % item for item in coef ]
-        adj_r2 = adjusted_r2(x_train, y_train, score)
-        p_values = f_regression(x_train, y_train)[1]
-        p_values = [ '%.3f' % item for item in p_values ]
-
-        # r-squared
-        r2_table = pd.DataFrame()
-        r2_table["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
-        r2_table['coefficient'] = [score, adj_r2, rmse, rss]
-
-        # p-values
-        cols = ['bias']
-        cols.extend(self.independent_vars)
-        coefs_table = pd.DataFrame(cols, columns=['feature'])
-        c = [round(bias, 3)]
-        c.extend(coef)
-        c = list(map(float, c))
-        coefs_table['coefficient'] = c
-        p = [0]
-        p.extend(p_values)
+        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=(self.validation_size / (1 - self.test_size)), random_state=1)
         
-        coefs_table['p-value'] = p
-        fu.log('Calculating scores and coefficients for training dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n\nCOEFFS & P-VALUES\n\n%s\n' % (r2_table, coefs_table), out_log, self.global_log)
+        # build model
+        fu.log('Building model', out_log, self.global_log)
+        model = self.build_model((X_train.shape[1],), np.unique(y_train).size)
+
+        # model summary
+        stringlist = []
+        model.summary(print_fn=lambda x: stringlist.append(x))
+        model_summary = "\n".join(stringlist)
+        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+
+        # get optimizer
+        mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
+        opt_class = getattr(mod, self.optimizer)
+        opt = opt_class(lr = self.learning_rate)
+        # compile model
+        model.compile(optimizer = opt, loss = 'sparse_categorical_crossentropy', metrics = ['accuracy', 'mse'])
+
+        # fitting
+        fu.log('Training model', out_log, self.global_log)
+        # set an early stopping mechanism
+        # set patience=2, to be a bit tolerant against random validation loss increases
+        early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
+        # fit the model
+        mf = model.fit(X_train, 
+                       y_train, 
+                       batch_size=self.batch_size, 
+                       epochs=self.max_epochs, 
+                       callbacks=[early_stopping], 
+                       validation_data=(X_val, y_val), 
+                       verbose = 1)
+
+        fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
+
+        train_metrics = pd.DataFrame()
+        train_metrics['metric'] = ['Train loss',' Train accuracy', 'Train MSE', 'Validation loss', 'Validation accuracy', 'Validation MSE']
+        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['accuracy'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_accuracy'][-1], mf.history['val_mse'][-1]]
+
+        fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
         # testing
-        # predict data from x_test
-        y_hat_test = reg.predict(x_test)
-        test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
-        # reset y_test (problem with old indexes column)
-        y_test = y_test.reset_index(drop=True)
-        # add real values to predicted ones in test_table table
+        fu.log('Testing model', out_log, self.global_log)
+        test_loss, test_accuracy, test_mse = model.evaluate(X_test, y_test)
+
+        test_metrics = pd.DataFrame()
+        test_metrics['metric'] = ['Test loss',' Test accuracy', 'Test MSE']
+        test_metrics['coefficient'] = [test_loss, test_accuracy, test_mse]
+
+        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
+
+        # predict data from X_test
+        test_predictions = model.predict(X_test)
+        test_predictions = np.around(test_predictions, decimals=2)        
+        tpr = tuple(map(tuple, test_predictions))
+
+        test_table = pd.DataFrame()
+        test_table['P' + np.array2string(np.unique(y_train))] = tpr
         test_table['target'] = y_test
-        # calculate difference between target and prediction (absolute and %)
-        test_table['residual'] = test_table['target'] - test_table['prediction']
-        test_table['difference %'] = np.absolute(test_table['residual']/test_table['target']*100)
-        pd.set_option('display.float_format', lambda x: '%.2f' % x)
-        # sort by difference in %
-        test_table = test_table.sort_values(by=['difference %'])
-        test_table = test_table.reset_index(drop=True)
-        fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
-        
-        # scores and coefficients test
-        r2_test = reg.score(x_test, y_test)
-        adj_r2_test = adjusted_r2(x_test, y_test, r2_test)
-        rmse_test = np.sqrt(mean_squared_error(y_test, y_hat_test))
-        rss_test = np.mean((y_hat_test - y_test) ** 2)
 
-        # r-squared
-        pd.set_option('display.float_format', lambda x: '%.6f' % x)
-        r2_table_test = pd.DataFrame()
-        r2_table_test["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
-        r2_table_test['coefficient'] = [r2_test, adj_r2_test, rmse_test, rss_test]
+        fu.log('TEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
 
-        fu.log('Calculating scores and coefficients for testing dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n' % r2_table_test, out_log, self.global_log)
-
+        # save test data
         if(self.io_dict["out"]["output_test_table_path"]): 
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
-            fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
+            fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            plot = plotResults(mf.history)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
-
         # prediction
-        pd.set_option('display.float_format', lambda x: '%.2f' % x)
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
-        new_data = new_data_table
-        if self.scale:
-            new_data = scaler.transform(new_data_table)
-        p = reg.predict(new_data)
-        p = np.around(p, 2)
-        new_data_table[self.target] = p
+        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.features)
+        new_data = scale(new_data_table)
+  
+        predictions = model.predict(new_data)
+        predictions = np.around(predictions, decimals=2)        
+        pr = tuple(map(tuple, predictions))
+        new_data_table[self.target + ' ' + np.array2string(np.unique(y_train))] = pr
+
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+
+        ###################################################
+        ####################################################
+        # https://www.tensorflow.org/tutorials/distribute/save_and_load
+        #model.save('my_model.tf')
+        ###################################################
+        ####################################################
 
         return 0
 
@@ -313,7 +246,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy, MAE and MSE plots. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"

@@ -48,3 +48,44 @@ def check_mandatory_property(property, name, out_log, classname):
 
 # UTILITIES
 
+def get_list_of_predictors(predictions):
+	p = []
+	for obj in predictions:
+		a = []
+		for k, v in obj.items():
+			a.append(v)
+		p.append(a)
+	return p
+
+def plotResults(data):
+
+	#FIGURE
+    plt.figure(figsize=[12,4])
+
+    plt.subplot(131)
+    plt.title('Model loss', size=15)
+    plt.plot(data['loss'])
+    plt.plot(data['val_loss'])
+    plt.xlabel('loss',size=14)
+    plt.ylabel('epoch',size=14)
+    plt.legend(['training', 'validation'], loc='best')
+
+    plt.subplot(132)
+    plt.title('Model accuracy', size=15)
+    plt.plot(data['accuracy'])
+    plt.plot(data['val_accuracy'])
+    plt.xlabel('accuracy',size=14)
+    plt.ylabel('epoch',size=14)
+    plt.legend(['training', 'validation'], loc='best')
+
+    plt.subplot(133)
+    plt.title('Model MSE', size=15)
+    plt.plot(data['mse'])
+    plt.plot(data['val_mse'])
+    plt.xlabel('mse',size=14)
+    plt.ylabel('epoch',size=14)
+    plt.legend(['training', 'validation'], loc='best')
+
+    plt.tight_layout()
+    
+    return plt
