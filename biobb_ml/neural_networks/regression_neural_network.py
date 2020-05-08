@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-"""Module containing the ClassificationNeuralNetwork class and the command line interface."""
+"""Module containing the RegressionNeuralNetwork class and the command line interface."""
 import argparse
+import numpy as np
 import pandas as pd
+import seaborn as sns
 import tensorflow as tf
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
@@ -11,9 +13,10 @@ from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
+sns.set()
 
-class ClassificationNeuralNetwork():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.
+class RegressionNeuralNetwork():
+    """Trains and tests a given dataset and calculates coefficients and predictions for a NN regression.
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
@@ -21,7 +24,7 @@ class ClassificationNeuralNetwork():
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. Accepted formats: png.
+        output_plot_path (str) (Optional): Loss, MAE and MSE plots. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
@@ -33,7 +36,6 @@ class ClassificationNeuralNetwork():
             * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
             * **batch_size** (*int*) - (100) Number of samples per gradient update.
             * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
-            * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -60,7 +62,6 @@ class ClassificationNeuralNetwork():
         self.learning_rate = properties.get('learning_rate', 0.02)
         self.batch_size = properties.get('batch_size', 100)
         self.max_epochs = properties.get('max_epochs', 100)
-        self.normalize_cm =  properties.get('normalize_cm', False)
         self.predictions = properties.get('predictions', [])
         self.properties = properties
 
@@ -80,7 +81,7 @@ class ClassificationNeuralNetwork():
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
-    def build_model(self, input_shape, output_size):
+    def build_model(self, input_shape):
         # create model
         model = tf.keras.Sequential([])
 
@@ -95,13 +96,13 @@ class ClassificationNeuralNetwork():
             else:
                 model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation']))
 
-        model.add(tf.keras.layers.Dense(output_size, activation='softmax')) # output layer
+        model.add(tf.keras.layers.Dense(1)) # output layer
 
         return model
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClassificationNeuralNetwork module."""
+        """Launches the execution of the RegressionNeuralNetwork module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -141,10 +142,10 @@ class ClassificationNeuralNetwork():
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
         X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
-
+        
         # build model
         fu.log('Building model', out_log, self.global_log)
-        model = self.build_model((X_train.shape[1],), np.unique(y_train).size)
+        model = self.build_model((X_train.shape[1],))
 
         # model summary
         stringlist = []
@@ -157,7 +158,7 @@ class ClassificationNeuralNetwork():
         opt_class = getattr(mod, self.optimizer)
         opt = opt_class(lr = self.learning_rate)
         # compile model
-        model.compile(optimizer = opt, loss = 'sparse_categorical_crossentropy', metrics = ['accuracy', 'mse'])
+        model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'])
 
         # fitting
         fu.log('Training model', out_log, self.global_log)
@@ -169,66 +170,38 @@ class ClassificationNeuralNetwork():
                        y_train, 
                        batch_size=self.batch_size, 
                        epochs=self.max_epochs, 
-                       callbacks=[early_stopping],
+                       callbacks=[early_stopping], 
                        validation_split=self.validation_size,
                        verbose = 1)
 
         fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
 
         train_metrics = pd.DataFrame()
-        train_metrics['metric'] = ['Train loss',' Train accuracy', 'Train MSE', 'Validation loss', 'Validation accuracy', 'Validation MSE']
-        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['accuracy'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_accuracy'][-1], mf.history['val_mse'][-1]]
+        train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Validation loss', 'Validation MAE', 'Validation MSE']
+        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
 
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
-        # confusion matrix
-        train_predictions = model.predict(X_train)
-        train_predictions = np.around(train_predictions, decimals=2)
-        norm_pred = []
-        [norm_pred.append(np.argmax(pred, axis=0)) for pred in train_predictions]
-        cnf_matrix_train = tf.math.confusion_matrix(y_train, norm_pred).numpy()
-        np.set_printoptions(precision=2)
-        if self.normalize_cm:
-            cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
-            cm_type = 'NORMALIZED CONFUSION MATRIX'
-        else:
-            cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
-
-        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
-
         # testing
         fu.log('Testing model', out_log, self.global_log)
-        test_loss, test_accuracy, test_mse = model.evaluate(X_test, y_test)
+        test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
 
         test_metrics = pd.DataFrame()
-        test_metrics['metric'] = ['Test loss',' Test accuracy', 'Test MSE']
-        test_metrics['coefficient'] = [test_loss, test_accuracy, test_mse]
+        test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE']
+        test_metrics['coefficient'] = [test_loss, test_mae, test_mse]
 
         fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
 
         # predict data from X_test
         test_predictions = model.predict(X_test)
-        test_predictions = np.around(test_predictions, decimals=2)
-        tpr = tuple(map(tuple, test_predictions))
+        test_predictions = np.around(test_predictions, decimals=2)        
+        tpr = np.squeeze(np.asarray(test_predictions))
 
         test_table = pd.DataFrame()
-        test_table['P' + np.array2string(np.unique(y_train))] = tpr
+        test_table['prediction'] = tpr
         test_table['target'] = y_test
 
         fu.log('TEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
-
-        # confusion matrix
-        norm_pred = []
-        [norm_pred.append(np.argmax(pred, axis=0)) for pred in test_predictions]
-        cnf_matrix_test = tf.math.confusion_matrix(y_test, norm_pred).numpy()
-        np.set_printoptions(precision=2)
-        if self.normalize_cm:
-            cnf_matrix_test = cnf_matrix_test.astype('float') / cnf_matrix_test.sum(axis=1)[:, np.newaxis]
-            cm_type = 'NORMALIZED CONFUSION MATRIX'
-        else:
-            cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
-
-        fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_test), out_log, self.global_log)
 
         # save test data
         if(self.io_dict["out"]["output_test_table_path"]): 
@@ -237,37 +210,24 @@ class ClassificationNeuralNetwork():
 
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
-            vs = np.unique(targets)
-            vs.sort()
-            if len(vs) > 2:
-                #plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
-                plot = plotResultsClass(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
-                fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            else:
-                #plot = plotBinaryClassifier(logreg, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
-                plot = plotResultsClass(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
-                fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            test_predictions = model.predict(X_test).flatten()
+            train_predictions = model.predict(X_train).flatten()
+            plot = plotResultsReg(mf.history, y_test, test_predictions, y_train, train_predictions)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # prediction
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.features)
         new_data = scale(new_data_table)
-  
+
         predictions = model.predict(new_data)
-        predictions = np.around(predictions, decimals=2)        
-        pr = tuple(map(tuple, predictions))
-        new_data_table[self.target + ' ' + np.array2string(np.unique(y_train))] = pr
+        predictions = np.around(predictions, decimals=2)
+        pr = np.squeeze(np.asarray(predictions))
+        new_data_table[self.target] = pr
 
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
-
-        ###################################################
-        ####################################################
-        # https://www.tensorflow.org/tutorials/distribute/save_and_load
-        #model.save('my_model.tf')
-        ###################################################
-        ####################################################
 
         return 0
 
@@ -280,14 +240,14 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClassificationNeuralNetwork(input_dataset_path=args.input_dataset_path,
+    RegressionNeuralNetwork(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 

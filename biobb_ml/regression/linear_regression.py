@@ -187,6 +187,8 @@ class LinearRegression():
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
             fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            y_hat_test = y_hat_test.flatten()
+            y_hat_train = y_hat_train.flatten()
             plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 

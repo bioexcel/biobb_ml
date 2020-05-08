@@ -151,7 +151,7 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     
     return plt
 
-def CMplotNonBinary(position, cm, title, values):
+def CMplotNonBinary(position, cm, title, normalize, values):
 
     if cm.shape[1] < 5:  fs = 10
     elif cm.shape[1] >= 5 and cm.shape[1] < 10:  fs = 8
@@ -159,7 +159,10 @@ def CMplotNonBinary(position, cm, title, values):
 
     plt.subplot(position)
     plt.title(title, size=15)
-    group_counts = ["{0:0.0f}".format(value) for value in cm.flatten()]
+    if normalize:
+        group_counts = ["{0:0.2f}".format(value) for value in cm.flatten()]
+    else:
+        group_counts = ["{0:0.0f}".format(value) for value in cm.flatten()]
     group_names = []
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         if i == j: group_names.append("True " + str(values[i]))
@@ -177,10 +180,10 @@ def plotMultipleCM(cm_train, cm_test, normalize, values):
     plt.figure(figsize=[8,4])
     
     #1 -- Confusion matrix train
-    CMplotNonBinary(121, cm_train, 'Confusion Matrix Train', values)
+    CMplotNonBinary(121, cm_train, 'Confusion Matrix Train', normalize, values)
 
     #2 -- Confusion matrix test
-    CMplotNonBinary(122, cm_test, 'Confusion Matrix Test', values)
+    CMplotNonBinary(122, cm_test, 'Confusion Matrix Test', normalize, values)
 
     plt.tight_layout()
 

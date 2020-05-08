@@ -64,22 +64,40 @@ def get_list_of_predictors(predictions):
 		p.append(a)
 	return p
 
+def predictionPlot(tit, data1, data2, xlabel, ylabel):
+    plt.title(tit, size=15)
+    plt.scatter(data1, data2, alpha=0.2)
+    plt.xlabel(xlabel,size=14)
+    plt.ylabel(ylabel,size=14)
+    axes = plt.gca()
+    lims = axes.get_xlim()
+    plt.xlim(lims)
+    plt.ylim(lims)
+    plt.plot(lims, lims)
+
+def histogramPlot(tit, data1, data2, xlabel, ylabel):
+    plt.title(tit, size=15)
+    error = data2 - data1
+    plt.hist(error, bins = 25)
+    plt.xlabel(xlabel,size=14)
+    plt.ylabel(ylabel,size=14)
+
 def plotResults(y_train, y_hat_train, y_test, y_hat_test):
 
 	#FIGURE
-    plt.figure(figsize=[8,4])
+    plt.figure(figsize=[8,8])
 
-    plt.subplot(121)
-    plt.title('Train', size=15)
-    plt.scatter(y_train, y_hat_train, alpha=0.2)
-    plt.xlabel('targets',size=18)
-    plt.ylabel('predictions',size=18)
+    plt.subplot(221)
+    predictionPlot('Train predictions', y_train, y_hat_train, 'true values', 'predictions')
 
-    plt.subplot(122)
-    plt.title('Test', size=15)
-    plt.scatter(y_test, y_hat_test, alpha=0.2)
-    plt.xlabel('targets',size=18)
-    plt.ylabel('predictions',size=18)
+    plt.subplot(222)
+    histogramPlot('Train histogram', y_train, y_hat_train, 'prediction error', 'count')
+
+    plt.subplot(223)
+    predictionPlot('Test predictions', y_test, y_hat_test, 'true values', 'predictions')
+
+    plt.subplot(224)
+    histogramPlot('Test histogram', y_test, y_hat_test, 'prediction error', 'count')
 
     plt.tight_layout()
     
