@@ -12,13 +12,13 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 class ClassificationNeuralNetwork():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.
+    """Trains and tests a given dataset and save the complete model for a NN classification
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the output results file. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. Accepted formats: h5.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
         output_plot_path (str) (Optional): Loss, accuracy and MSE plots. Accepted formats: png.
         properties (dic):
@@ -33,19 +33,18 @@ class ClassificationNeuralNetwork():
             * **batch_size** (*int*) - (100) Number of samples per gradient update.
             * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+                 output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -60,7 +59,6 @@ class ClassificationNeuralNetwork():
         self.batch_size = properties.get('batch_size', 100)
         self.max_epochs = properties.get('max_epochs', 100)
         self.normalize_cm =  properties.get('normalize_cm', False)
-        self.predictions = properties.get('predictions', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -75,7 +73,7 @@ class ClassificationNeuralNetwork():
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
@@ -94,7 +92,7 @@ class ClassificationNeuralNetwork():
             else:
                 model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation']))
 
-        model.add(tf.keras.layers.Dense(output_size, activation='softmax')) # output layer
+        model.add(tf.keras.layers.Dense(output_size, activation=self.output_layer_activation)) # output layer
 
         return model
 
@@ -113,7 +111,7 @@ class ClassificationNeuralNetwork():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
+            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -239,7 +237,6 @@ class ClassificationNeuralNetwork():
             vs = np.unique(targets)
             vs.sort()
             if len(vs) > 2:
-                #plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
                 plot = plotResultsClassMultCM(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
                 fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             else:
@@ -247,36 +244,19 @@ class ClassificationNeuralNetwork():
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
-        # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.features)
-        new_data = scale(new_data_table)
-  
-        predictions = model.predict(new_data)
-        predictions = np.around(predictions, decimals=2)        
-        pr = tuple(map(tuple, predictions))
-        new_data_table[self.target + ' ' + np.array2string(np.unique(y_train))] = pr
-
-        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
-
-        ###################################################
-        ####################################################
-        # https://www.tensorflow.org/tutorials/distribute/save_and_load
-        #model.save('my_model.tf')
-        ###################################################
-        ####################################################
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        model.save(self.io_dict["out"]["output_model_path"])
 
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and save the complete model for a NN classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
     parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.')
 
@@ -286,7 +266,7 @@ def main():
 
     # Specific call of each building block
     ClassificationNeuralNetwork(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
+                   output_model_path=args.output_model_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()

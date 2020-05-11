@@ -22,7 +22,7 @@ class RegressionNeuralNetwork():
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the output results file. Accepted formats: csv.
+        output_model_path< (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
         output_plot_path (str) (Optional): Loss, MAE and MSE plots. Accepted formats: png.
         properties (dic):
@@ -36,19 +36,18 @@ class RegressionNeuralNetwork():
             * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
             * **batch_size** (*int*) - (100) Number of samples per gradient update.
             * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
-            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+                 output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -62,7 +61,6 @@ class RegressionNeuralNetwork():
         self.learning_rate = properties.get('learning_rate', 0.02)
         self.batch_size = properties.get('batch_size', 100)
         self.max_epochs = properties.get('max_epochs', 100)
-        self.predictions = properties.get('predictions', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -77,7 +75,7 @@ class RegressionNeuralNetwork():
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
@@ -115,7 +113,7 @@ class RegressionNeuralNetwork():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
+            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -211,23 +209,13 @@ class RegressionNeuralNetwork():
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
             fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            test_predictions = model.predict(X_test).flatten()
+            test_predictions = test_predictions.flatten()
             train_predictions = model.predict(X_train).flatten()
             plot = plotResultsReg(mf.history, y_test, test_predictions, y_train, train_predictions)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
-        # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.features)
-        new_data = scale(new_data_table)
-
-        predictions = model.predict(new_data)
-        predictions = np.around(predictions, decimals=2)
-        pr = np.squeeze(np.asarray(predictions))
-        new_data_table[self.target] = pr
-
-        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        model.save(self.io_dict["out"]["output_model_path"])
 
         return 0
 
@@ -238,7 +226,7 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
     parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
 
@@ -248,7 +236,7 @@ def main():
 
     # Specific call of each building block
     RegressionNeuralNetwork(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
+                   output_model_path=args.output_model_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()
