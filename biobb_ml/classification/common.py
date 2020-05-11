@@ -55,12 +55,13 @@ def check_mandatory_property(property, name, out_log, classname):
 
 # UTILITIES
 
-def CMPlotBinary(position, cm, group_names, title):
+def CMPlotBinary(position, cm, group_names, title, normalize):
     plt.subplot(position)
     plt.title(title, size=15)
-    #group_names = ['True Negatives', 'False Positives', 'False Negatives', 'True Positives']
-    group_counts = ["{0:0.0f}".format(value) for value in
-                    cm.flatten()]
+    if normalize:
+        group_counts = ["{0:0.2f}".format(value) for value in cm.flatten()]
+    else:
+        group_counts = ["{0:0.0f}".format(value) for value in cm.flatten()]
     labels_cfm = [f"{v1}\n{v2}" for v1, v2 in
               zip(group_counts, group_names)]
     labels_cfm = np.asarray(labels_cfm).reshape(2,2)
@@ -119,7 +120,7 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
     plt.figure(figsize=[15,8])
     
     #1 -- Confusion matrix train
-    CMPlotBinary(231, cm_train, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Train')
+    CMPlotBinary(231, cm_train, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Train', normalize)
       
     #2 -- Distributions of Predicted Probabilities of both classes train
     distPredPlot(232, y_train, pos_p, labels, 'Distributions of Predictions Train')
@@ -139,7 +140,7 @@ def plotBinaryClassifier(model, proba_train, proba_test, cm_train, cm_test, y_tr
         pos_p = p[:,0]
     
     #1 -- Confusion matrix test
-    CMPlotBinary(234, cm_test, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Test')
+    CMPlotBinary(234, cm_test, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Test', normalize)
       
     #2 -- Distributions of Predicted Probabilities of both classes test
     distPredPlot(235, y_test, pos_p, labels, 'Distributions of Predictions Test')

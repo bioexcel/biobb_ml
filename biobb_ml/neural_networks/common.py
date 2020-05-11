@@ -1,9 +1,11 @@
 """ Common functions for package biobb_analysis.ambertools """
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 import itertools
 from pathlib import Path, PurePath
+from sklearn.metrics import roc_curve, auc
 from biobb_common.tools import file_utils as fu
 sns.set()
 
@@ -87,12 +89,13 @@ def histogramPlot(tit, data1, data2, xlabel, ylabel):
     plt.xlabel(xlabel,size=14)
     plt.ylabel(ylabel,size=14)
 
-def CMPlotBinary(position, cm, group_names, title):
+def CMPlotBinary(position, cm, group_names, title, normalize):
     plt.subplot(position)
     plt.title(title, size=15)
-    #group_names = ['True Negatives', 'False Positives', 'False Negatives', 'True Positives']
-    group_counts = ["{0:0.0f}".format(value) for value in
-                    cm.flatten()]
+    if normalize:
+        group_counts = ["{0:0.2f}".format(value) for value in cm.flatten()]
+    else:
+        group_counts = ["{0:0.0f}".format(value) for value in cm.flatten()]
     labels_cfm = [f"{v1}\n{v2}" for v1, v2 in
               zip(group_counts, group_names)]
     labels_cfm = np.asarray(labels_cfm).reshape(2,2)
@@ -124,7 +127,7 @@ def CMplotNonBinary(position, cm, title, normalize, values):
     plt.xlabel('Predicted Values', size=13)
     plt.yticks(rotation=0) 
 
-def plotResultsClass(data, cm_train, cm_test, normalize, values):
+def plotResultsClassMultCM(data, cm_train, cm_test, normalize, values):
 
 	#FIGURE
     plt.figure(figsize=[12,8])
@@ -140,12 +143,79 @@ def plotResultsClass(data, cm_train, cm_test, normalize, values):
 
     CMplotNonBinary(234, cm_train, 'Confusion Matrix Train', normalize, values)
 
-    #2 -- Confusion matrix test
     CMplotNonBinary(235, cm_test, 'Confusion Matrix Test', normalize, values)
 
     plt.tight_layout()
     
     return plt
+
+def distPredPlot(position, y, pos_p, labels, title):
+    df = pd.DataFrame({'probPos':pos_p, 'target': y})
+    plt.subplot(position)
+    plt.hist(df[df.target==1].probPos, density=True, bins=25,
+             alpha=.5, color='green',  label=labels[0])
+    plt.hist(df[df.target==0].probPos, density=True, bins=25,
+             alpha=.5, color='red', label=labels[1])
+    plt.axvline(.5, color='blue', linestyle='--', label='Boundary')
+    plt.xlim([0,1])
+    plt.title(title, size=15)
+    plt.xlabel('Positive Probability (predicted)', size=13)
+    plt.ylabel('Samples (normalized scale)', size=13)
+    plt.legend(loc="upper right")
+
+def ROCPlot(position, y, p, cm, title):
+    fp_rates, tp_rates, _ = roc_curve(y,p)
+    roc_auc = auc(fp_rates, tp_rates)
+    plt.subplot(position)
+    plt.plot(fp_rates, tp_rates, color='green',
+             lw=1, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], lw=1, linestyle='--', color='grey')
+    #plot current decision point:
+    tn, fp, fn, tp = [i for i in cm.ravel()]
+    plt.plot(fp/(fp+tn), tp/(tp+fn), 'bo', markersize=8, label='Decision Point')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', size=13)
+    plt.ylabel('True Positive Rate', size=13)
+    plt.title(title, size=15)
+    plt.legend(loc="lower right")
+
+def plotResultsClassBinCM(data, proba_train, proba_test, y_train, y_test, cm_train, cm_test, normalize, values):
+
+	#FIGURE
+    plt.figure(figsize=[15,15])
+
+    plt.subplot(331)
+    doublePlot('Model loss', data['loss'], data['val_loss'], 'epoch', 'loss', ['training', 'validation'])
+
+    plt.subplot(332)
+    doublePlot('Model accuracy', data['accuracy'], data['val_accuracy'], 'epoch', 'accuracy', ['training', 'validation'])
+
+    plt.subplot(333)
+    doublePlot('Model MSE', data['mse'], data['val_mse'], 'epoch', 'mse', ['training', 'validation'])
+
+    pos_p = proba_train[:,1]
+
+    #CMplotNonBinary(334, cm_train, 'Confusion Matrix Train', normalize, values)
+    CMPlotBinary(334, cm_train, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Train', normalize)
+
+    distPredPlot(335, y_train, pos_p, ['Positives', 'Negatives'], 'Distributions of Predictions Train')
+
+    ROCPlot(336, y_train, pos_p, cm_train, 'ROC Curve Train')
+
+    pos_p = proba_test[:,1]
+
+    #CMplotNonBinary(337, cm_test, 'Confusion Matrix Test', normalize, values)
+    CMPlotBinary(337, cm_test, ['True Negatives', 'False Positives', 'False Negatives', 'True Positives'], 'Confusion Matrix Test', normalize)
+
+    distPredPlot(338, y_test, pos_p, ['Positives', 'Negatives'], 'Distributions of Predictions Test')
+
+    ROCPlot(339, y_test, pos_p, cm_test, 'ROC Curve Test')
+
+    plt.tight_layout()
+    
+    return plt
+
 
 def plotResultsReg(data, test_labels, test_predictions, train_labels, train_predictions):
 

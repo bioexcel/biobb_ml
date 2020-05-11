@@ -2,7 +2,6 @@
 
 """Module containing the ClassificationNeuralNetwork class and the command line interface."""
 import argparse
-import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
@@ -241,11 +240,10 @@ class ClassificationNeuralNetwork():
             vs.sort()
             if len(vs) > 2:
                 #plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
-                plot = plotResultsClass(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
+                plot = plotResultsClassMultCM(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
                 fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             else:
-                #plot = plotBinaryClassifier(logreg, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
-                plot = plotResultsClass(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
+                plot = plotResultsClassBinCM(mf.history, train_predictions, test_predictions, y_train, y_test, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
