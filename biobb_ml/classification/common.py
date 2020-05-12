@@ -39,8 +39,10 @@ def is_valid_file(ext, argument):
 	""" Checks if file format is compatible """
 	formats = {
 		'input_dataset_path': ['csv'],
+        'output_model_path': ['pkl'],
 		'output_dataset_path': ['csv'],
 		'output_results_path': ['csv'],
+        'input_model_path': ['pkl'],
 		'output_test_table_path': ['csv'],
 		'output_plot_path': ['png']
 	}

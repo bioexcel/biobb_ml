@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-"""Module containing the RegressionPredict class and the command line interface."""
+"""Module containing the ClassificationPredict class and the command line interface."""
 import argparse
 import numpy as np
 import pandas as pd
 import joblib
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
 from sklearn import linear_model
-from sklearn import ensemble
+from sklearn.neighbors import KNeighborsClassifier
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.regression.common import *
+from biobb_ml.classification.common import *
 
-class RegressionPredict():
+class ClassificationPredict():
     """Makes predictions from a given model.
     Visit the 'sklearn official website <https://scikit-learn.org>'_. 
 
@@ -58,7 +58,7 @@ class RegressionPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RegressionPredict module."""
+        """Launches the execution of the ClassificationPredict module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -82,13 +82,11 @@ class RegressionPredict():
             while True:
                 try:
                     m = joblib.load(f)
-                    if (isinstance(m, linear_model.LinearRegression) 
-                        or isinstance(m, ensemble.RandomForestRegressor)):
+                    if (isinstance(m, linear_model.LogisticRegression)
+                        or isinstance(m, KNeighborsClassifier)):
                         new_model = m
                     if isinstance(m, StandardScaler):
                         scaler = m
-                    if isinstance(m, PolynomialFeatures):
-                        poly_features = m
                     if isinstance(m, dict):
                         variables = m
                 except EOFError:
@@ -98,10 +96,11 @@ class RegressionPredict():
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=variables['independent_vars'])
         new_data = scaler.transform(new_data_table)
         # if polynomial regression
-        if 'poly_features' in locals(): new_data = poly_features.transform(new_data)
-        p = new_model.predict(new_data)
+        #if 'poly_features' in locals(): new_data = poly_features.transform(new_data)
+        p = new_model.predict_proba(new_data)
         p = np.around(p, 2)
-        new_data_table[variables['target']] = p
+        clss = ' (' + ', '.join(str(x) for x in variables['target_values']) + ')'
+        new_data_table[variables['target'] + ' ' + clss] = tuple(map(tuple, p))
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
@@ -121,7 +120,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    RegressionPredict(input_model_path=args.input_model_path,
+    ClassificationPredict(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
                    properties=properties).launch()
 

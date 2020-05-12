@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the KNeighborsTraining class and the command line interface."""
+"""Module containing the KNeighborsCoefficient class and the command line interface."""
 import argparse
 import io
 from sklearn.preprocessing import StandardScaler
@@ -14,7 +14,7 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
 
-class KNeighborsTraining():
+class KNeighborsCoefficient():
     """Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.
     Wrapper of the sklearn.neighbors.KNeighborsClassifier module
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>'_. 
@@ -25,7 +25,6 @@ class KNeighborsTraining():
         output_plot_path (str) (Optional): Path to the accuracy plot. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
-            * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean, manhattan, chebyshev, minkowski, wminkowski, seuclidean, mahalanobi.
             * **max_neighbors** (*int*) - (6) Maximum number of neighbors to use by default for kneighbors queries.
@@ -47,7 +46,6 @@ class KNeighborsTraining():
         # Properties specific for BB
         self.independent_vars = properties.get('independent_vars', [])
         self.target = properties.get('target', '')
-        self.scale = properties.get('scale', True)
         self.metric = properties.get('metric', 'minkowski')
         self.max_neighbors = properties.get('max_neighbors', 6)
         self.test_size = properties.get('test_size', 0.2)
@@ -70,7 +68,7 @@ class KNeighborsTraining():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the KNeighborsTraining module."""
+        """Launches the execution of the KNeighborsCoefficient module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -97,17 +95,14 @@ class KNeighborsTraining():
         # the inputs are all the independent variables
         inputs = data.filter(self.independent_vars)
 
-        t_inputs = inputs
-        # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_inputs)
-            t_inputs = scaler.transform(t_inputs)
-
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=4)
+        x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=self.test_size, random_state=4)
+
+        # scale dataset
+        fu.log('Scaling dataset', out_log, self.global_log)
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(x_train)
 
         # training and getting accuracy for each K
         fu.log('Training dataset applying k neighbors classification from 1 to %d n_neighbors' % self.max_neighbors, out_log, self.global_log)
@@ -115,17 +110,18 @@ class KNeighborsTraining():
         train_accuracy =np.empty(len(neighbors))
         test_accuracy = np.empty(len(neighbors))
         std_acc = np.zeros((self.max_neighbors))
+        X_test = scaler.transform(x_test)
         for i,k in enumerate(neighbors):
             #Setup a knn classifier with k neighbors
-            kneigh = KNeighborsClassifier(n_neighbors = k)
+            model = KNeighborsClassifier(n_neighbors = k)
             #Fit the model
-            kneigh.fit(x_train, y_train)
+            model.fit(X_train, y_train)
             #Compute accuracy on the training set
-            train_accuracy[i] = kneigh.score(x_train, y_train)
+            train_accuracy[i] = model.score(X_train, y_train)
             #Compute accuracy on the test set
-            test_accuracy[i] = kneigh.score(x_test, y_test)
+            test_accuracy[i] = model.score(X_test, y_test)
             # deviation
-            yhat_test = kneigh.predict(x_test)
+            yhat_test = model.predict(X_test)
             std_acc[i - 1] = np.std(yhat_test == y_test) / np.sqrt(yhat_test.shape[0])
 
         # best K / best accuracy
@@ -137,9 +133,9 @@ class KNeighborsTraining():
         fu.log('Calculating accuracy for each K\n\nACCURACY\n\n%s\n' % test_table_accuracy.to_string(index=False), out_log, self.global_log)
 
         # classification report
-        cr_test = classification_report(y_test, kneigh.predict(x_test))
+        cr_test = classification_report(y_test, model.predict(X_test))
         # log loss
-        yhat_prob = kneigh.predict_proba(x_test)
+        yhat_prob = model.predict_proba(X_test)
         l_loss = log_loss(y_test, yhat_prob)
         fu.log('Calculating report for testing dataset and best K = %d | accuracy = %.3f\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (best_k, best_accuracy, cr_test, l_loss), out_log, self.global_log)
 
@@ -177,7 +173,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    KNeighborsTraining(input_dataset_path=args.input_dataset_path,
+    KNeighborsCoefficient(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()

@@ -182,13 +182,16 @@ class PolynomialRegression():
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # save model, scaler and parameters
+        variables = {
+            'target': self.target,
+            'independent_vars': self.independent_vars
+        }
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
             joblib.dump(scaler, f)
             joblib.dump(poly_features, f)
-            joblib.dump(self.target, f)
-            joblib.dump(self.independent_vars, f)
+            joblib.dump(variables, f)
 
         return 0
 
