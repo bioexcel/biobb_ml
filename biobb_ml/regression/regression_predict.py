@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 
-"""Module containing the ClassificationNeuralNetwork class and the command line interface."""
+"""Module containing the LinearRegression class and the command line interface."""
 import argparse
-import tensorflow as tf
-from sklearn.preprocessing import scale
+import numpy as np
+import pandas as pd
+import joblib
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn import linear_model
+from sklearn import ensemble
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.neural_networks.common import *
+from biobb_ml.regression.common import *
 
-class ClassificationNeuralNetwork():
-    """Calculates prediction for a NN classification given a model file.
-    Wrapper of the TensorFlow Keras Sequential model
-    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
+class LinearRegression():
+    """Makes predictions from a given model.
+    Visit the 'sklearn official website <https://scikit-learn.org>'_. 
 
     Args:
-        input_model_path (str): Path to the input model. Accepted formats: csv.
+        input_model_path (str): Path to the input model. Accepted formats: pkl.
         output_results_path (str): Path to the output results file. Accepted formats: csv.
         properties (dic):
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
@@ -35,7 +38,9 @@ class ClassificationNeuralNetwork():
         }
 
         # Properties specific for BB
+        self.independent_vars = properties.get('independent_vars', [])
         self.predictions = properties.get('predictions', [])
+        self.test_size = properties.get('test_size', 0.2)
         self.properties = properties
 
         # Properties common in all BB
@@ -54,7 +59,7 @@ class ClassificationNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClassificationNeuralNetwork module."""
+        """Launches the execution of the LinearRegression module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -73,43 +78,44 @@ class ClassificationNeuralNetwork():
                 return 0
 
         fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], out_log, self.global_log)
-        new_model = tf.keras.models.load_model(self.io_dict["in"]["input_model_path"])
 
-        stringlist = []
-        new_model.summary(print_fn=lambda x: stringlist.append(x))
-        model_summary = "\n".join(stringlist)
-        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+        with open(self.io_dict["in"]["input_model_path"], "rb") as f:
+            while True:
+                try:
+                    m = joblib.load(f)
+                    if (isinstance(m, linear_model.LinearRegression) 
+                        or isinstance(m, ensemble.RandomForestRegressor)):
+                        new_model = m
+                    if isinstance(m, StandardScaler):
+                        scaler = m
+                    if isinstance(m, PolynomialFeatures):
+                        poly_features = m
+                    if isinstance(m, str):
+                        target = m
+                    if isinstance(m, list):
+                        independent_vars = m
+                except EOFError:
+                    break
 
-        # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
-        new_data = scale(new_data_table)
-  
-        predictions = new_model.predict(new_data)
-        predictions = np.around(predictions, decimals=2)
-
-        clss = ''
-        if predictions.shape[1] > 1:
-            # classification
-            pr = tuple(map(tuple, predictions))
-            clss = ' (' + ', '.join(str(x) for x in range(0, predictions.shape[1])) + ')'
-        else:
-            # regression
-            pr = np.squeeze(np.asarray(predictions))
-        new_data_table['target' + clss] = pr
-
+        pd.set_option('display.float_format', lambda x: '%.2f' % x)
+        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=independent_vars)
+        new_data = scaler.transform(new_data_table)
+        # if polynomial regression
+        if 'poly_features' in locals(): new_data = poly_features.transform(new_data)
+        p = new_model.predict(new_data)
+        p = np.around(p, 2)
+        new_data_table[target] = p
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Calculates prediction for a NN classification given a model file.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: csv.')
+    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: pkl.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
 
     args = parser.parse_args()
@@ -117,7 +123,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClassificationNeuralNetwork(input_model_path=args.input_model_path,
+    LinearRegression(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
                    properties=properties).launch()
 
