@@ -3,6 +3,8 @@
 """Module containing the RandomForestClassifier class and the command line interface."""
 import argparse
 import io
+import joblib
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report, log_loss
 from sklearn import ensemble
@@ -13,13 +15,13 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
 class RandomForestClassifier():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a random forest classifier.
+    """Trains and tests a given dataset and saves the model and scaler for a random forest classifier.
     Wrapper of the sklearn.ensemble.RandomForestClassifier module
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the output results file. Accepted formats: csv.
+        output_model_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
         output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. Accepted formats: png.
         properties (dic):
@@ -28,20 +30,19 @@ class RandomForestClassifier():
             * **n_estimators** (*int*) - (100) The number of trees in the forest.
             * **bootstrap** (*bool*) - (True) Whether bootstrap samples are used when building trees. If False, the whole datset is used to build each tree.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+                 output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -50,7 +51,6 @@ class RandomForestClassifier():
         self.n_estimators = properties.get('n_estimators', 100)
         self.bootstrap = properties.get('bootstrap', True)
         self.normalize_cm =  properties.get('normalize_cm', False)
-        self.predictions = properties.get('predictions', [])
         self.test_size = properties.get('test_size', 0.2)
         self.properties = properties
 
@@ -66,7 +66,7 @@ class RandomForestClassifier():
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
@@ -85,7 +85,7 @@ class RandomForestClassifier():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
+            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -97,21 +97,26 @@ class RandomForestClassifier():
         # declare inputs and targets
         targets = data[self.target]
         # the inputs are all the independent variables
-        t_inputs = data.filter(self.independent_vars)
+        inputs = data.filter(self.independent_vars)
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(t_inputs, targets, test_size=self.test_size, random_state=4)
+        x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=self.test_size, random_state=4)
+
+        # scale dataset
+        fu.log('Scaling dataset', out_log, self.global_log)
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(x_train)
 
         # classification
         fu.log('Training dataset applying random forest classification', out_log, self.global_log)
-        random_forest = ensemble.RandomForestClassifier(n_estimators = self.n_estimators,  bootstrap = self.bootstrap)
-        random_forest.fit(x_train,y_train)
-        y_hat_train = random_forest.predict(x_train)
+        model = ensemble.RandomForestClassifier(n_estimators = self.n_estimators,  bootstrap = self.bootstrap)
+        model.fit(X_train,y_train)
+        y_hat_train = model.predict(X_train)
         # classification report
         cr_train = classification_report(y_train, y_hat_train)
         # log loss
-        yhat_prob_train = random_forest.predict_proba(x_train)
+        yhat_prob_train = model.predict_proba(X_train)
         l_loss_train = log_loss(y_train, yhat_prob_train)
         fu.log('Calculating scores and report for training dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr_train, l_loss_train), out_log, self.global_log)
 
@@ -128,18 +133,21 @@ class RandomForestClassifier():
 
         # testing
         # predict data from x_test
-        y_hat_test = random_forest.predict(x_test)
-        test_table = pd.DataFrame(y_hat_test, columns=['prediction'])
-        # reset y_test (problem with old indexes column)
+        X_test = scaler.transform(x_test)
+        y_hat_test = model.predict(X_test)
+        test_table = pd.DataFrame()
+        y_hat_prob = model.predict_proba(X_test)
+        y_hat_prob = np.around(y_hat_prob, decimals=2)
+        y_hat_prob = tuple(map(tuple, y_hat_prob))
+        test_table['P' + np.array2string(np.unique(y_test))] = y_hat_prob
         y_test = y_test.reset_index(drop=True)
-        # add real values to predicted ones in test_table table
         test_table['target'] = y_test
         fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
 
         # classification report
         cr = classification_report(y_test, y_hat_test)
         # log loss
-        yhat_prob = random_forest.predict_proba(x_test)
+        yhat_prob = model.predict_proba(X_test)
         l_loss = log_loss(y_test, yhat_prob)
         fu.log('Calculating scores and report for testing dataset\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (cr, l_loss), out_log, self.global_log)
 
@@ -166,20 +174,23 @@ class RandomForestClassifier():
                 plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
                 fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             else:
-                plot = plotBinaryClassifier(random_forest, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
+                plot = plotBinaryClassifier(model, yhat_prob_train, yhat_prob, cnf_matrix_train, cnf_matrix, y_train, y_test, normalize=self.normalize_cm)
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
-        # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=self.independent_vars)
-        new_data = new_data_table
-        p = random_forest.predict(new_data)
-        p = np.around(p, 2)
-
-        new_data_table[self.target] = p
-        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        # save model, scaler and parameters
+        tv = targets.unique().tolist()
+        tv.sort()
+        variables = {
+            'target': self.target,
+            'independent_vars': self.independent_vars,
+            'target_values': tv
+        }
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        with open(self.io_dict["out"]["output_model_path"], "wb") as f:
+            joblib.dump(model, f)
+            joblib.dump(scaler, f)
+            joblib.dump(variables, f)
 
         return 0
 
@@ -190,7 +201,7 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
     parser.add_argument('--output_plot_path', required=False, help='Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. Accepted formats: png.')
 
@@ -200,7 +211,7 @@ def main():
 
     # Specific call of each building block
     RandomForestClassifier(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
+                   output_model_path=args.output_model_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()

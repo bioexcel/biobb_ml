@@ -8,6 +8,9 @@ import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn import linear_model
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import ensemble
+from sklearn import svm
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -83,7 +86,10 @@ class ClassificationPredict():
                 try:
                     m = joblib.load(f)
                     if (isinstance(m, linear_model.LogisticRegression)
-                        or isinstance(m, KNeighborsClassifier)):
+                        or isinstance(m, KNeighborsClassifier)
+                        or isinstance(m, DecisionTreeClassifier)
+                        or isinstance(m, ensemble.RandomForestClassifier)
+                        or isinstance(m, svm.SVC)):
                         new_model = m
                     if isinstance(m, StandardScaler):
                         scaler = m
@@ -95,8 +101,6 @@ class ClassificationPredict():
         pd.set_option('display.float_format', lambda x: '%.2f' % x)
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=variables['independent_vars'])
         new_data = scaler.transform(new_data_table)
-        # if polynomial regression
-        #if 'poly_features' in locals(): new_data = poly_features.transform(new_data)
         p = new_model.predict_proba(new_data)
         p = np.around(p, 2)
         clss = ' (' + ', '.join(str(x) for x in variables['target_values']) + ')'

@@ -150,7 +150,7 @@ class KNeighborsCoefficient():
             plt.plot(neighbors, train_accuracy)
             plt.plot(neighbors, test_accuracy)
             plt.axvline(x=best_k, c='red')
-            plt.legend(('Training Accuracy', 'Testing accuracy', '+/- 3xstd'))
+            plt.legend(('Training Accuracy', 'Testing accuracy', 'Best K', '+/- 3xstd'))
             plt.xlabel('Number of neighbors')
             plt.ylabel('Accuracy')
             plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
