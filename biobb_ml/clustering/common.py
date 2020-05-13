@@ -45,8 +45,8 @@ def is_valid_file(ext, argument):
 	""" Checks if file format is compatible """
 	formats = {
 		'input_dataset_path': ['csv'],
-		'output_wcss_path': ['csv'],
-		'output_gap_path': ['csv'],
+        'output_model_path': ['pkl'],
+        'input_model_path': ['pkl'],
 		'output_results_path': ['csv'],
 		'output_plot_path': ['png']
 	}
@@ -192,9 +192,11 @@ def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
     plt.subplot(131)
     plt.title('The Elbow Method', size=15)
     plt.plot(number_clusters, wcss, '-o')
+    plt.axvline(x=best_k, c='red')
+    plt.legend(('WCSS', 'Best K'))
     plt.xlabel('Cluster')
     plt.ylabel('Within-cluster Sum of Squares')
-    plt.axvline(x=best_k, c='red')
+    
 
     #2 -- GAP
     plt.subplot(132)
@@ -203,6 +205,7 @@ def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
     plt.ylabel('Gap')
     plt.xlabel('Cluster')
     plt.axvline(x=best_g, c='red')
+    plt.legend(('GAP', 'Best K'))
 
     #3 -- SILHOUETTE
     plt.subplot(133)
@@ -211,6 +214,7 @@ def plotKmeansTrain(max_clusters, wcss, gap, sil, best_k, best_g, best_s):
     plt.ylabel('Silhouette score')
     plt.xlabel('Cluster')
     plt.axvline(x=best_s, c='red')
+    plt.legend(('Silhouette', 'Best K'))
 
     plt.tight_layout()
 

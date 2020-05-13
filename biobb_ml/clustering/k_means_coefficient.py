@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the AgglomerativeTraining class and the command line interface."""
+"""Module containing the KMeansCoefficient class and the command line interface."""
 import argparse
 import io
 from sklearn.preprocessing import StandardScaler
@@ -11,18 +11,17 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.clustering.common import *
 
 
-class AgglomerativeTraining():
-    """Clusters a given dataset and calculates best K coefficient for an agglomerative clustering.
-    Wrapper of the sklearn.cluster.AgglomerativeClustering module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>'_. 
+class KMeansCoefficient():
+    """Clusters a given dataset and calculates best K coefficient for a k-means clustering.
+    Wrapper of the sklearn.cluster.KMeans module
+    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the gap values list. Accepted formats: csv.
+        output_results_path (str): Table with WCSS (elbow method), Gap and Silhouette coefficients for each cluster. Accepted formats: csv.
         output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
-            * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **max_clusters** (*int*) - (6) Maximum number of clusters to use by default for kmeans queries.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -40,7 +39,6 @@ class AgglomerativeTraining():
 
         # Properties specific for BB
         self.predictors = properties.get('predictors', [])
-        self.scale = properties.get('scale', True)
         self.max_clusters = properties.get('max_clusters', 6)
         self.properties = properties
 
@@ -61,7 +59,7 @@ class AgglomerativeTraining():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the AgglomerativeTraining module."""
+        """Launches the execution of the KMeansCoefficient module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -90,16 +88,35 @@ class AgglomerativeTraining():
         H = hopkins(predictors)
         fu.log('Performing Hopkins test over dataset. H = %f' % H, out_log, self.global_log)
 
-        t_predictors = predictors
         # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_predictors)
-            t_predictors = scaler.transform(t_predictors)
+        fu.log('Scaling dataset', out_log, self.global_log)
+        scaler = StandardScaler()
+        t_predictors = scaler.fit_transform(predictors)
+
+        # calculate wcss for each cluster
+        fu.log('Calculating Within-Clusters Sum of Squares (WCSS) for each %d clusters' % self.max_clusters, out_log, self.global_log)
+        wcss = getWCSS('kmeans', self.max_clusters, t_predictors)
+            
+        # wcss table
+        wcss_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'WCSS': wcss})
+        fu.log('Calculating WCSS for each cluster\n\nWCSS TABLE\n\n%s\n' % wcss_table.to_string(index=False), out_log, self.global_log)
+
+        # get best cluster elbow method
+        best_k, elbow_index = get_best_K(wcss)
+        fu.log('Best Cluster according to the Elbow Method is %d' % best_k, out_log, self.global_log)
+
+        # calculate gap
+        best_g, gap = getGap('kmeans', t_predictors, nrefs=5, maxClusters=(self.max_clusters + 1))
+
+        # gap table
+        gap_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'GAP': gap['gap']})
+        fu.log('Calculating Gap for each cluster\n\nGAP TABLE\n\n%s\n' % gap_table.to_string(index=False), out_log, self.global_log)
+
+        # log best cluster gap method
+        fu.log('Best Cluster according to the Gap Statistics Method is %d' % best_g, out_log, self.global_log)
 
         # calculate silhouette
-        silhouette_list, s_list = getSilhouetthe('agglomerative', t_predictors, self.max_clusters)
+        silhouette_list, s_list = getSilhouetthe('kmeans', t_predictors, self.max_clusters)
 
         # silhouette table
         silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})
@@ -111,7 +128,7 @@ class AgglomerativeTraining():
         fu.log('Best Cluster according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
 
         # save results table
-        results_table = pd.DataFrame(data={'method': ['silhouette'], 'coefficient': [max(silhouette_list)], 'cluster': [best_s]})
+        results_table = pd.DataFrame(data={'method': ['elbow', 'gap', 'silhouette'], 'coefficient': [wcss[elbow_index], max(gap['gap']) ,max(silhouette_list)], 'cluster': [best_k, best_g ,best_s]})
         fu.log('Gathering results\n\nRESULTS TABLE\n\n%s\n' % results_table.to_string(index=False), out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         results_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
@@ -119,7 +136,7 @@ class AgglomerativeTraining():
         # wcss plot
         if self.io_dict["out"]["output_plot_path"]: 
             fu.log('Saving methods plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            plot = plotAgglomerativeTrain(self.max_clusters, silhouette_list, best_s)
+            plot = plotKmeansTrain(self.max_clusters, wcss, gap['gap'], silhouette_list, best_k, best_g, best_s)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         return 0
@@ -131,7 +148,7 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_results_path', required=True, help='Path to the gap values list. Accepted formats: csv.')
+    required_args.add_argument('--output_results_path', required=True, help='Table with WCSS (elbow method), Gap and Silhouette coefficients for each cluster. Accepted formats: csv.')
     parser.add_argument('--output_plot_path', required=False, help='Path to the elbow and gap methods plot. Accepted formats: png.')
 
     args = parser.parse_args()
@@ -139,7 +156,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    AgglomerativeTraining(input_dataset_path=args.input_dataset_path,
+    KMeansCoefficient(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()

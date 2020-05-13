@@ -23,7 +23,6 @@ class DBSCANClustering():
         output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
-            * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **eps** (*float*) - (0.5) The maximum distance between two samples for one to be considered as in the neighborhood of the other.
             * **min_samples** (*int*) - (5) The number of samples (or total weight) in a neighborhood for a point to be considered as a core point. This includes the point itself.
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
@@ -43,7 +42,6 @@ class DBSCANClustering():
 
         # Properties specific for BB
         self.predictors = properties.get('predictors', [])
-        self.scale = properties.get('scale', True)
         self.eps = properties.get('eps', .5)
         self.min_samples = properties.get('min_samples', 5)
         self.plots = properties.get('plots', [])
@@ -95,23 +93,20 @@ class DBSCANClustering():
         H = hopkins(predictors)
         fu.log('Performing Hopkins test over dataset. H = %f' % H, out_log, self.global_log)
 
-        t_predictors = predictors
         # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_predictors)
-            t_predictors = scaler.transform(t_predictors)
+        fu.log('Scaling dataset', out_log, self.global_log)
+        scaler = StandardScaler()
+        t_predictors = scaler.fit_transform(predictors)
 
         # create a DBSCAN object with self.clusters clusters
-        db = DBSCAN(eps=self.eps, min_samples=self.min_samples)
+        model = DBSCAN(eps=self.eps, min_samples=self.min_samples)
         # fit the data
-        db.fit(t_predictors)
+        model.fit(t_predictors)
 
         # create a copy of data, so we can see the clusters next to the original data
         clusters = data.copy()
         # predict the cluster for each observation
-        clusters['cluster'] = db.fit_predict(t_predictors)
+        clusters['cluster'] = model.fit_predict(t_predictors)
 
         fu.log('Calculating results\n\nCLUSTERING TABLE\n\n%s\n' % clusters, out_log, self.global_log)
 

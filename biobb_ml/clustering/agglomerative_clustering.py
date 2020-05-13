@@ -23,7 +23,6 @@ class AgglClustering():
         output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
-            * **scale** (*bool*) - (True) Whether the dataset should be scaled or not.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.
             * **linkage** (*int*) - ("ward") The linkage criterion determines which distance to use between sets of observation. The algorithm will merge the pairs of cluster that minimize this criterion. Values: ward, complete, average, single.
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
@@ -43,7 +42,6 @@ class AgglClustering():
 
         # Properties specific for BB
         self.predictors = properties.get('predictors', [])
-        self.scale = properties.get('scale', True)
         self.clusters = properties.get('clusters', 3)
         self.linkage = properties.get('linkage', 'ward')
         self.plots = properties.get('plots', [])
@@ -95,23 +93,20 @@ class AgglClustering():
         H = hopkins(predictors)
         fu.log('Performing Hopkins test over dataset. H = %f' % H, out_log, self.global_log)
 
-        t_predictors = predictors
         # scale dataset
-        if self.scale:
-            fu.log('Scaling dataset', out_log, self.global_log)
-            scaler = StandardScaler()
-            scaler.fit(t_predictors)
-            t_predictors = scaler.transform(t_predictors)
+        fu.log('Scaling dataset', out_log, self.global_log)
+        scaler = StandardScaler()
+        t_predictors = scaler.fit_transform(predictors)
 
         # create an agglomerative clustering object with self.clusters clusters
-        agglom = AgglomerativeClustering(n_clusters = self.clusters, linkage = self.linkage)
+        model = AgglomerativeClustering(n_clusters = self.clusters, linkage = self.linkage)
         # fit the data
-        agglom.fit(t_predictors)
+        model.fit(t_predictors)
 
         # create a copy of data, so we can see the clusters next to the original data
         clusters = data.copy()
         # predict the cluster for each observation
-        clusters['cluster'] = agglom.fit_predict(t_predictors)
+        clusters['cluster'] = model.fit_predict(t_predictors)
 
         fu.log('Calculating results\n\nCLUSTERING TABLE\n\n%s\n' % clusters, out_log, self.global_log)
 
