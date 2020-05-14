@@ -3,6 +3,9 @@
 """Module containing the ClassificationNeuralNetwork class and the command line interface."""
 import argparse
 import tensorflow as tf
+import h5py
+import json
+from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -73,7 +76,12 @@ class ClassificationNeuralNetwork():
                 return 0
 
         fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], out_log, self.global_log)
-        new_model = tf.keras.models.load_model(self.io_dict["in"]["input_model_path"])
+        with h5py.File(self.io_dict["in"]["input_model_path"], mode='r') as f:
+            variables = f.attrs['variables']
+            new_model = hdf5_format.load_model_from_hdf5(f)
+
+        # get dictionary with variables
+        vars_obj = json.loads(variables)
 
         stringlist = []
         new_model.summary(print_fn=lambda x: stringlist.append(x))
@@ -81,7 +89,7 @@ class ClassificationNeuralNetwork():
         fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
 
         # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=vars_obj['features'])
         new_data = scale(new_data_table)
   
         predictions = new_model.predict(new_data)
@@ -91,11 +99,11 @@ class ClassificationNeuralNetwork():
         if predictions.shape[1] > 1:
             # classification
             pr = tuple(map(tuple, predictions))
-            clss = ' (' + ', '.join(str(x) for x in range(0, predictions.shape[1])) + ')'
+            clss = ' (' + ', '.join(str(x) for x in vars_obj['vs']) + ')'
         else:
             # regression
             pr = np.squeeze(np.asarray(predictions))
-        new_data_table['target' + clss] = pr
+        new_data_table[vars_obj['target'] + clss] = pr
 
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)

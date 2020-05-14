@@ -3,6 +3,9 @@
 """Module containing the ClassificationNeuralNetwork class and the command line interface."""
 import argparse
 import tensorflow as tf
+import h5py
+import json
+from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from biobb_common.configuration import  settings
@@ -10,6 +13,7 @@ from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
+
 
 class ClassificationNeuralNetwork():
     """Trains and tests a given dataset and save the complete model for a NN classification
@@ -124,20 +128,21 @@ class ClassificationNeuralNetwork():
         # the inputs are all the independent variables
         inputs = data.filter(self.features)
 
-        # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        scaled_inputs = scale(inputs)
-
         # shuffle dataset
         fu.log('Shuffling dataset', out_log, self.global_log)
-        shuffled_indices = np.arange(scaled_inputs.shape[0])
+        shuffled_indices = np.arange(inputs.shape[0])
         np.random.shuffle(shuffled_indices)
-        shuffled_inputs = scaled_inputs[shuffled_indices]
+        np_inputs = inputs.to_numpy()
+        shuffled_inputs = np_inputs[shuffled_indices]
         shuffled_targets = targets[shuffled_indices]
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
+        x_train, x_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
+
+        # scale dataset
+        fu.log('Scaling dataset', out_log, self.global_log)
+        X_train = scale(x_train)
 
         # build model
         fu.log('Building model', out_log, self.global_log)
@@ -194,6 +199,7 @@ class ClassificationNeuralNetwork():
         fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
 
         # testing
+        X_test = scale(x_test)
         fu.log('Testing model', out_log, self.global_log)
         test_loss, test_accuracy, test_mse = model.evaluate(X_test, y_test)
 
@@ -244,8 +250,19 @@ class ClassificationNeuralNetwork():
                 fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
+        # save model and parameters
+        vs = np.unique(targets)
+        vs.sort()
+        vars_obj = {
+            'features': self.features,
+            'target': self.target,
+            'vs': vs.tolist()
+        }
+        variables = json.dumps(vars_obj)
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
-        model.save(self.io_dict["out"]["output_model_path"])
+        with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
+            hdf5_format.save_model_to_hdf5(model, f)
+            f.attrs['variables'] = variables
 
         return 0
 

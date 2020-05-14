@@ -2,27 +2,28 @@
 
 """Module containing the RegressionNeuralNetwork class and the command line interface."""
 import argparse
-import numpy as np
-import pandas as pd
-import seaborn as sns
 import tensorflow as tf
+import h5py
+import json
+from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
-sns.set()
+
 
 class RegressionNeuralNetwork():
-    """Trains and tests a given dataset and calculates coefficients and predictions for a NN regression.
+    """Trains and tests a given dataset and save the complete model for a NN regression
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_model_path< (str): Path to the output results file. Accepted formats: csv.
+        output_model_path (str): Path to the output results file. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
         output_plot_path (str) (Optional): Loss, MAE and MSE plots. Accepted formats: png.
         properties (dic):
@@ -126,21 +127,22 @@ class RegressionNeuralNetwork():
         # the inputs are all the independent variables
         inputs = data.filter(self.features)
 
-        # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        scaled_inputs = scale(inputs)
-
         # shuffle dataset
         fu.log('Shuffling dataset', out_log, self.global_log)
-        shuffled_indices = np.arange(scaled_inputs.shape[0])
+        shuffled_indices = np.arange(inputs.shape[0])
         np.random.shuffle(shuffled_indices)
-        shuffled_inputs = scaled_inputs[shuffled_indices]
+        np_inputs = inputs.to_numpy()
+        shuffled_inputs = np_inputs[shuffled_indices]
         shuffled_targets = targets[shuffled_indices]
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
+        x_train, x_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
         
+        # scale dataset
+        fu.log('Scaling dataset', out_log, self.global_log)
+        X_train = scale(x_train)
+
         # build model
         fu.log('Building model', out_log, self.global_log)
         model = self.build_model((X_train.shape[1],))
@@ -174,31 +176,43 @@ class RegressionNeuralNetwork():
 
         fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
 
+        # predict data from X_train
+        train_predictions = model.predict(X_train)
+        train_predictions = np.around(train_predictions, decimals=2)        
+        train_score = r2_score(train_predictions, y_train)
+
         train_metrics = pd.DataFrame()
-        train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Validation loss', 'Validation MAE', 'Validation MSE']
-        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
+        train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
+        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], train_score, mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
 
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
         # testing
+        X_test = scale(x_test)
         fu.log('Testing model', out_log, self.global_log)
         test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
-
-        test_metrics = pd.DataFrame()
-        test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE']
-        test_metrics['coefficient'] = [test_loss, test_mae, test_mse]
-
-        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
 
         # predict data from X_test
         test_predictions = model.predict(X_test)
         test_predictions = np.around(test_predictions, decimals=2)        
         tpr = np.squeeze(np.asarray(test_predictions))
+        score = r2_score(test_predictions, y_test)
+
+        test_metrics = pd.DataFrame()
+        test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']
+        test_metrics['coefficient'] = [test_loss, test_mae, test_mse, score]
+
+        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
 
         test_table = pd.DataFrame()
         test_table['prediction'] = tpr
         test_table['target'] = y_test
-
+        test_table['residual'] = test_table['target'] - test_table['prediction']
+        test_table['difference %'] = np.absolute(test_table['residual']/test_table['target']*100)
+        pd.set_option('display.float_format', lambda x: '%.2f' % x)
+        # sort by difference in %
+        test_table = test_table.sort_values(by=['difference %'])
+        test_table = test_table.reset_index(drop=True)
         fu.log('TEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
 
         # save test data
@@ -214,8 +228,16 @@ class RegressionNeuralNetwork():
             plot = plotResultsReg(mf.history, y_test, test_predictions, y_train, train_predictions)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
+        # save model and parameters
+        vars_obj = {
+            'features': self.features,
+            'target': self.target
+        }
+        variables = json.dumps(vars_obj)
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
-        model.save(self.io_dict["out"]["output_model_path"])
+        with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
+            hdf5_format.save_model_to_hdf5(model, f)
+            f.attrs['variables'] = variables
 
         return 0
 
