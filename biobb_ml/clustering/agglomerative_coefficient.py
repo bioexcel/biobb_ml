@@ -103,7 +103,7 @@ class AgglomerativeCoefficient():
         # get best cluster silhouette method
         key = silhouette_list.index(max(silhouette_list))
         best_s = s_list.__getitem__(key)
-        fu.log('Best Cluster according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
+        fu.log('Optimal number of clusters according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
 
         # save results table
         results_table = pd.DataFrame(data={'method': ['silhouette'], 'coefficient': [max(silhouette_list)], 'cluster': [best_s]})

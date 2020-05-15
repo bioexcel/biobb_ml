@@ -1,2 +1,2 @@
 name = "clustering"
-__all__ = ["agglomerative_clustering","agglomerative_training","dbscan","k_means_clustering","k_means_training"]
+__all__ = ["agglomerative_clustering","agglomerative_coefficient","clustering_predict","dbscan","k_means","k_means_coefficient"]

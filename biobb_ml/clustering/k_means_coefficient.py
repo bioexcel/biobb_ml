@@ -103,7 +103,7 @@ class KMeansCoefficient():
 
         # get best cluster elbow method
         best_k, elbow_index = get_best_K(wcss)
-        fu.log('Best Cluster according to the Elbow Method is %d' % best_k, out_log, self.global_log)
+        fu.log('Optimal number of clusters according to the Elbow Method is %d' % best_k, out_log, self.global_log)
 
         # calculate gap
         best_g, gap = getGap('kmeans', t_predictors, nrefs=5, maxClusters=(self.max_clusters + 1))
@@ -113,7 +113,7 @@ class KMeansCoefficient():
         fu.log('Calculating Gap for each cluster\n\nGAP TABLE\n\n%s\n' % gap_table.to_string(index=False), out_log, self.global_log)
 
         # log best cluster gap method
-        fu.log('Best Cluster according to the Gap Statistics Method is %d' % best_g, out_log, self.global_log)
+        fu.log('Optimal number of clusters according to the Gap Statistics Method is %d' % best_g, out_log, self.global_log)
 
         # calculate silhouette
         silhouette_list, s_list = getSilhouetthe('kmeans', t_predictors, self.max_clusters)
@@ -125,10 +125,10 @@ class KMeansCoefficient():
         # get best cluster silhouette method
         key = silhouette_list.index(max(silhouette_list))
         best_s = s_list.__getitem__(key)
-        fu.log('Best Cluster according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
+        fu.log('Optimal number of clusters according to the Silhouette Method is %d' % best_s, out_log, self.global_log)
 
         # save results table
-        results_table = pd.DataFrame(data={'method': ['elbow', 'gap', 'silhouette'], 'coefficient': [wcss[elbow_index], max(gap['gap']) ,max(silhouette_list)], 'cluster': [best_k, best_g ,best_s]})
+        results_table = pd.DataFrame(data={'method': ['elbow', 'gap', 'silhouette'], 'coefficient': [wcss[elbow_index], max(gap['gap']) ,max(silhouette_list)], 'clusters': [best_k, best_g ,best_s]})
         fu.log('Gathering results\n\nRESULTS TABLE\n\n%s\n' % results_table.to_string(index=False), out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         results_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')

@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 
-"""Module containing the ClassificationPredict class and the command line interface."""
+"""Module containing the RegressionPredict class and the command line interface."""
 import argparse
 import numpy as np
 import pandas as pd
 import joblib
 from sklearn.preprocessing import StandardScaler
-from sklearn import linear_model
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import ensemble
-from sklearn import svm
+from sklearn.cluster import KMeans
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.classification.common import *
+from biobb_ml.clustering.common import *
 
-class ClassificationPredict():
+class RegressionPredict():
     """Makes predictions from a given model.
     Visit the 'sklearn official website <https://scikit-learn.org>'_. 
 
@@ -61,7 +57,7 @@ class ClassificationPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClassificationPredict module."""
+        """Launches the execution of the RegressionPredict module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -85,11 +81,7 @@ class ClassificationPredict():
             while True:
                 try:
                     m = joblib.load(f)
-                    if (isinstance(m, linear_model.LogisticRegression)
-                        or isinstance(m, KNeighborsClassifier)
-                        or isinstance(m, DecisionTreeClassifier)
-                        or isinstance(m, ensemble.RandomForestClassifier)
-                        or isinstance(m, svm.SVC)):
+                    if (isinstance(m, KMeans)):
                         new_model = m
                     if isinstance(m, StandardScaler):
                         scaler = m
@@ -101,10 +93,8 @@ class ClassificationPredict():
         pd.set_option('display.float_format', lambda x: '%.2f' % x)
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
         new_data = scaler.transform(new_data_table)
-        p = new_model.predict_proba(new_data)
-        p = np.around(p, 2)
-        clss = ' (' + ', '.join(str(x) for x in variables['target_values']) + ')'
-        new_data_table[variables['target'] + ' ' + clss] = tuple(map(tuple, p))
+        p = new_model.predict(new_data)
+        new_data_table['cluster'] = p
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
@@ -124,7 +114,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClassificationPredict(input_model_path=args.input_model_path,
+    RegressionPredict(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
                    properties=properties).launch()
 

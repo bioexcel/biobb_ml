@@ -60,6 +60,21 @@ def check_mandatory_property(property, name, out_log, classname):
 
 # UTILITIES
 
+def get_list_of_predictors(predictions):
+    p = []
+    for obj in predictions:
+        a = []
+        for k, v in obj.items():
+            a.append(v)
+        p.append(a)
+    return p
+
+def get_keys_of_predictors(predictions):
+    p = []
+    for obj in predictions[0]:
+        p.append(obj)
+    return p
+
 # get best K in WCSS plot (getting elbow point)
 def get_best_K(wcss):
 	curve = wcss

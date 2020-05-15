@@ -57,6 +57,21 @@ def check_mandatory_property(property, name, out_log, classname):
 
 # UTILITIES
 
+def get_list_of_predictors(predictions):
+    p = []
+    for obj in predictions:
+        a = []
+        for k, v in obj.items():
+            a.append(v)
+        p.append(a)
+    return p
+
+def get_keys_of_predictors(predictions):
+    p = []
+    for obj in predictions[0]:
+        p.append(obj)
+    return p
+
 def CMPlotBinary(position, cm, group_names, title, normalize):
     plt.subplot(position)
     plt.title(title, size=15)
@@ -191,13 +206,3 @@ def plotMultipleCM(cm_train, cm_test, normalize, values):
     plt.tight_layout()
 
     return plt
-
-
-def get_list_of_predictors(predictions):
-	p = []
-	for obj in predictions:
-		a = []
-		for k, v in obj.items():
-			a.append(v)
-		p.append(a)
-	return p

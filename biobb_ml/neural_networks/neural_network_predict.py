@@ -89,7 +89,7 @@ class ClassificationNeuralNetwork():
         fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
 
         # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=vars_obj['features'])
+        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
         new_data = scale(new_data_table)
   
         predictions = new_model.predict(new_data)

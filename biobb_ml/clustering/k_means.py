@@ -3,6 +3,7 @@
 """Module containing the KMeansClustering class and the command line interface."""
 import argparse
 import io
+import joblib
 from sklearn.preprocessing import StandardScaler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -19,6 +20,7 @@ class KMeansClustering():
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
         output_results_path (str): Path to the clustered dataset. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. Accepted formats: pkl.
         output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
@@ -29,13 +31,13 @@ class KMeansClustering():
     """
 
     def __init__(self, input_dataset_path,
-                 output_results_path, output_plot_path=None, properties=None, **kwargs) -> None:
+                 output_results_path, output_model_path, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+            "out": { "output_results_path": output_results_path, "output_model_path": output_model_path, "output_plot_path": output_plot_path } 
         }
 
         # Properties specific for BB
@@ -57,6 +59,7 @@ class KMeansClustering():
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
@@ -74,7 +77,7 @@ class KMeansClustering():
         fu.check_properties(self, self.properties)
 
         if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_plot_path"]]
+            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_plot_path"]]
             if fu.check_complete_files(output_file_list):
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
@@ -125,6 +128,16 @@ class KMeansClustering():
             fu.log('Saving output plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
+        # save model, scaler and parameters
+        variables = {
+            'predictors': self.predictors
+        }
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        with open(self.io_dict["out"]["output_model_path"], "wb") as f:
+            joblib.dump(model, f)
+            joblib.dump(scaler, f)
+            joblib.dump(variables, f)
+
         return 0
 
 def main():
@@ -135,6 +148,7 @@ def main():
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the clustered dataset. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: pkl.')
     parser.add_argument('--output_plot_path', required=False, help='Path to the elbow and gap methods plot. Accepted formats: png.')
 
     args = parser.parse_args()
@@ -144,6 +158,7 @@ def main():
     # Specific call of each building block
     KMeansClustering(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
+                   output_model_path=args.output_model_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()
 
