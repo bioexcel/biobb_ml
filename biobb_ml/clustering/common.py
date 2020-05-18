@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import KMeans
+from sklearn.cluster import SpectralClustering
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 from random import sample
@@ -187,6 +188,7 @@ def getSilhouetthe(method, X, max_clusters):
 
         if method == 'kmeans': clusterer = KMeans(p)
         elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
+        elif method == 'spectral': clusterer = SpectralClustering(n_clusters=p, affinity = "nearest_neighbors")
 
         clusterer.fit(X)
         # The higher (up to 1) the better
