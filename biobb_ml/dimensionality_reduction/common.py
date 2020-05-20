@@ -1,0 +1,117 @@
+""" Common functions for package biobb_analysis.ambertools """
+from pathlib import Path, PurePath
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from biobb_common.tools import file_utils as fu
+sns.set()
+
+# CHECK PARAMETERS
+
+def check_input_path(path, argument, out_log, classname):
+	""" Checks input file """ 
+	if not Path(path).exists():
+		fu.log(classname + ': Unexisting %s file, exiting' % argument, out_log)
+		raise SystemExit(classname + ': Unexisting %s file' % argument)
+	file_extension = PurePath(path).suffix
+	if not is_valid_file(file_extension[1:], argument):
+		fu.log(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument), out_log)
+		raise SystemExit(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument))
+	return path
+
+def check_output_path(path, argument, optional, out_log, classname):
+	""" Checks output file """ 
+	if optional and not path:
+		return None
+	if PurePath(path).parent and not Path(PurePath(path).parent).exists():
+		fu.log(classname + ': Unexisting  %s folder, exiting' % argument, out_log)
+		raise SystemExit(classname + ': Unexisting  %s folder' % argument)
+	file_extension = PurePath(path).suffix
+	if not is_valid_file(file_extension[1:], argument):
+		fu.log(classname + ': Format %s in  %s file is not compatible' % (file_extension[1:], argument), out_log)
+		raise SystemExit(classname + ': Format %s in  %s file is not compatible' % (file_extension[1:], argument))
+	return path
+
+def is_valid_file(ext, argument):
+	""" Checks if file format is compatible """
+	formats = {
+		'input_dataset_path': ['csv'],
+		'output_results_path': ['csv'],
+        'output_plot_path': ['png']
+	}
+	return ext in formats[argument]
+
+# UTILITIES
+
+def generate_columns_labels(label, length):
+    return [label + ' ' + str(x + 1) for x in range(0, length)]
+
+def plot2D(ax, pca_table, targets, target, x, y):
+    ax.set_xlabel('PC ' + str(x), fontsize = 12)
+    ax.set_ylabel('PC ' + str(y), fontsize = 12)
+    ax.set_title('2 Component PCA (PC ' + str(x) + ' vs PC ' + str(y) + ')', fontsize = 15)
+    
+    colors = plt.get_cmap('rainbow_r')(np.linspace(0.0, 1.0, len(targets)))
+    for tgt, color in zip(targets,colors):
+        indicesToKeep = pca_table[target] == tgt
+        ax.scatter(pca_table.loc[indicesToKeep, 'PC ' + str(x)]
+                   , pca_table.loc[indicesToKeep, 'PC ' + str(y)]
+                   , color = color
+                   , s = 50
+                   , alpha = 0.6)
+    ax.legend(targets)
+
+
+def PCA2CPlot(pca_table, targets, target):
+    fig = plt.figure(figsize = (8,8))
+    ax = fig.add_subplot(1,1,1) 
+    plot2D(ax,pca_table, targets, target, 1, 2)
+    plt.tight_layout()
+
+def scatter3DLegend(targets):
+    colors = plt.get_cmap('rainbow_r')(np.linspace(0.0, 1.0, len(targets)))
+    proxies = []
+    for i, v in enumerate(targets):
+        proxies.append(Line2D([0],[0], linestyle="none", c=colors[i], marker = 'o'))
+    return proxies
+
+def plot3D(ax, pca_table, targets, dt):
+    xs = pca_table['PC 1']
+    ys = pca_table['PC 2']
+    zs = pca_table['PC 3']
+    ax.scatter(xs, ys, zs, s=50, alpha=0.6, c=dt,cmap='rainbow_r')
+
+    ax.set_xlabel('PC 1')
+    ax.set_ylabel('PC 2')
+    ax.set_zlabel('PC 3')
+
+    scatter_proxies = scatter3DLegend(targets)
+    ax.legend(scatter_proxies, targets, numpoints = 1)
+
+    plt.title('3 Component PCA', size=15, pad=35)
+
+def PCA3CPlot(pca_table, targets, target):
+    lst = pca_table[target].unique().tolist()
+    dct = {lst[i]: i for i in range(0, len(lst))} 
+    dt = pca_table[target].map(dct)
+
+    fig = plt.figure(figsize = (12,12))
+    ax = fig.add_subplot(2,2,1, projection='3d') 
+    
+    plot3D(ax, pca_table, targets, dt)
+
+    ax = fig.add_subplot(2,2,2) 
+    
+    plot2D(ax,pca_table, targets, target, 1, 2)
+
+    ax = fig.add_subplot(2,2,3) 
+    
+    plot2D(ax,pca_table, targets, target, 1, 3)
+
+    ax = fig.add_subplot(2,2,4) 
+    
+    plot2D(ax,pca_table, targets, target, 2, 3)
+
+    plt.tight_layout()

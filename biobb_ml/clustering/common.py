@@ -291,7 +291,7 @@ def plotCluster(new_plots, clusters):
             ax.set_ylabel(plot['features'][1])
             ax.set_zlabel(plot['features'][2])
 
-            plt.title(plot['title'], size=15)
+            plt.title(plot['title'], size=15, pad=35)
 
     plt.tight_layout()
 
