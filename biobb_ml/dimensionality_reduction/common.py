@@ -45,6 +45,16 @@ def is_valid_file(ext, argument):
 
 # UTILITIES
 
+def getWindowLength(default, feat):
+    window_length = default
+    # if features size is less than WL, then get last odd
+    if feat < window_length: 
+        if (feat % 2) == 0:
+            window_length = feat - 1
+        else:
+            window_length = feat
+    return window_length
+
 def generate_columns_labels(label, length):
     return [label + ' ' + str(x + 1) for x in range(0, length)]
 
@@ -115,3 +125,47 @@ def PCA3CPlot(pca_table, targets, target):
     plot2D(ax,pca_table, targets, target, 2, 3)
 
     plt.tight_layout()
+
+def predictionPlot(tit, data1, data2, xlabel, ylabel):   
+    z = np.polyfit(data1, data2, 1)
+    plt.scatter(data2, data1, alpha=0.2)
+    plt.title(tit, size=15)
+    plt.xlabel(xlabel,size=14)
+    plt.ylabel(ylabel,size=14)
+    #Plot the best fit line
+    plt.plot(np.polyval(z,data1), data1, c='red', linewidth=1)
+    #Plot the ideal 1:1 line
+    axes = plt.gca()
+    lims = axes.get_xlim()
+    plt.xlim(lims)
+    plt.ylim(lims)
+    plt.plot(lims, lims)
+    plt.legend(('Best fit','Ideal 1:1'))
+
+def histogramPlot(tit, data1, data2, xlabel, ylabel):
+    plt.title(tit, size=15)
+    error = data2 - data1
+    plt.hist(error, bins = 25)
+    plt.xlabel(xlabel,size=14)
+    plt.ylabel(ylabel,size=14)
+
+def PLSRegPlot(y, y_c, y_cv):
+
+    #FIGURE
+    plt.figure(figsize=[8,8])
+
+    plt.subplot(221)
+    predictionPlot('Calibration predictions', y, y_c, 'true values', 'predictions')
+
+    plt.subplot(222)
+    histogramPlot('Calibration histogram', y, y_c[0], 'prediction error', 'count')
+
+    plt.subplot(223)
+    predictionPlot('Cross Validation predictions', y, y_cv, 'true values', 'predictions')
+
+    plt.subplot(224)
+    histogramPlot('Cross Validation histogram', y, y_cv[0], 'prediction error', 'count')
+
+    plt.tight_layout()
+    
+    return plt

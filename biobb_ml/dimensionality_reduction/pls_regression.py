@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
-"""Module containing the PCADataVisualization class and the command line interface."""
+"""Module containing the PLS_Regression class and the command line interface."""
 import argparse
 import io
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+import warnings
+from sys import stdout
+from scipy.signal import savgol_filter
+from sklearn.cross_decomposition import PLSRegression
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import mean_squared_error, r2_score
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -13,19 +16,20 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.dimensionality_reduction.common import *
 
 
-class PCADataVisualization():
-    """Analyses a given dataset through Principal Component Analysis (PCA).
-    Wrapper of the sklearn.decomposition.PCA module
-    Visit the 'sklearn official website <https://scikit-learn.org/0.16/modules/generated/sklearn.decomposition.PCA.html>'_. 
+class PLS_Regression():
+    """Gives results for a Partial Least Square (PLS) Regression.
+    Wrapper of the sklearn.cross_decomposition.PLSRegression module
+    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the analysed dataset. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the Principal Component plot, only if number of components is 2 or 3. Accepted formats: png.
+        output_results_path (str): Table with R2 and MSE for calibration and cross-validation data. Accepted formats: csv.
+        output_plot_path (str) (Optional): Path to the R2 cross-validation plot. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **n_components** (*int* / *float*) - (None) Number of components to keep (int) or minimum number of principal components such the 0 to 1 range of the variance (float) is retained. If n_components is not set (None) all components are kept.
+            * **n_components** (*int*) - (5) Maximum number of components to use by default for PLS queries.
+            * **cv** (*int*) - (10) Specify the number of folds in the cross-validation splitting strategy. Value must be betwwen 2 and number of samples in the dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -43,7 +47,8 @@ class PCADataVisualization():
         # Properties specific for BB
         self.features = properties.get('features', [])
         self.target = properties.get('target', '')
-        self.n_components = properties.get('n_components', None)
+        self.n_components = properties.get('n_components', 5)
+        self.cv = properties.get('cv', 10)
         self.properties = properties
 
         # Properties common in all BB
@@ -61,9 +66,15 @@ class PCADataVisualization():
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
+    def warn(*args, **kwargs):
+        pass
+
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PCADataVisualization module."""
+        """Launches the execution of the PLS_Regression module."""
+
+        # trick for disable warnings in interations
+        warnings.warn = self.warn
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -85,69 +96,64 @@ class PCADataVisualization():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
+        # get targets
+        y = data[self.target]
         # get features
         features = data.filter(self.features)
 
-        # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        scaler = StandardScaler()
-        t_features = scaler.fit_transform(features)
+        # get rid of baseline and linear variations calculating second derivative
+        fu.log('Performing second derivative on the data', out_log, self.global_log)
+        self.window_length = getWindowLength(17, features.shape[1])
+        X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
 
-        # create a PCA object with self.n_components n_components
-        fu.log('Fitting dataset', out_log, self.global_log)
-        model = PCA(n_components = self.n_components)
-        # fit the data
-        model.fit(t_features)
+        # define PLS object with optimal number of components
+        model = PLSRegression(n_components = self.n_components)
+        # fit to the entire dataset
+        model.fit(X, y)
+        y_c = model.predict(X)
+        # cross-validation
+        y_cv = cross_val_predict(model, X, y, cv = self.cv)
+        # calculate scores for calibration and cross-validation
+        score_c = r2_score(y, y_c)
+        score_cv = r2_score(y, y_cv)
+        # calculate mean squared error for calibration and cross validation
+        mse_c = mean_squared_error(y, y_c)
+        mse_cv = mean_squared_error(y, y_cv)
+        # create scores table
+        r2_table = pd.DataFrame()
+        r2_table["feature"] = ['R2 calib','R2 CV', 'MSE calib', 'MSE CV']
+        r2_table['coefficient'] = [score_c, score_cv, mse_c, mse_cv]
 
-        # calculate variance ratio
-        v_ratio = model.explained_variance_ratio_
-        fu.log('Variance ratio for %d Principal Components: %s' % (v_ratio.shape[0], np.array2string(v_ratio, precision=3, separator=', ')), out_log, self.global_log)
+        fu.log('Generating scores table\n\nR2 & MSE TABLE\n\n%s\n' % r2_table, out_log, self.global_log)
 
-        # transform
-        fu.log('Transforming dataset', out_log, self.global_log)
-        pca = model.transform(t_features)
-        pca = pd.DataFrame(data = pca, columns = generate_columns_labels('PC', v_ratio.shape[0]))
+        # save results table
+        fu.log('Saving R2 & MSE table to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        r2_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
-        # output results
-        pca_table = pd.concat([pca, data[[self.target]]], axis = 1)
-        fu.log('Calculating PCA for dataset\n\n%d COMPONENT PCA TABLE\n\n%s\n' % (v_ratio.shape[0], pca_table), out_log, self.global_log)
-
-        # save results
-        fu.log('Saving data to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
-        pca_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True)
-
-        # create output plot
-        if(self.io_dict["out"]["output_plot_path"]): 
-            if v_ratio.shape[0] > 3: 
-                fu.log('%d PC\'s found. Displaying only 1st, 2nd and 3rd PC' % v_ratio.shape[0], out_log, self.global_log)
-            fu.log('Saving PC plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
-            targets = np.unique(data[[self.target]])
-            if v_ratio.shape[0] == 2:
-                PCA2CPlot(pca_table, targets, self.target)
-
-            if v_ratio.shape[0] >= 3:
-                PCA3CPlot(pca_table, targets, self.target)
-
-            plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
+        # mse plot
+        if self.io_dict["out"]["output_plot_path"]: 
+            fu.log('Saving MSE plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            plot = PLSRegPlot(y, y_c, y_cv)
+            plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Analyses a given dataset through Principal Component Analysis (PCA).", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Gives results for a Partial Least Square (PLS) Regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_results_path', required=True, help='Path to the analysed dataset. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Path to the Principal Component plot, only if number of components is 2 or 3. Accepted formats: png.')
+    required_args.add_argument('--output_results_path', required=True, help='Table with R2 and MSE for calibration and cross-validation data. Accepted formats: csv.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the R2 cross-validation plot. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PCADataVisualization(input_dataset_path=args.input_dataset_path,
+    PLS_Regression(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_plot_path=args.output_plot_path, 
                    properties=properties).launch()
