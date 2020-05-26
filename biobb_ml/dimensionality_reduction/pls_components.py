@@ -113,7 +113,7 @@ class PLSComponents():
 
         if self.optimise:
 
-            #mse = []
+            mse = []
             # Define MSE array to be populated
             msep = np.zeros((self.max_components,X.shape[1]))
             # Loop over the number of PLS components

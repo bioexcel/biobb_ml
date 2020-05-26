@@ -71,7 +71,7 @@ def plot2D(ax, pca_table, targets, target, x, y):
                    , color = color
                    , s = 50
                    , alpha = 0.6)
-    ax.legend(targets)
+    if len(targets) < 15: ax.legend(targets)
 
 
 def PCA2CPlot(pca_table, targets, target):
@@ -97,8 +97,9 @@ def plot3D(ax, pca_table, targets, dt):
     ax.set_ylabel('PC 2')
     ax.set_zlabel('PC 3')
 
-    scatter_proxies = scatter3DLegend(targets)
-    ax.legend(scatter_proxies, targets, numpoints = 1)
+    if len(targets) < 15: 
+        scatter_proxies = scatter3DLegend(targets)
+        ax.legend(scatter_proxies, targets, numpoints = 1)
 
     plt.title('3 Component PCA', size=15, pad=35)
 
