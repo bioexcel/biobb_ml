@@ -5,7 +5,7 @@ import argparse
 import io
 import warnings
 from sys import stdout
-from scipy.signal import savgol_filter
+#from scipy.signal import savgol_filter
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import mean_squared_error, r2_score
@@ -104,9 +104,10 @@ class PLSComponents():
         features = data.filter(self.features)
 
         # get rid of baseline and linear variations calculating second derivative
-        fu.log('Performing second derivative on the data', out_log, self.global_log)
-        self.window_length = getWindowLength(17, features.shape[1])
-        X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
+        # fu.log('Performing second derivative on the data', out_log, self.global_log)
+        # self.window_length = getWindowLength(17, features.shape[1])
+        # X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
+        X = features
 
         # run PLS from 1 to max_components
         fu.log('Calculating MSE for each %d components' % self.max_components, out_log, self.global_log)
