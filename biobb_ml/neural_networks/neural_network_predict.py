@@ -89,22 +89,42 @@ class ClassificationNeuralNetwork():
         fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
 
         # prediction
-        new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
-        new_data = scale(new_data_table)
-  
-        predictions = new_model.predict(new_data)
-        predictions = np.around(predictions, decimals=2)
+        if vars_obj['type'] != 'recurrent':
+            # classification or regression
 
-        clss = ''
-        if predictions.shape[1] > 1:
-            # classification
-            pr = tuple(map(tuple, predictions))
-            clss = ' (' + ', '.join(str(x) for x in vars_obj['vs']) + ')'
+            new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+            new_data = scale(new_data_table)
+
+            predictions = new_model.predict(new_data)
+            predictions = np.around(predictions, decimals=2)
+
+            clss = ''
+            if predictions.shape[1] > 1:
+                # classification
+                pr = tuple(map(tuple, predictions))
+                clss = ' (' + ', '.join(str(x) for x in vars_obj['vs']) + ')'
+            else:
+                # regression
+                pr = np.squeeze(np.asarray(predictions))
+            new_data_table[vars_obj['target'] + clss] = pr
+
         else:
-            # regression
-            pr = np.squeeze(np.asarray(predictions))
-        new_data_table[vars_obj['target'] + clss] = pr
+            # recurrent
 
+            new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
+            predictions = []
+
+            for r in self.predictions:
+                row = np.asarray(r).reshape((1, vars_obj['window_size'], 1))
+
+                pred = new_model.predict(row)
+                pred = np.around(pred, decimals=2)
+
+                predictions.append(pred[0][0])
+
+            pd.set_option('display.float_format', lambda x: '%.2f' % x)
+            new_data_table["predictions"] = predictions 
+        
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')

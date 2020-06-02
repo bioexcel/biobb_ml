@@ -138,7 +138,8 @@ class PLSComponents():
                     y_cv = cross_val_predict(pls2, Xc[:, j:], y, cv = self.cv)
                     msep[i,j] = mean_squared_error(y, y_cv)
             
-                # TO BE REVIEWED
+                # TO BE REVIEWED:
+                # https://nirpyresearch.com/variable-selection-method-pls-python/
                 mx,my = np.where(msep==np.min(msep[np.nonzero(msep)]))
                 mse.append(my[0])
 

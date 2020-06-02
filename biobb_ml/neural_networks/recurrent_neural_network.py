@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the RegressionNeuralNetwork class and the command line interface."""
+"""Module containing the RecurrentNeuralNetwork class and the command line interface."""
 import argparse
 import tensorflow as tf
 import h5py
@@ -8,7 +8,6 @@ import json
 from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -16,27 +15,27 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 
-class RegressionNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a Neural Network Regression
-    Wrapper of the TensorFlow Keras Sequential model
-    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
+class RecurrentNeuralNetwork():
+    """Trains and tests a given dataset and save the complete model for a Recurrent Neural Network
+    Wrapper of the TensorFlow Keras Long Short-Term Memory layer
+    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>'_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_model_path (str): Path to the output results file. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. Accepted formats: h5.
         output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, MAE and MSE plots. Accepted formats: png.
+        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. Accepted formats: png.
         properties (dic):
-            * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
-            * **test_size** (*float*) - (0.1) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **window_size** (*int*) - (5) Number of steps for each window of training model.
+            * **test_size** (*int*) - (0.1) Represents the number of samples of the dataset to include in the test split.
             * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
-            * **output_layer_activation** (*string*) - ("softmax") Activation function to use in the output layer. Values: sigmoid, tanh, relu, softmax.
             * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
             * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
             * **batch_size** (*int*) - (100) Number of samples per gradient update.
             * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+            * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -52,16 +51,16 @@ class RegressionNeuralNetwork():
         }
 
         # Properties specific for BB
-        self.features = properties.get('features', [])
         self.target = properties.get('target', '')
         self.validation_size = properties.get('validation_size', 0.1)
-        self.test_size = properties.get('test_size', 0.1)
+        self.window_size = properties.get('window_size', 5)
+        self.test_size = properties.get('test_size', 5)
         self.hidden_layers = properties.get('hidden_layers', [])
-        self.output_layer_activation = properties.get('output_layer_activation', 'softmax')
         self.optimizer = properties.get('optimizer', 'Adam')
         self.learning_rate = properties.get('learning_rate', 0.02)
         self.batch_size = properties.get('batch_size', 100)
         self.max_epochs = properties.get('max_epochs', 100)
+        self.normalize_cm =  properties.get('normalize_cm', False)
         self.properties = properties
 
         # Properties common in all BB
@@ -91,7 +90,7 @@ class RegressionNeuralNetwork():
         # generate hidden_layers
         for i,layer in enumerate(self.hidden_layers):
             if i == 0:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
+                model.add(tf.keras.layers.LSTM(layer['size'], activation=layer['activation'], kernel_initializer='he_normal', input_shape=input_shape)) # 1st hidden layer
             else:
                 model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
 
@@ -101,7 +100,7 @@ class RegressionNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RegressionNeuralNetwork module."""
+        """Launches the execution of the RecurrentNeuralNetwork module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -123,29 +122,21 @@ class RegressionNeuralNetwork():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
 
-        targets = data[self.target].to_numpy()
-        # the inputs are all the independent variables
-        inputs = data.filter(self.features)
+        # get target column
+        target = data[self.target].to_numpy()
 
-        # shuffle dataset
-        fu.log('Shuffling dataset', out_log, self.global_log)
-        shuffled_indices = np.arange(inputs.shape[0])
-        np.random.shuffle(shuffled_indices)
-        np_inputs = inputs.to_numpy()
-        shuffled_inputs = np_inputs[shuffled_indices]
-        shuffled_targets = targets[shuffled_indices]
+        # split into samples
+        X, y = split_sequence(target, self.window_size)
+        # reshape into [samples, timesteps, features]
+        X = X.reshape((X.shape[0], X.shape[1], 1))
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
-        
-        # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        X_train = scale(x_train)
+        X_train, X_test, y_train, y_test = X[:-self.test_size], X[-self.test_size:], y[:-self.test_size], y[-self.test_size:]
 
         # build model
         fu.log('Building model', out_log, self.global_log)
-        model = self.build_model((X_train.shape[1],))
+        model = self.build_model((X_train.shape[1],1))
 
         # model summary
         stringlist = []
@@ -158,49 +149,40 @@ class RegressionNeuralNetwork():
         opt_class = getattr(mod, self.optimizer)
         opt = opt_class(lr = self.learning_rate)
         # compile model
-        model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'])
+        model.compile(optimizer = opt, loss = 'mse', metrics = ['mse', 'mae'])
 
         # fitting
         fu.log('Training model', out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
-        early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
+        #early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 
                        batch_size=self.batch_size, 
                        epochs=self.max_epochs, 
-                       callbacks=[early_stopping], 
+                       #callbacks=[early_stopping],
                        validation_split=self.validation_size,
                        verbose = 1)
 
-        fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
-
-        # predict data from X_train
-        train_predictions = model.predict(X_train)
-        train_predictions = np.around(train_predictions, decimals=2)        
-        train_score = r2_score(train_predictions, y_train)
-
         train_metrics = pd.DataFrame()
-        train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
-        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], train_score, mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
+        train_metrics['metric'] = ['Train loss',' Train MAE', 'Train MSE', 'Validation loss', 'Validation MAE', 'Validation MSE']
+        train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
 
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
         # testing
-        X_test = scale(x_test)
         fu.log('Testing model', out_log, self.global_log)
-        test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
+        test_loss, test_mse, test_mae = model.evaluate(X_test, y_test)
 
         # predict data from X_test
         test_predictions = model.predict(X_test)
         test_predictions = np.around(test_predictions, decimals=2)        
         tpr = np.squeeze(np.asarray(test_predictions))
-        score = r2_score(test_predictions, y_test)
 
         test_metrics = pd.DataFrame()
-        test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']
-        test_metrics['coefficient'] = [test_loss, test_mae, test_mse, score]
+        test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE']
+        test_metrics['coefficient'] = [test_loss, test_mae, test_mse]
 
         fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
 
@@ -230,8 +212,9 @@ class RegressionNeuralNetwork():
 
         # save model and parameters
         vars_obj = {
-            'features': self.features,
-            'target': self.target
+            'target': self.target,
+            'window_size': self.window_size,
+            'type': 'recurrent'
         }
         variables = json.dumps(vars_obj)
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
@@ -242,7 +225,7 @@ class RegressionNeuralNetwork():
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and save the complete model for a Recurrent Neural Network.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -250,14 +233,14 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    RegressionNeuralNetwork(input_dataset_path=args.input_dataset_path,
+    RecurrentNeuralNetwork(input_dataset_path=args.input_dataset_path,
                    output_model_path=args.output_model_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 

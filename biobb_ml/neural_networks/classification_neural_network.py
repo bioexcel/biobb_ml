@@ -16,7 +16,7 @@ from biobb_ml.neural_networks.common import *
 
 
 class ClassificationNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a NN classification
+    """Trains and tests a given dataset and save the complete model for a Neural Network Classification
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
@@ -92,9 +92,9 @@ class ClassificationNeuralNetwork():
         # generate hidden_layers
         for i,layer in enumerate(self.hidden_layers):
             if i == 0:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], input_shape = input_shape)) # 1st hidden layer
+                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
             else:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation']))
+                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
 
         model.add(tf.keras.layers.Dense(output_size, activation=self.output_layer_activation)) # output layer
 
