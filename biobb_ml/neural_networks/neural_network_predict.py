@@ -2,7 +2,6 @@
 
 """Module containing the ClassificationNeuralNetwork class and the command line interface."""
 import argparse
-import tensorflow as tf
 import h5py
 import json
 from tensorflow.python.keras.saving import hdf5_format
@@ -52,7 +51,7 @@ class ClassificationNeuralNetwork():
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
-        self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", out_log, self.__class__.__name__)
+        self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
 
     @launchlogger

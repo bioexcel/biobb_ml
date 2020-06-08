@@ -11,16 +11,18 @@ sns.set()
 
 # CHECK PARAMETERS
 
-def check_input_path(path, argument, out_log, classname):
-	""" Checks input file """ 
-	if not Path(path).exists():
-		fu.log(classname + ': Unexisting %s file, exiting' % argument, out_log)
-		raise SystemExit(classname + ': Unexisting %s file' % argument)
-	file_extension = PurePath(path).suffix
-	if not is_valid_file(file_extension[1:], argument):
-		fu.log(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument), out_log)
-		raise SystemExit(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument))
-	return path
+def check_input_path(path, argument, optional, out_log, classname):
+    """ Checks input file """ 
+    if optional and not path:
+        return None
+    if not Path(path).exists():
+        fu.log(classname + ': Unexisting %s file, exiting' % argument, out_log)
+        raise SystemExit(classname + ': Unexisting %s file' % argument)
+    file_extension = PurePath(path).suffix
+    if not is_valid_file(file_extension[1:], argument):
+        fu.log(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument), out_log)
+        raise SystemExit(classname + ': Format %s in %s file is not compatible' % (file_extension[1:], argument))
+    return path
 
 def check_output_path(path, argument, optional, out_log, classname):
 	""" Checks output file """ 
@@ -39,10 +41,16 @@ def is_valid_file(ext, argument):
 	""" Checks if file format is compatible """
 	formats = {
 		'input_dataset_path': ['csv'],
+        'input_decode_path': ['csv'],
+        'input_predict_path': ['csv'],
         'input_model_path': ['h5'],
         'output_model_path': ['h5'],
 		'output_results_path': ['csv'],
 		'output_test_table_path': ['csv'],
+        'output_test_decode_path': ['csv'],
+        'output_test_predict_path': ['csv'],
+        'output_decode_path': ['csv'],
+        'output_predict_path': ['csv'],
 		'output_plot_path': ['png']
 	}
 	return ext in formats[argument]

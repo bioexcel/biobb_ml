@@ -2,13 +2,15 @@
 
 """Module containing the RegressionNeuralNetwork class and the command line interface."""
 import argparse
-import tensorflow as tf
 import h5py
 import json
 from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.callbacks import EarlyStopping
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -17,7 +19,7 @@ from biobb_ml.neural_networks.common import *
 
 
 class RegressionNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a Neural Network Regression
+    """Trains and tests a given dataset and save the complete model for a Neural Network Regression.
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
@@ -75,14 +77,14 @@ class RegressionNeuralNetwork():
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
-        self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
+        self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, input_shape):
         # create model
-        model = tf.keras.Sequential([])
+        model = Sequential([])
 
         # if no hidden_layers provided, create manually a hidden layer with default values
         if not self.hidden_layers:
@@ -91,11 +93,11 @@ class RegressionNeuralNetwork():
         # generate hidden_layers
         for i,layer in enumerate(self.hidden_layers):
             if i == 0:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
+                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
             else:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
+                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
 
-        model.add(tf.keras.layers.Dense(1)) # output layer
+        model.add(Dense(1)) # output layer
 
         return model
 
@@ -164,7 +166,7 @@ class RegressionNeuralNetwork():
         fu.log('Training model', out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
-        early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
+        early_stopping = EarlyStopping(patience=2)
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 
@@ -231,7 +233,8 @@ class RegressionNeuralNetwork():
         # save model and parameters
         vars_obj = {
             'features': self.features,
-            'target': self.target
+            'target': self.target,
+            'type': 'regression'
         }
         variables = json.dumps(vars_obj)
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)

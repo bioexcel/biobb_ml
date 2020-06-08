@@ -2,12 +2,16 @@
 
 """Module containing the ClassificationNeuralNetwork class and the command line interface."""
 import argparse
-import tensorflow as tf
+#import tensorflow as tf
 import h5py
 import json
 from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow import math
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -16,7 +20,7 @@ from biobb_ml.neural_networks.common import *
 
 
 class ClassificationNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a Neural Network Classification
+    """Trains and tests a given dataset and save the complete model for a Neural Network Classification.
     Wrapper of the TensorFlow Keras Sequential model
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
@@ -76,14 +80,14 @@ class ClassificationNeuralNetwork():
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
-        self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
+        self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, input_shape, output_size):
         # create model
-        model = tf.keras.Sequential([])
+        model = Sequential([])
 
         # if no hidden_layers provided, create manually a hidden layer with default values
         if not self.hidden_layers:
@@ -92,11 +96,11 @@ class ClassificationNeuralNetwork():
         # generate hidden_layers
         for i,layer in enumerate(self.hidden_layers):
             if i == 0:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
+                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
             else:
-                model.add(tf.keras.layers.Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
+                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
 
-        model.add(tf.keras.layers.Dense(output_size, activation=self.output_layer_activation)) # output layer
+        model.add(Dense(output_size, activation=self.output_layer_activation)) # output layer
 
         return model
 
@@ -165,7 +169,7 @@ class ClassificationNeuralNetwork():
         fu.log('Training model', out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
-        early_stopping = tf.keras.callbacks.EarlyStopping(patience=2)
+        early_stopping = EarlyStopping(patience=2)
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 
@@ -188,7 +192,7 @@ class ClassificationNeuralNetwork():
         train_predictions = np.around(train_predictions, decimals=2)
         norm_pred = []
         [norm_pred.append(np.argmax(pred, axis=0)) for pred in train_predictions]
-        cnf_matrix_train = tf.math.confusion_matrix(y_train, norm_pred).numpy()
+        cnf_matrix_train = math.confusion_matrix(y_train, norm_pred).numpy()
         np.set_printoptions(precision=2)
         if self.normalize_cm:
             cnf_matrix_train = cnf_matrix_train.astype('float') / cnf_matrix_train.sum(axis=1)[:, np.newaxis]
@@ -223,7 +227,7 @@ class ClassificationNeuralNetwork():
         # confusion matrix
         norm_pred = []
         [norm_pred.append(np.argmax(pred, axis=0)) for pred in test_predictions]
-        cnf_matrix_test = tf.math.confusion_matrix(y_test, norm_pred).numpy()
+        cnf_matrix_test = math.confusion_matrix(y_test, norm_pred).numpy()
         np.set_printoptions(precision=2)
         if self.normalize_cm:
             cnf_matrix_test = cnf_matrix_test.astype('float') / cnf_matrix_test.sum(axis=1)[:, np.newaxis]
@@ -256,7 +260,8 @@ class ClassificationNeuralNetwork():
         vars_obj = {
             'features': self.features,
             'target': self.target,
-            'vs': vs.tolist()
+            'vs': vs.tolist(),
+            'type': 'classification'
         }
         variables = json.dumps(vars_obj)
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
