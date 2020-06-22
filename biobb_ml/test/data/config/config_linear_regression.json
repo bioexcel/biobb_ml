@@ -1,0 +1,11 @@
+{
+    "properties": {
+        "independent_vars": [
+            "size",
+            "year",
+            "view"
+        ],
+        "target": "price",
+        "test_size": 0.2
+    }
+}

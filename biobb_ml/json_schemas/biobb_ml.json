@@ -11,7 +11,7 @@
         {
             "block" : "LinearRegression", 
             "tool" : "sklearn.linear_model.LinearRegression", 
-            "desc" : "Trains and tests a given dataset and calculates coefficients for a linear regression.",
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a linear regression.",
             "exec" : "linear_regression"
         },
         {
