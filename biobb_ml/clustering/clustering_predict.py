@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the RegressionPredict class and the command line interface."""
+"""Module containing the ClusteringPredict class and the command line interface."""
 import argparse
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.clustering.common import *
 
-class RegressionPredict():
+class ClusteringPredict():
     """Makes predictions from a given model.
     Visit the 'sklearn official website <https://scikit-learn.org>'_. 
 
@@ -57,7 +57,7 @@ class RegressionPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RegressionPredict module."""
+        """Launches the execution of the ClusteringPredict module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -114,7 +114,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    RegressionPredict(input_model_path=args.input_model_path,
+    ClusteringPredict(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
                    properties=properties).launch()
 

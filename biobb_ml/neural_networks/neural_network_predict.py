@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module containing the ClassificationNeuralNetwork class and the command line interface."""
+"""Module containing the PredictNeuralNetwork class and the command line interface."""
 import argparse
 import h5py
 import json
@@ -12,10 +12,9 @@ from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
-class ClassificationNeuralNetwork():
+class PredictNeuralNetwork():
     """Calculates prediction for a NN classification given a model file.
-    Wrapper of the TensorFlow Keras Sequential model
-    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
+    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>'_. 
 
     Args:
         input_model_path (str): Path to the input model. Accepted formats: csv.
@@ -56,7 +55,7 @@ class ClassificationNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClassificationNeuralNetwork module."""
+        """Launches the execution of the PredictNeuralNetwork module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -144,7 +143,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClassificationNeuralNetwork(input_model_path=args.input_model_path,
+    PredictNeuralNetwork(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
                    properties=properties).launch()
 

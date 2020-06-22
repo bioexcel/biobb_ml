@@ -14,8 +14,7 @@ from biobb_ml.neural_networks.common import *
 
 class DecodingNeuralNetwork():
     """Decodes and predicts given a dataset and a model file.
-    Wrapper of the TensorFlow Keras Long Short-Term Memory layer
-    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>'_. 
+    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>'_. 
 
     Args:
         input_decode_path (str): Path to the input decode dataset. Accepted formats: csv.

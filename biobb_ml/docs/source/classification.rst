@@ -5,14 +5,6 @@ Submodules
 -----------
 
 
-classification.classification_predict module
----------------------------------------------
-
-.. automodule:: classification.classification_predict
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 classification.decision_tree module
 ------------------------------------
 
@@ -21,18 +13,18 @@ classification.decision_tree module
     :undoc-members:
     :show-inheritance:
 
-classification.k_neighbors module
-----------------------------------
-
-.. automodule:: classification.k_neighbors
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 classification.k_neighbors_coefficient module
 ----------------------------------------------
 
 .. automodule:: classification.k_neighbors_coefficient
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classification.k_neighbors module
+----------------------------------
+
+.. automodule:: classification.k_neighbors
     :members:
     :undoc-members:
     :show-inheritance:
@@ -57,6 +49,14 @@ classification.support_vector_machine module
 ---------------------------------------------
 
 .. automodule:: classification.support_vector_machine
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classification.classification_predict module
+---------------------------------------------
+
+.. automodule:: classification.classification_predict
     :members:
     :undoc-members:
     :show-inheritance:

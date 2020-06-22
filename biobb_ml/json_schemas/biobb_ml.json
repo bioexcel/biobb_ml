@@ -15,10 +15,196 @@
             "exec" : "linear_regression"
         },
         {
+            "block" : "PolynomialRegression", 
+            "tool" : "sklearn.linear_model.LinearRegression", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a polynomial regression.",
+            "exec" : "polynomial_regression"
+        },
+        {
+            "block" : "RandomForestRegressor", 
+            "tool" : "sklearn.ensemble.RandomForestRegressor", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a random forest regressor.",
+            "exec" : "random_forest_regressor"
+        },
+        {
+            "block" : "RegressionPredict", 
+            "tool" : "In house using sklearn", 
+            "desc" : "Makes predictions from a given model.",
+            "exec" : "regression_predict"
+        },
+        {
+            "block" : "DecisionTree", 
+            "tool" : "sklearn.model.DecisionTreeClassifier", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a decision tree classification.",
+            "exec" : "decision_tree"
+        },
+        {
+            "block" : "KNeighborsCoefficient", 
+            "tool" : "sklearn.linear_model.LinearRegression", 
+            "desc" : "Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.",
+            "exec" : "k_neighbors_coefficient"
+        },
+        {
+            "block" : "KNeighborsTrain", 
+            "tool" : "sklearn.neighbors.KNeighborsClassifier", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a k-nearest neighbors classification.",
+            "exec" : "k_neighbors"
+        },
+        {
+            "block" : "LogisticRegression", 
+            "tool" : "sklearn.linear_model.LogisticRegression", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a logistic regression.",
+            "exec" : "logistic_regression"
+        },
+        {
+            "block" : "RandomForestClassifier", 
+            "tool" : "sklearn.ensemble.RandomForestClassifier", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a random forest classifier.",
+            "exec" : "random_forest_classifier"
+        },
+        {
+            "block" : "SupportVectorMachine", 
+            "tool" : "sklearn.svm.SVC", 
+            "desc" : "Trains and tests a given dataset and saves the model and scaler for a support vector machine.",
+            "exec" : "support_vector_machine"
+        },
+        {
+            "block" : "ClassificationPredict", 
+            "tool" : "In house using sklearn", 
+            "desc" : "Makes predictions from a given model.",
+            "exec" : "classification_predict"
+        },
+        {
+            "block" : "AgglomerativeCoefficient", 
+            "tool" : "sklearn.cluster.AgglomerativeClustering", 
+            "desc" : "Clusters a given dataset and calculates best K coefficient for an agglomerative clustering.",
+            "exec" : "agglomerative_coefficient"
+        },
+        {
+            "block" : "AgglClustering", 
+            "tool" : "sklearn.cluster.AgglomerativeClustering", 
+            "desc" : "Clusters a given dataset with agglomerative clustering method.",
+            "exec" : "agglomerative_clustering"
+        },
+        {
+            "block" : "DBSCANClustering", 
+            "tool" : "sklearn.cluster.DBSCAN", 
+            "desc" : "Clusters a given dataset with DBSCAN clustering method.",
+            "exec" : "dbscan"
+        },
+        {
+            "block" : "KMeansCoefficient", 
+            "tool" : "sklearn.cluster.KMeans", 
+            "desc" : "Clusters a given dataset and calculates best K coefficient for a k-means clustering.",
+            "exec" : "k_means_coefficient"
+        },
+        {
+            "block" : "KMeansClustering", 
+            "tool" : "sklearn.cluster.KMeans", 
+            "desc" : "Clusters a given dataset with k-means clustering method.",
+            "exec" : "k_means"
+        },
+        {
+            "block" : "SpectralCoefficient", 
+            "tool" : "klearn.cluster.SpectralClustering", 
+            "desc" : "Clusters a given dataset and calculates best K coefficient for a spectral clustering.",
+            "exec" : "spectral_coefficient"
+        },
+        {
+            "block" : "SpecClustering", 
+            "tool" : "sklearn.cluster.SpectralClustering", 
+            "desc" : "Clusters a given dataset with spectral clustering method.",
+            "exec" : "spectral_clustering"
+        },
+        {
+            "block" : "ClusteringPredict", 
+            "tool" : "In house using sklearn", 
+            "desc" : "Makes predictions from a given model.",
+            "exec" : "clustering_predict"
+        },
+        {
+            "block" : "CorrelationMatrix", 
+            "tool" : "In house", 
+            "desc" : "Generates a correlation matrix from a given dataset.",
+            "exec" : "correlation_matrix"
+        },
+        {
+            "block" : "Dendrogram", 
+            "tool" : "In house", 
+            "desc" : "Generates a dendrogram from a given dataset.",
+            "exec" : "dendrogram"
+        },
+        {
             "block" : "DummyVariables", 
-            "tool" : "In house?", 
-            "desc" : "",
+            "tool" : "In house", 
+            "desc" : "Maps dummy variables from a given dataset.",
             "exec" : "dummy_variables"
+        },
+        {
+            "block" : "MapVariables", 
+            "tool" : "In house", 
+            "desc" : "Maps dummy variables from a given dataset.",
+            "exec" : "map_variables"
+        },
+        {
+            "block" : "PairwiseComparison", 
+            "tool" : "In house", 
+            "desc" : "Generates a pairwise comparison from a given dataset.",
+            "exec" : "pairwise_comparison"
+        },
+        {
+            "block" : "AutoencoderNeuralNetwork", 
+            "tool" : "tf.keras.layers.LSTM", 
+            "desc" : "Trains and tests a given dataset and save the complete model for an Autoencoder Neural Network.",
+            "exec" : "autoencoder_neural_network"
+        },
+        {
+            "block" : "ClassificationNeuralNetwork", 
+            "tool" : "tf.keras.Sequential", 
+            "desc" : "Trains and tests a given dataset and save the complete model for a Neural Network Classification.",
+            "exec" : "classification_neural_network"
+        },
+        {
+            "block" : "RecurrentNeuralNetwork", 
+            "tool" : "tf.keras.layers.LSTM", 
+            "desc" : "Trains and tests a given dataset and save the complete model for a Recurrent Neural Network.",
+            "exec" : "recurrent_neural_network"
+        },
+        {
+            "block" : "RegressionNeuralNetwork", 
+            "tool" : "tf.keras.Sequential", 
+            "desc" : "Trains and tests a given dataset and save the complete model for a Neural Network Regression.",
+            "exec" : "regression_neural_network"
+        },
+        {
+            "block" : "DecodingNeuralNetwork", 
+            "tool" : "In house using TensorFlow", 
+            "desc" : "Decodes and predicts given a dataset and a model file.",
+            "exec" : "neural_network_decode"
+        },
+        {
+            "block" : "PredictNeuralNetwork", 
+            "tool" : "In house using TensorFlow", 
+            "desc" : "Calculates prediction for a NN classification given a model file.",
+            "exec" : "neural_network_predict"
+        },
+        {
+            "block" : "PLSComponents", 
+            "tool" : "sklearn.cross_decomposition.PLSRegression", 
+            "desc" : "Calculates best components number for a Partial Least Square (PLS) Regression.",
+            "exec" : "pls_components"
+        },
+        {
+            "block" : "PLS_Regression", 
+            "tool" : "sklearn.cross_decomposition.PLSRegression", 
+            "desc" : "Gives results for a Partial Least Square (PLS) Regression.",
+            "exec" : "pls_regression"
+        },
+        {
+            "block" : "PrincipalComponentAnalysis", 
+            "tool" : "sklearn.decomposition.PCA", 
+            "desc" : "Analyses a given dataset through Principal Component Analysis (PCA).",
+            "exec" : "principal_component"
         }
     ],
     "dep_pypi" : [

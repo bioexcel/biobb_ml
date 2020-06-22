@@ -4,15 +4,6 @@ clustering package
 Submodules
 -----------
 
-
-clustering.agglomerative_clustering module
--------------------------------------------
-
-.. automodule:: clustering.agglomerative_clustering
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clustering.agglomerative_coefficient module
 --------------------------------------------
 
@@ -21,10 +12,10 @@ clustering.agglomerative_coefficient module
     :undoc-members:
     :show-inheritance:
 
-clustering.clustering_predict module
--------------------------------------
+clustering.agglomerative_clustering module
+-------------------------------------------
 
-.. automodule:: clustering.clustering_predict
+.. automodule:: clustering.agglomerative_clustering
     :members:
     :undoc-members:
     :show-inheritance:
@@ -37,6 +28,14 @@ clustering.dbscan module
     :undoc-members:
     :show-inheritance:
 
+clustering.k_means_coefficient module
+-------------------------------------
+
+.. automodule:: clustering.k_means_coefficient
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clustering.k_means module
 --------------------------
 
@@ -45,10 +44,10 @@ clustering.k_means module
     :undoc-members:
     :show-inheritance:
 
-clustering.k_means_coefficient module
--------------------------------------
+clustering.spectral_coefficient module
+---------------------------------------
 
-.. automodule:: clustering.k_means_coefficient
+.. automodule:: clustering.spectral_coefficient
     :members:
     :undoc-members:
     :show-inheritance:
@@ -61,10 +60,10 @@ clustering.spectral_clustering module
     :undoc-members:
     :show-inheritance:
 
-clustering.spectral_coefficient module
----------------------------------------
+clustering.clustering_predict module
+-------------------------------------
 
-.. automodule:: clustering.spectral_coefficient
+.. automodule:: clustering.clustering_predict
     :members:
     :undoc-members:
     :show-inheritance:

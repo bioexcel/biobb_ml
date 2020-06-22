@@ -13,3 +13,18 @@ linear_regression:
     independent_vars: ['size', 'year', 'view']
     target: 'price'
     test_size: 0.2
+
+polynomial_regression:
+  paths:
+    input_dataset_path: file:test_data_dir/regression/dataset_polynomial_regression.csv
+    output_model_path: output_model.pkl
+    ref_output_model_path: file:test_reference_dir/regression/ref_output_model_polynomial_regression.pkl
+    output_test_table_path: output_test.csv
+    ref_output_test_table_path: file:test_reference_dir/regression/ref_output_test_polynomial_regression.csv
+    output_plot_path: output_plot.png
+    ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_polynomial_regression.png
+  properties:
+    independent_vars: ['LSTAT','RM']
+    target: 'MEDV'
+    degree: 2
+    test_size: 0.2
