@@ -12,7 +12,7 @@
             "type": "string",
             "description": "Path to the input dataset",
             "filetype": "input",
-            "sample": null,
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_linear_regression.csv",
             "enum": [
                 ".*\\.csv$"
             ]
@@ -21,7 +21,7 @@
             "type": "string",
             "description": "Path to the output model file",
             "filetype": "output",
-            "sample": null,
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_linear_regression.pkl",
             "enum": [
                 ".*\\.pkl$"
             ]
@@ -30,7 +30,7 @@
             "type": "string",
             "description": "Path to the test table file",
             "filetype": "output",
-            "sample": null,
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_linear_regression.csv",
             "enum": [
                 ".*\\.csv$"
             ]
@@ -39,7 +39,7 @@
             "type": "string",
             "description": "Residual plot checks the error between actual values and predicted values",
             "filetype": "output",
-            "sample": null,
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_linear_regression.png",
             "enum": [
                 ".*\\.png$"
             ]

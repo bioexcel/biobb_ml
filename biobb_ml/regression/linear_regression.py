@@ -3,7 +3,6 @@
 """Module containing the LinearRegression class and the command line interface."""
 import argparse
 import numpy as np
-import pandas as pd
 import seaborn as sns
 import joblib
 from sklearn.preprocessing import StandardScaler
