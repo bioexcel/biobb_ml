@@ -1,6 +1,9 @@
 """ Common functions for package biobb_analysis.ambertools """
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import seaborn as sns
+import joblib
 from pathlib import Path, PurePath
 from biobb_common.tools import file_utils as fu
 
