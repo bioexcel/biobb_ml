@@ -1,17 +1,17 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.regression.polynomial_regression import PolynomialRegression
+from biobb_ml.classification.k_neighbors import KNeighborsTrain
 
 
-class TestPolynomialRegression():
+class TestKNeighborsTrain():
     def setUp(self):
-        fx.test_setup(self,'polynomial_regression')
+        fx.test_setup(self,'k_neighbors')
 
     def tearDown(self):
         fx.test_teardown(self)
         pass
 
-    def test_polynomial_regression(self):
-        PolynomialRegression(properties=self.properties, **self.paths).launch()
+    def test_k_neighbors(self):
+        KNeighborsTrain(properties=self.properties, **self.paths).launch()
         assert fx.not_empty(self.paths['output_model_path'])
         assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

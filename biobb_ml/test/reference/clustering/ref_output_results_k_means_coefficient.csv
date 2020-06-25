@@ -1,0 +1,4 @@
+method,coefficient,clusters
+elbow,103.784,3
+gap,-2.405,2
+silhouette,0.444,2
