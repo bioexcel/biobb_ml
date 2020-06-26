@@ -21,7 +21,7 @@ from biobb_ml.neural_networks.common import *
 class AutoencoderNeuralNetwork():
     """Trains and tests a given dataset and save the complete model for an Autoencoder Neural Network.
     Wrapper of the tf.keras.layers.LSTM model
-    Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>'_. 
+    Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_. 
 
     Args:
         input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv.

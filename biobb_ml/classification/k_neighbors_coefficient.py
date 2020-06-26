@@ -17,7 +17,7 @@ from biobb_ml.classification.common import *
 class KNeighborsCoefficient():
     """Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.
     Wrapper of the sklearn.neighbors.KNeighborsClassifier module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv.

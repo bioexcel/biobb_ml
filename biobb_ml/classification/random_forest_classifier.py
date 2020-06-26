@@ -17,7 +17,7 @@ from biobb_ml.classification.common import *
 class RandomForestClassifier():
     """Trains and tests a given dataset and saves the model and scaler for a random forest classifier.
     Wrapper of the sklearn.ensemble.RandomForestClassifier module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_random_forest_classifier.csv>`_. Accepted formats: csv.

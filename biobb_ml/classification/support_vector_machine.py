@@ -17,7 +17,7 @@ from biobb_ml.classification.common import *
 class SupportVectorMachine():
     """Trains and tests a given dataset and saves the model and scaler for a support vector machine.
     Wrapper of the sklearn.svm.SVC module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_support_vector_machine.csv>`_. Accepted formats: csv.

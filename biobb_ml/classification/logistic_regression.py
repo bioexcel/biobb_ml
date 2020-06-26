@@ -18,7 +18,7 @@ from biobb_ml.classification.common import *
 class LogisticRegression():
     """Trains and tests a given dataset and saves the model and scaler for a logistic regression.
     Wrapper of the sklearn.linear_model.LogisticRegression module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_logistic_regression.csv>`_. Accepted formats: csv.

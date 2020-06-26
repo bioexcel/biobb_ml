@@ -19,7 +19,7 @@ from biobb_ml.classification.common import *
 
 class ClassificationPredict():
     """Makes predictions from a given model.
-    Visit the 'sklearn official website <https://scikit-learn.org>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org>`_. 
 
     Args:
         input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/model_classification_predict.pkl>`_. Accepted formats: pkl.

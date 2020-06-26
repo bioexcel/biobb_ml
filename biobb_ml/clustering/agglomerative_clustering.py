@@ -14,7 +14,7 @@ from biobb_ml.clustering.common import *
 class AgglClustering():
     """Clusters a given dataset with agglomerative clustering method.
     Wrapper of the sklearn.cluster.AgglomerativeClustering module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_agglomerative_clustering.csv>`_. Accepted formats: csv.

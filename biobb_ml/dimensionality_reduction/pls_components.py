@@ -19,7 +19,7 @@ from biobb_ml.dimensionality_reduction.common import *
 class PLSComponents():
     """Calculates best components number for a Partial Least Square (PLS) Regression.
     Wrapper of the sklearn.cross_decomposition.PLSRegression module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_components.csv>`_. Accepted formats: csv.

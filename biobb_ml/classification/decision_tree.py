@@ -17,7 +17,7 @@ from biobb_ml.classification.common import *
 class DecisionTree():
     """Trains and tests a given dataset and saves the model and scaler for a decision tree classification.
     Wrapper of the sklearn.model.DecisionTreeClassifier module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.model.DecisionTreeClassifier.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.model.DecisionTreeClassifier.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_decision_tree.csv>`_. Accepted formats: csv.

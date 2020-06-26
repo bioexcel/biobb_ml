@@ -15,7 +15,7 @@ from biobb_ml.dimensionality_reduction.common import *
 class PrincipalComponentAnalysis():
     """Analyses a given dataset through Principal Component Analysis (PCA).
     Wrapper of the sklearn.decomposition.PCA module
-    Visit the 'sklearn official website <https://scikit-learn.org/0.16/modules/generated/sklearn.decomposition.PCA.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/0.16/modules/generated/sklearn.decomposition.PCA.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_principal_component.csv>`_. Accepted formats: csv.

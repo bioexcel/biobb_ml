@@ -21,7 +21,7 @@ sns.set()
 class LinearRegression():
     """Trains and tests a given dataset and saves the model and scaler for a linear regression.
     Wrapper of the sklearn.linear_model.LinearRegression module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_linear_regression.csv>`_. Accepted formats: csv.

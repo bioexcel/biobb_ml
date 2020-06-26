@@ -15,7 +15,7 @@ from biobb_ml.clustering.common import *
 class DBSCANClustering():
     """Clusters a given dataset with DBSCAN clustering method.
     Wrapper of the sklearn.cluster.DBSCAN module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_dbscan.csv>`_. Accepted formats: csv.

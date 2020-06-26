@@ -14,7 +14,7 @@ from biobb_ml.clustering.common import *
 class SpecClustering():
     """Clusters a given dataset with spectral clustering method.
     Wrapper of the sklearn.cluster.SpectralClustering module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_spectral_clustering.csv>`_. Accepted formats: csv.

@@ -21,7 +21,7 @@ sns.set()
 class RandomForestRegressor():
     """Trains and tests a given dataset and saves the model and scaler for a random forest regressor.
     Wrapper of the sklearn.ensemble.RandomForestRegressor module
-    Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>'_. 
+    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_random_forest_regressor.csv>`_. Accepted formats: csv.
