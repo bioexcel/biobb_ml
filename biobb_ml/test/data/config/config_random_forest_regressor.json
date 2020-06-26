@@ -1,0 +1,12 @@
+{
+    "properties": {
+        "independent_vars": [
+            "LSTAT",
+            "RM"
+        ],
+        "target": "MEDV",
+        "n_estimators": 10,
+        "max_depth": 5,
+        "test_size": 0.2
+    }
+}

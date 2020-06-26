@@ -24,10 +24,10 @@ class RegressionNeuralNetwork():
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_model_path (str): Path to the output results file. Accepted formats: csv.
-        output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, MAE and MSE plots. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output results file. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: csv.
+        output_test_table_path (str) (Optional): Path to the test table file. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.

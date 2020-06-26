@@ -17,10 +17,10 @@ class DecodingNeuralNetwork():
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>'_. 
 
     Args:
-        input_decode_path (str): Path to the input decode dataset. Accepted formats: csv.
-        input_model_path (str): Path to the input model. Accepted formats: csv.
-        output_decode_path (str): Path to the output decode file. Accepted formats: csv.
-        output_predict_path (str): Path to the output predict file. Accepted formats: csv.
+        input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_decoder.csv>`_. Accepted formats: csv.
+        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_decoder.h5>`_. Accepted formats: csv.
+        output_decode_path (str): Path to the output decode file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_decode_decoder.csv>`_. Accepted formats: csv.
+        output_predict_path (str): Path to the output predict file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict_decoder.csv>`_. Accepted formats: csv.
         properties (dic):
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.

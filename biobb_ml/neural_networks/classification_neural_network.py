@@ -27,8 +27,8 @@ class ClassificationNeuralNetwork():
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_classification.csv>`_. Accepted formats: csv.
         output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_classification.h5>`_. Accepted formats: h5.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: png.
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_classification.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_classification.png>`_. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.

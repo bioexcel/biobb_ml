@@ -1,0 +1,14 @@
+{
+    "properties": {
+        "predictions": [
+            {
+                "LSTAT": 4.98,
+                "RM": 6.575
+            },
+            {
+                "LSTAT": 9.14,
+                "RM": 6.421
+            }
+        ]
+    }
+}

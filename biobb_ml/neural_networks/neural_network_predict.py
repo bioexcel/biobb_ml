@@ -17,8 +17,8 @@ class PredictNeuralNetwork():
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>'_. 
 
     Args:
-        input_model_path (str): Path to the input model. Accepted formats: csv.
-        output_results_path (str): Path to the output results file. Accepted formats: csv.
+        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: csv.
+        output_results_path (str): Path to the output results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv>`_. Accepted formats: csv.
         properties (dic):
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

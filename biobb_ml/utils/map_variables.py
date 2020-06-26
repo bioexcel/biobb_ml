@@ -11,13 +11,13 @@ from biobb_ml.utils.common import *
 
 
 class MapVariables():
-    """Maps dummy variables from a given dataset.
+    """Maps variables from a given dataset.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_dataset_path (str): Path to the output dataset. Accepted formats: csv.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_map_variables.csv>`_. Accepted formats: csv.
+        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_map_variables.csv>`_. Accepted formats: csv.
         properties (dic):
-            * **columns** (*list*) - ([]) List with all columns you want to map.
+            * **columns** (*list*) - (None) List with all columns you want to map.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -88,7 +88,7 @@ class MapVariables():
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Maps dummy variables from a given dataset.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Maps variables from a given dataset.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

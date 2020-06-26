@@ -1,0 +1,36 @@
+{
+    "properties": {
+        "features": [
+            "CRIM",
+            "ZN",
+            "INDUS",
+            "CHAS",
+            "NOX",
+            "RM",
+            "AGE",
+            "DIS",
+            "RAD",
+            "TAX",
+            "PTRATIO",
+            "B",
+            "LSTAT"
+        ],
+        "target": "MEDV",
+        "validation_size": 0.2,
+        "test_size": 0.33,
+        "hidden_layers": [
+            {
+                "size": 10,
+                "activation": "relu"
+            },
+            {
+                "size": 8,
+                "activation": "relu"
+            }
+        ],
+        "optimizer": "Adam",
+        "learning_rate": 0.01,
+        "batch_size": 32,
+        "max_epochs": 150
+    }
+}

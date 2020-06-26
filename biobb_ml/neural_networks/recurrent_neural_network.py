@@ -24,10 +24,10 @@ class RecurrentNeuralNetwork():
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. Accepted formats: h5.
-        output_test_table_path (str) (Optional): Path to the test table file. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_recurrent.csv>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_recurrent.h5>`_. Accepted formats: h5.
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_recurrent.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_recurrent.png>`_. Accepted formats: png.
         properties (dic):
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.

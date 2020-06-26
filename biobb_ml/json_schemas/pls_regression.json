@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/pls_regression",
+    "title": "Gives results for a Partial Least Square (PLS) Regression.",
+    "type": "object",
+    "required": [
+        "input_dataset_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Table with R2 and MSE for calibration and cross-validation data",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_results_pls_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the R2 cross-validation plot",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_plot_pls_regression.png",
+            "enum": [
+                ".*\\.png$"
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "features": {
+                    "type": "list",
+                    "default": null,
+                    "description": "Features or columns from your dataset you want to use for fitting."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "n_components": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Maximum number of components to use by default for PLS queries."
+                },
+                "cv": {
+                    "type": "number",
+                    "default": 10,
+                    "description": "Specify the number of folds in the cross-validation splitting strategy. Value must be betwwen 2 and number of samples in the dataset."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

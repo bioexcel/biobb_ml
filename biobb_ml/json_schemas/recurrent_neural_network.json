@@ -1,0 +1,124 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/recurrent_neural_network",
+    "title": "Trains and tests a given dataset and save the complete model for a Recurrent Neural Network.",
+    "type": "object",
+    "required": [
+        "input_dataset_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_recurrent.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_recurrent.h5",
+            "enum": [
+                ".*\\.h5$"
+            ]
+        },
+        "output_test_table_path": {
+            "type": "string",
+            "description": "Path to the test table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_recurrent.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Loss, accuracy and MSE plots",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_recurrent.png",
+            "enum": [
+                ".*\\.png$"
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "validation_size": {
+                    "type": "float",
+                    "default": 0.2,
+                    "description": "Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0."
+                },
+                "window_size": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Number of steps for each window of training model."
+                },
+                "test_size": {
+                    "type": "number",
+                    "default": 0.1,
+                    "description": "Represents the number of samples of the dataset to include in the test split."
+                },
+                "hidden_layers": {
+                    "type": "list",
+                    "default": null,
+                    "description": " List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ]."
+                },
+                "optimizer": {
+                    "type": "string",
+                    "default": "Adam",
+                    "description": "Name of optimizer instance.",
+                    "enum": [
+                        "Adadelta",
+                        "Adagrad",
+                        "Adam",
+                        "Adamax",
+                        "Ftrl",
+                        "Nadam",
+                        "RMSprop",
+                        "SGD"
+                    ]
+                },
+                "learning_rate": {
+                    "type": "float",
+                    "default": 0.02,
+                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function"
+                },
+                "batch_size": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of samples per gradient update."
+                },
+                "max_epochs": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum."
+                },
+                "normalize_cm": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether or not to normalize the confusion matrix."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,21 @@
+{
+    "properties": {
+        "independent_vars": [
+            "region",
+            "tenure",
+            "age",
+            "marital",
+            "address",
+            "income",
+            "ed",
+            "employ",
+            "retire",
+            "gender",
+            "reside"
+        ],
+        "target": "custcat",
+        "metric": "minkowski",
+        "max_neighbors": 15,
+        "test_size": 0.2
+    }
+}

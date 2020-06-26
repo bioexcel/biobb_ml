@@ -16,10 +16,10 @@ class PairwiseComparison():
     """Generates a pairwise comparison from a given dataset.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_plot_path (str): Path to the pairwise comparison plot. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_pairwise_comparison.csv>`_. Accepted formats: csv.
+        output_plot_path (str): Path to the pairwise comparison plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_plot_pairwise_comparison.png>`_. Accepted formats: png.
         properties (dic):
-            * **features** (*list*) - ([]) List with all features to compare.
+            * **features** (*list*) - (None) List with all features to compare.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """

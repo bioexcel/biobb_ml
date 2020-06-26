@@ -16,10 +16,10 @@ class CorrelationMatrix():
     """Generates a correlation matrix from a given dataset.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_plot_path (str): Path to the correlation matrix plot. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_correlation_matrix.csv>`_. Accepted formats: csv.
+        output_plot_path (str): Path to the correlation matrix plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_plot_correlation_matrix.png>`_. Accepted formats: png.
         properties (dic):
-            * **features** (*list*) - ([]) List with all features to compare.
+            * **features** (*list*) - (None) List with all features to compare.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """

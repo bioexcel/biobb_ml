@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/autoencoder_neural_network",
+    "title": "Trains and tests a given dataset and save the complete model for an Autoencoder Neural Network.",
+    "type": "object",
+    "required": [
+        "input_decode_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_decode_path": {
+            "type": "string",
+            "description": "Path to the input decode dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "input_predict_path": {
+            "type": "string",
+            "description": "Path to the input predict dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_autoencoder.h5",
+            "enum": [
+                ".*\\.h5$"
+            ]
+        },
+        "output_test_decode_path": {
+            "type": "string",
+            "description": "Path to the test decode table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_decode_autoencoder.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_test_predict_path": {
+            "type": "string",
+            "description": "Path to the test predict table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_predict_autoencoder.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "optimizer": {
+                    "type": "string",
+                    "default": "Adam",
+                    "description": "Name of optimizer instance.",
+                    "enum": [
+                        "Adadelta",
+                        "Adagrad",
+                        "Adam",
+                        "Adamax",
+                        "Ftrl",
+                        "Nadam",
+                        "RMSprop",
+                        "SGD"
+                    ]
+                },
+                "learning_rate": {
+                    "type": "float",
+                    "default": 0.02,
+                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function"
+                },
+                "batch_size": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of samples per gradient update."
+                },
+                "max_epochs": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

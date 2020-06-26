@@ -1,0 +1,51 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/neural_network_predict",
+    "title": "Calculates prediction for a NN classification given a model file.",
+    "type": "object",
+    "required": [
+        "input_model_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_model_path": {
+            "type": "string",
+            "description": "Path to the input model",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Path to the output results file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "predictions": {
+                    "type": "list",
+                    "default": null,
+                    "description": "List of dictionaries with all values you want to predict targets."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

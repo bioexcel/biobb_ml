@@ -1,0 +1,9 @@
+{
+    "properties": {
+        "predictors": [
+            "sepal_length",
+            "sepal_width"
+        ],
+        "max_clusters": 10
+    }
+}

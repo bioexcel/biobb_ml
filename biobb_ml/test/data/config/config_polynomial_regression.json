@@ -1,0 +1,11 @@
+{
+    "properties": {
+        "independent_vars": [
+            "LSTAT",
+            "RM"
+        ],
+        "target": "MEDV",
+        "degree": 2,
+        "test_size": 0.2
+    }
+}

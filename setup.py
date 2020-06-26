@@ -18,7 +18,7 @@ setuptools.setup(
         "Bioexcel": "https://bioexcel.eu/"
     },
     packages=setuptools.find_packages(exclude=['docs', 'test']),
-    install_requires=['biobb_common==3.0.0'],
+    install_requires=['biobb_common==3.0.0', 'scikit-learn ==0.22.2.post1', 'pandas ==1.0.3', 'matplotlib ==3.2.1', 'seaborn ==0.10.1', 'tensorflow ==2.1.0', 'h5py ==v2.10.0'],
     python_requires='==3.7.*',
     classifiers=(
         "Development Status :: 3 - Alpha",

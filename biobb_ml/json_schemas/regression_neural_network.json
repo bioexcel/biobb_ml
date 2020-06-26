@@ -1,0 +1,130 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/regression_neural_network",
+    "title": "Trains and tests a given dataset and save the complete model for a Neural Network Regression.",
+    "type": "object",
+    "required": [
+        "input_dataset_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output results file",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_test_table_path": {
+            "type": "string",
+            "description": "Path to the test table file",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Loss, MAE and MSE plots",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png",
+            "enum": [
+                ".*\\.png$"
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "features": {
+                    "type": "list",
+                    "default": null,
+                    "description": "Independent variables or columns from your dataset you want to train."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "validation_size": {
+                    "type": "float",
+                    "default": 0.2,
+                    "description": "Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0."
+                },
+                "test_size": {
+                    "type": "float",
+                    "default": 0.1,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0."
+                },
+                "hidden_layers": {
+                    "type": "list",
+                    "default": null,
+                    "description": " List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ]."
+                },
+                "output_layer_activation": {
+                    "type": "string",
+                    "default": "softmax",
+                    "description": "Activation function to use in the output layer.",
+                    "enum": [
+                        "sigmoid",
+                        "tanh",
+                        "relu",
+                        "softmax"
+                    ]
+                },
+                "optimizer": {
+                    "type": "string",
+                    "default": "Adam",
+                    "description": "Name of optimizer instance.",
+                    "enum": [
+                        "Adadelta",
+                        "Adagrad",
+                        "Adam",
+                        "Adamax",
+                        "Ftrl",
+                        "Nadam",
+                        "RMSprop",
+                        "SGD"
+                    ]
+                },
+                "learning_rate": {
+                    "type": "float",
+                    "default": 0.02,
+                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function"
+                },
+                "batch_size": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of samples per gradient update."
+                },
+                "max_epochs": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

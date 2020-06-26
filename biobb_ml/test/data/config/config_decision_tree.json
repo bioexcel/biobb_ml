@@ -1,0 +1,16 @@
+{
+    "properties": {
+        "independent_vars": [
+            "duration",
+            "interest_rate",
+            "march",
+            "credit",
+            "previous"
+        ],
+        "target": "y",
+        "criterion": "entropy",
+        "max_depth": 4,
+        "normalize_cm": false,
+        "test_size": 0.2
+    }
+}

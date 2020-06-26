@@ -1,0 +1,27 @@
+{
+    "properties": {
+        "predictions": [
+            {
+                "duration": 117.0,
+                "interest_rate": 1.334,
+                "march": 1.0,
+                "credit": 0.0,
+                "previous": 0.0
+            },
+            {
+                "duration": 274.0,
+                "interest_rate": 0.767,
+                "march": 0.0,
+                "credit": 0.0,
+                "previous": 1.0
+            },
+            {
+                "duration": 167.0,
+                "interest_rate": 4.858,
+                "march": 1.0,
+                "credit": 0.0,
+                "previous": 0.0
+            }
+        ]
+    }
+}
