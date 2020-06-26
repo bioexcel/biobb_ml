@@ -418,6 +418,8 @@ classification_neural_network:
     input_dataset_path: file:test_data_dir/neural_networks/dataset_classification.csv
     output_model_path: output_model.h5
     ref_output_model_path: file:test_reference_dir/neural_networks/ref_output_model_classification.h5
+    output_test_table_path: output_test.csv
+    ref_output_test_table_path: file:test_reference_dir/neural_networks/ref_output_test_classification.csv
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_classification.png
   properties:

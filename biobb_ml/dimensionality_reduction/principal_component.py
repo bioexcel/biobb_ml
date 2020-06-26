@@ -18,9 +18,9 @@ class PrincipalComponentAnalysis():
     Visit the 'sklearn official website <https://scikit-learn.org/0.16/modules/generated/sklearn.decomposition.PCA.html>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the analysed dataset. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the Principal Component plot, only if number of components is 2 or 3. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_principal_component.csv>`_. Accepted formats: csv.
+        output_results_path (str): Path to the analysed dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_results_principal_component.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Path to the Principal Component plot, only if number of components is 2 or 3. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_plot_principal_component.png>`_. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.

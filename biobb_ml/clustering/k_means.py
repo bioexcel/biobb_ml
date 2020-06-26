@@ -18,10 +18,10 @@ class KMeansClustering():
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the clustered dataset. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. Accepted formats: pkl.
-        output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_k_means.csv>`_. Accepted formats: csv.
+        output_results_path (str): Path to the clustered dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_k_means.csv>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_model_k_means.pkl>`_. Accepted formats: pkl.
+        output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_k_means.png>`_. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.

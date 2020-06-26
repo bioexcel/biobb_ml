@@ -22,9 +22,9 @@ class PLSComponents():
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Table with R2 and MSE for calibration and cross-validation data for the best number of components. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the Mean Square Error plot. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_components.csv>`_. Accepted formats: csv.
+        output_results_path (str): Table with R2 and MSE for calibration and cross-validation data for the best number of components. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_results_pls_components.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Path to the Mean Square Error plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_plot_pls_components.png>`_. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.

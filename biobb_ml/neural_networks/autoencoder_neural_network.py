@@ -24,11 +24,11 @@ class AutoencoderNeuralNetwork():
     Visit the 'TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>'_. 
 
     Args:
-        input_decode_path (str): Path to the input decode dataset. Accepted formats: csv.
-        input_predict_path (str) (Optional): Path to the input predict dataset. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. Accepted formats: h5.
-        output_test_decode_path (str) (Optional): Path to the test decode table file. Accepted formats: csv.
-        output_test_predict_path (str) (Optional): Path to the test predict table file. Accepted formats: csv.
+        input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv.
+        input_predict_path (str) (Optional): Path to the input predict dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_predict.csv>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_autoencoder.h5>`_. Accepted formats: h5.
+        output_test_decode_path (str) (Optional): Path to the test decode table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_decode_autoencoder.csv>`_. Accepted formats: csv.
+        output_test_predict_path (str) (Optional): Path to the test predict table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_predict_autoencoder.csv>`_. Accepted formats: csv.
         properties (dic):
             * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
             * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function

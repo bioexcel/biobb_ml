@@ -20,9 +20,9 @@ class KNeighborsCoefficient():
     Visit the 'sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>'_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. Accepted formats: csv.
-        output_results_path (str): Path to the accuracy values list. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the accuracy plot. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv.
+        output_results_path (str): Path to the accuracy values list. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Path to the accuracy plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors_coefficient.png>`_. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
