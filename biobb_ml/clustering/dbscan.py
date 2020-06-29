@@ -20,7 +20,7 @@ class DBSCANClustering():
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_dbscan.csv>`_. Accepted formats: csv.
         output_results_path (str): Path to the clustered dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_dbscan.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_dbscan.png>`_. Accepted formats: png.
+        output_plot_path (str) (Optional): Path to the clustering plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_dbscan.png>`_. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **eps** (*float*) - (0.5) The maximum distance between two samples for one to be considered as in the neighborhood of the other.
@@ -147,7 +147,7 @@ def main():
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the clustered dataset. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Path to the elbow and gap methods plot. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the clustering plot. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"

@@ -21,14 +21,14 @@ class RandomForestClassifier():
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_random_forest_classifier.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_random_forest_classifier.pkl>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_random_forest_classifier.pkl>`_. Accepted formats: csv.
         output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_random_forest_classifier.csv>`_. Accepted formats: csv.
         output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_random_forest_classifier.png>`_. Accepted formats: png.
         properties (dic):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **n_estimators** (*int*) - (100) The number of trees in the forest.
-            * **bootstrap** (*bool*) - (True) Whether bootstrap samples are used when building trees. If False, the whole datset is used to build each tree.
+            * **bootstrap** (*bool*) - (True) Whether bootstrap samples are used when building trees. If False, the whole dataset is used to build each tree.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -201,7 +201,7 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: pkl.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
     parser.add_argument('--output_plot_path', required=False, help='Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. Accepted formats: png.')
 

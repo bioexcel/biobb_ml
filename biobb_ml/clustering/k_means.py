@@ -13,7 +13,7 @@ from biobb_ml.clustering.common import *
 
 
 class KMeansClustering():
-    """Clusters a given dataset with k-means clustering method.
+    """Clusters a given dataset and saves a model with k-means clustering method.
     Wrapper of the sklearn.cluster.KMeans module
     Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>`_. 
 
@@ -21,7 +21,7 @@ class KMeansClustering():
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_k_means.csv>`_. Accepted formats: csv.
         output_results_path (str): Path to the clustered dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_k_means.csv>`_. Accepted formats: csv.
         output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_model_k_means.pkl>`_. Accepted formats: pkl.
-        output_plot_path (str) (Optional): Path to the elbow method and gap statistics plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_k_means.png>`_. Accepted formats: png.
+        output_plot_path (str) (Optional): Path to the clustering plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_k_means.png>`_. Accepted formats: png.
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.
@@ -141,7 +141,7 @@ class KMeansClustering():
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Clusters a given dataset with k-means clustering method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Clusters a given dataset and saves a model with k-means clustering method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -149,7 +149,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the clustered dataset. Accepted formats: csv.')
     required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: pkl.')
-    parser.add_argument('--output_plot_path', required=False, help='Path to the elbow and gap methods plot. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Path to the clustering plot. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
