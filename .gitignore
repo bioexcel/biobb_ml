@@ -113,8 +113,8 @@ traj_comp.xtc
 .ipynb_checkpoints
 
 # jupyter docs
-biobb_analysis/docs/jupyter/data
-biobb_analysis/docs/jupyter/log.*
-biobb_analysis/docs/jupyter/*.xpm
-biobb_analysis/docs/jupyter/*.xvg
-biobb_analysis/docs/jupyter/.ipynb_checkpoints/
+biobb_ml/docs/jupyter/data
+biobb_ml/docs/jupyter/log.*
+biobb_ml/docs/jupyter/*.xpm
+biobb_ml/docs/jupyter/*.xvg
+biobb_ml/docs/jupyter/.ipynb_checkpoints/
