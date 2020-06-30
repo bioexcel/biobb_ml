@@ -17,7 +17,7 @@ class PredictNeuralNetwork():
     Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>`_. 
 
     Args:
-        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: csv.
+        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: h5.
         output_results_path (str): Path to the output results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv>`_. Accepted formats: csv.
         properties (dic):
             * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
@@ -135,7 +135,7 @@ def main():
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: csv.')
+    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: h5.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
 
     args = parser.parse_args()

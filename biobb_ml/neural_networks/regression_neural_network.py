@@ -25,7 +25,7 @@ class RegressionNeuralNetwork():
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output results file. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: csv.
+        output_model_path (str): Path to the output model file. File type: input. `Sample file <http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: h5.
         output_test_table_path (str) (Optional): Path to the test table file. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
         output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
         properties (dic):
@@ -251,8 +251,8 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
-    parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: csv.')
+    parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: h5.')
     parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
 
     args = parser.parse_args()

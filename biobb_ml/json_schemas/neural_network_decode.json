@@ -25,7 +25,7 @@
             "filetype": "input",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_decoder.h5",
             "enum": [
-                ".*\\.csv$"
+                ".*\\.h5$"
             ]
         },
         "output_decode_path": {

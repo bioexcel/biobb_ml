@@ -18,7 +18,7 @@ class DecodingNeuralNetwork():
 
     Args:
         input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_decoder.csv>`_. Accepted formats: csv.
-        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_decoder.h5>`_. Accepted formats: csv.
+        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_decoder.h5>`_. Accepted formats: h5.
         output_decode_path (str): Path to the output decode file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_decode_decoder.csv>`_. Accepted formats: csv.
         output_predict_path (str): Path to the output predict file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict_decoder.csv>`_. Accepted formats: csv.
         properties (dic):
@@ -133,7 +133,7 @@ def main():
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_decode_path', required=True, help='Path to the input decode dataset. Accepted formats: csv.')
-    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: csv.')
+    required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: h5.')
     required_args.add_argument('--output_decode_path', required=True, help='Path to the output decode file. Accepted formats: csv.')
     parser.add_argument('--output_predict_path', required=False, help='Path to the output predict file. Accepted formats: csv.')
 

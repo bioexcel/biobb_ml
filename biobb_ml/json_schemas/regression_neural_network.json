@@ -19,11 +19,11 @@
         },
         "output_model_path": {
             "type": "string",
-            "description": "Path to the output results file",
+            "description": "Path to the output model file",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5",
+            "sample": "http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5",
             "enum": [
-                ".*\\.csv$"
+                ".*\\.h5$"
             ]
         },
         "output_test_table_path": {

@@ -19,7 +19,7 @@
         },
         "output_model_path": {
             "type": "string",
-            "description": "Path to the output results file",
+            "description": "Path to the output model file",
             "filetype": "output",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_random_forest_classifier.pkl",
             "enum": [
@@ -65,7 +65,7 @@
                 "bootstrap": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Whether bootstrap samples are used when building trees. If False, the whole datset is used to build each tree."
+                    "description": "Whether bootstrap samples are used when building trees. If False, the whole dataset is used to build each tree."
                 },
                 "normalize_cm": {
                     "type": "boolean",

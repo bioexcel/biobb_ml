@@ -28,7 +28,7 @@
         },
         "output_plot_path": {
             "type": "string",
-            "description": "Path to the elbow method and gap statistics plot",
+            "description": "Path to the clustering plot",
             "filetype": "output",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_agglomerative_clustering.png",
             "enum": [
