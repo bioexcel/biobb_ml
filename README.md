@@ -12,14 +12,14 @@ The latest documentation of this package can be found in our readthedocs site:
 [latest API documentation](http://biobb_ml.readthedocs.io/en/latest/).
 
 ### Version
-v3.0.0 2020.2
+v3.0.1 2020.2
 
 ### Installation
 Using PIP:
 * Installation:
 
 
-        pip install "biobb_ml>=3.0.0"
+        pip install "biobb_ml>=3.0.1"
 
 
 * Usage: [Python API documentation](https://biobb-ml.readthedocs.io/en/latest/modules.html)
@@ -29,7 +29,7 @@ Using ANACONDA:
 * Installation:
 
 
-        conda install -c bioconda "biobb_ml>=3.0.0"
+        conda install -c bioconda "biobb_ml>=3.0.1"
 
 
 * Usage: With conda installation BioBBs can be used with the [Python API documentation](https://biobb-ml.readthedocs.io/en/latest/modules.html) and the [Command Line documentation](https://biobb-ml.readthedocs.io/en/latest/command_line.html)
@@ -39,13 +39,13 @@ Using DOCKER:
 * Installation:
 
 
-        docker pull quay.io/biocontainers/biobb_ml:3.0.0--py_0
+        docker pull quay.io/biocontainers/biobb_ml:3.0.1--py_0
 
 
 * Usage:
 
 
-        docker run quay.io/biocontainers/biobb_ml:3.0.0--py_0 <command>
+        docker run quay.io/biocontainers/biobb_ml:3.0.1--py_0 <command>
 
 
 Using SINGULARITY:
