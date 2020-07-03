@@ -1,4 +1,4 @@
-biobb_analysis
+biobb_ml
 ==============
 
 .. toctree::
