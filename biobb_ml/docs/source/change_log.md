@@ -1,5 +1,15 @@
 # Biobb Machine Learning changelog
 
+## What's new in version [3.0.1](https://github.com/bioexcel/biobb_ml/releases/tag/v3.0.1)?
+In version 3.0.1 TensorFlow, scikit-learn and pandas have been updated and fixed to the latest version of July 2020. Finally a new conda installation recipe has been introduced.
+
+### New features
+
+* Update to TensorFlow 2.2.0 (neural networks module)
+* Update to scikit-learn 0.23.1 (classification, clustering, dimensionality_reduction and regression modules)
+* Update to pandas 1.0.5 (general)
+* New conda installer (installation)
+
 ## What's new in version [3.0.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.0.0)?
 In version 3.0.0 Python has been updated to version 3.7. Big changes in the documentation style and content. Finally a new conda installation recipe has been introduced.
 

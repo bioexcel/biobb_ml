@@ -3,9 +3,9 @@
     "desc": "Biobb_ml is the Biobb module collection to perform machine learning predictions.",
     "github": "https://github.com/bioexcel/biobb_ml",
     "readthedocs": "https://biobb-ml.readthedocs.io/en/latest/",
-    "conda": "",
-    "docker": "",
-    "singularity": "",
+    "conda": "https://anaconda.org/bioconda/biobb_ml",
+    "docker": "https://quay.io/repository/biocontainers/biobb_ml",
+    "singularity": "https://singularity-hub.org/collections/4574",
     "version": "3.0.1",
     "tools" : [
         {
@@ -241,17 +241,17 @@
         }
     ],
     "dep_pypi" : [
-        "install_requires=['biobb_common==3.0.0', 'scikit-learn==0.22.2.post1', 'pandas==1.0.3', 'seaborn==0.10.1', 'tensorflow==2.1.0', 'h5py==v2.10.0']", 
+        "install_requires=['biobb_common==3.0.0', 'scikit-learn==0.23.1', 'pandas==1.0.5', 'seaborn==0.10.1', 'tensorflow==2.2.0', 'h5py==2.10.0']", 
         "python_requires='==3.7.*'"
     ], 
     "dep_conda" : [
         "python ==3.7.*", 
         "biobb_common ==3.0.0", 
-        "scikit-learn ==0.22.2.post1",
-        "pandas ==1.0.3",
+        "scikit-learn ==0.23.1",
+        "pandas ==1.0.5",
         "seaborn ==0.10.1",
-        "tensorflow ==2.1.0",
-        "h5py ==v2.10.0"
+        "tensorflow ==2.2.0",
+        "h5py ==2.10.0"
     ],
     "keywords" : [
         "machine learning", 

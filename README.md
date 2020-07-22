@@ -7,7 +7,7 @@
 # biobb_ml
 
 ### Introduction
-Biobb_ml is the Biobb module collection to perform machine learning predictions..
+Biobb_ml is the Biobb module collection to perform machine learning predictions.
 Biobb (BioExcel building blocks) packages are Python building blocks that
 create new layer of compatibility and interoperability over popular
 bioinformatics tools.
@@ -42,13 +42,13 @@ Using DOCKER:
 * Installation:
 
 
-        docker pull quay.io/biocontainers/biobb_ml:3.0.1--py_0
+        docker pull quay.io/biocontainers/biobb_ml:3.0.1--py_3
 
 
 * Usage:
 
 
-        docker run quay.io/biocontainers/biobb_ml:3.0.1--py_0 <command>
+        docker run quay.io/biocontainers/biobb_ml:3.0.1--py_3 <command>
 
 
 Using SINGULARITY:
