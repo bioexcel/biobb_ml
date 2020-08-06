@@ -20,7 +20,7 @@
         "output_model_path": {
             "type": "string",
             "description": "Path to the output model file",
-            "filetype": "input",
+            "filetype": "output",
             "sample": "http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5",
             "enum": [
                 ".*\\.h5$"
@@ -29,7 +29,7 @@
         "output_test_table_path": {
             "type": "string",
             "description": "Path to the test table file",
-            "filetype": "input",
+            "filetype": "output",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv",
             "enum": [
                 ".*\\.csv$"
@@ -38,7 +38,7 @@
         "output_plot_path": {
             "type": "string",
             "description": "Loss, MAE and MSE plots",
-            "filetype": "input",
+            "filetype": "output",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png",
             "enum": [
                 ".*\\.png$"

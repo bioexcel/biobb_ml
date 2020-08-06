@@ -23,7 +23,7 @@
             "filetype": "output",
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_random_forest_classifier.pkl",
             "enum": [
-                ".*\\.csv$"
+                ".*\\.pkl$"
             ]
         },
         "output_test_table_path": {

@@ -25,9 +25,9 @@ class RegressionNeuralNetwork():
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: input. `Sample file <http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: h5.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: h5.
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
+        output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
         properties (dic):
             * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
