@@ -23,6 +23,7 @@ class AgglClustering():
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **clusters** (*int*) - (3) The number of clusters to form as well as the number of centroids to generate.
+            * **affinity** (*str*) - ("euclidean") Metric used to compute the linkage. If linkage is "ward", only "euclidean" is accepted. Values: euclidean, l1, l2, manhattan, cosine, precomputed.
             * **linkage** (*int*) - ("ward") The linkage criterion determines which distance to use between sets of observation. The algorithm will merge the pairs of cluster that minimize this criterion. Values: ward, complete, average, single.
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -42,6 +43,7 @@ class AgglClustering():
         # Properties specific for BB
         self.predictors = properties.get('predictors', [])
         self.clusters = properties.get('clusters', 3)
+        self.affinity = properties.get('affinity', 'euclidean')
         self.linkage = properties.get('linkage', 'ward')
         self.plots = properties.get('plots', [])
         self.properties = properties
@@ -98,7 +100,7 @@ class AgglClustering():
         t_predictors = scaler.fit_transform(predictors)
 
         # create an agglomerative clustering object with self.clusters clusters
-        model = AgglomerativeClustering(n_clusters = self.clusters, linkage = self.linkage)
+        model = AgglomerativeClustering(n_clusters = self.clusters, affinity=self.affinity, linkage = self.linkage)
         # fit the data
         model.fit(t_predictors)
 

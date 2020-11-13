@@ -41,8 +41,10 @@ random_forest_regressor:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_random_forest_regressor.png
   properties:
-    independent_vars: ['LSTAT','RM']
-    target: 'MEDV'
+    independent_vars: 
+      columns: [LSTAT,RM]
+    target: 
+      column: MEDV
     n_estimators: 10
     max_depth: 5
     test_size: 0.2

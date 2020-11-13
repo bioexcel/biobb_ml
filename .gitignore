@@ -21,6 +21,7 @@ lib/
 lib64/
 parts/
 sdist/
+test_tutorials/
 var/
 *.egg-info/
 .installed.cfg
@@ -118,3 +119,13 @@ biobb_ml/docs/jupyter/log.*
 biobb_ml/docs/jupyter/*.xpm
 biobb_ml/docs/jupyter/*.xvg
 biobb_ml/docs/jupyter/.ipynb_checkpoints/
+
+# test tools
+confusion_matrix.py
+random_forest_regressor_binding.py
+regression_binding_predict.py
+protein_dna_binding.py
+undersampling_binding.py
+
+
+*.bk

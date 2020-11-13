@@ -25,6 +25,7 @@ class DBSCANClustering():
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **eps** (*float*) - (0.5) The maximum distance between two samples for one to be considered as in the neighborhood of the other.
             * **min_samples** (*int*) - (5) The number of samples (or total weight) in a neighborhood for a point to be considered as a core point. This includes the point itself.
+            * **metric** (*str*) - ("euclidean") The metric to use when calculating distance between instances in a feature array. Values: cityblock, cosine, euclidean, l1, l2, manhattan, braycurtis, canberra, chebyshev, correlation, dice, hamming, jaccard, kulsinski, mahalanobis, minkowski, rogerstanimoto, russellrao, seuclidean, sokalmichener, sokalsneath, sqeuclidean, yule.
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -44,6 +45,7 @@ class DBSCANClustering():
         self.predictors = properties.get('predictors', [])
         self.eps = properties.get('eps', .5)
         self.min_samples = properties.get('min_samples', 5)
+        self.metric = properties.get('metric', 'euclidean')
         self.plots = properties.get('plots', [])
         self.properties = properties
 
@@ -99,7 +101,7 @@ class DBSCANClustering():
         t_predictors = scaler.fit_transform(predictors)
 
         # create a DBSCAN object with self.clusters clusters
-        model = DBSCAN(eps=self.eps, min_samples=self.min_samples)
+        model = DBSCAN(eps=self.eps, min_samples=self.min_samples, metric=self.metric)
         # fit the data
         model.fit(t_predictors)
 

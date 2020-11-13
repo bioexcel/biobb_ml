@@ -45,7 +45,7 @@
         },
         {
             "block" : "KNeighborsCoefficient", 
-            "tool" : "sklearn.linear_model.LinearRegression", 
+            "tool" : "sklearn.neighbors.KNeighborsClassifier", 
             "desc" : "Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.",
             "exec" : "k_neighbors_coefficient",
             "docs": "https://biobb-ml.readthedocs.io/en/latest/classification.html#module-classification.k_neighbors_coefficient"
@@ -158,14 +158,14 @@
         {
             "block" : "DummyVariables", 
             "tool" : "In house", 
-            "desc" : "Maps dummy variables from a given dataset.",
+            "desc" : "Converts categorical variables into dummy/indicator variables.",
             "exec" : "dummy_variables",
             "docs": "https://biobb-ml.readthedocs.io/en/latest/utils.html#module-utils.dummy_variables"
         },
         {
             "block" : "MapVariables", 
             "tool" : "In house", 
-            "desc" : "Maps dummy variables from a given dataset.",
+            "desc" : "Maps variables from a given dataset.",
             "exec" : "map_variables",
             "docs": "https://biobb-ml.readthedocs.io/en/latest/utils.html#module-utils.map_variables"
         },
@@ -241,7 +241,7 @@
         }
     ],
     "dep_pypi" : [
-        "install_requires=['biobb_common==3.0.1', 'scikit-learn ==0.23.1', 'pandas ==1.0.5', 'seaborn ==0.10.1', 'tensorflow ==2.2.0', 'h5py ==2.10.0']", 
+        "install_requires=['biobb_common==3.0.1', 'scikit-learn ==0.23.1', 'pandas ==1.0.5', 'seaborn ==0.10.1', 'tensorflow ==2.2.0', 'h5py ==2.10.0', 'imbalanced-learn ==0.7.0']", 
         "python_requires='==3.7.*'"
     ], 
     "dep_conda" : [
@@ -251,7 +251,8 @@
         "pandas ==1.0.5",
         "seaborn ==0.10.1",
         "tensorflow ==2.2.0",
-        "h5py ==2.10.0"
+        "h5py ==2.10.0",
+        "imbalanced-learn ==0.7.0"
     ],
     "keywords" : [
         "machine learning", 

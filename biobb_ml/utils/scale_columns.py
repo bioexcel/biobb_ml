@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 
-"""Module containing the MapVariables class and the command line interface."""
+"""Module containing the ScaleColumns class and the command line interface."""
 import argparse
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.utils.common import *
 
-
-class MapVariables():
-    """ Maps the values of a given dataset according to input correspondence, substituting each value in a series with another value, which may be derived from a function, a dictionary, or another series.
+class ScaleColumns():
+    """Scales columns from a given dataset
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_map_variables.csv>`_. Accepted formats: csv.
-        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_map_variables.csv>`_. Accepted formats: csv.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <>`_. Accepted formats: csv.
+        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <>`_. Accepted formats: csv.
         properties (dic):
-            * **columns** (*list*) - (None) List with all columns you want to map. If None given, all the columns will be taken.
+            * **columns** (*list*) - (None)  List of columns to drop from input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
-    def __init__(self, input_dataset_path,
+    def __init__(self, input_dataset_path, 
                  output_dataset_path, properties=None, **kwargs) -> None:
         properties = properties or {}
 
@@ -33,7 +33,7 @@ class MapVariables():
         }
 
         # Properties specific for BB
-        self.columns = properties.get('columns', None)
+        self.columns = properties.get('columns', [])
         self.properties = properties
 
         # Properties common in all BB
@@ -50,9 +50,10 @@ class MapVariables():
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"],"output_dataset_path", False, out_log, self.__class__.__name__)
 
+
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the MapVariables module."""
+        """Launches the execution of the ScaleColumns module."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -72,26 +73,30 @@ class MapVariables():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        if all(isinstance(n, str) for n in self.columns):
+            header = 0
+        else:
+            header = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
 
-        # map variables
-        fu.log('Mapping variables', out_log, self.global_log)
-        # if None given, map all the columns
-        if not self.columns:
-            self.columns = list(data)
-        for c in self.columns:
-            lst = data[c].unique().tolist()
-            dct = {lst[i]: i for i in range(0, len(lst))} 
-            data[c] = data[c].map(dct)
+        fu.log('Scaling [%s] columns from dataset' % ', '.join(self.columns), out_log, self.global_log)
+        df_scaled = (data[self.columns])
 
-        # save to csv
-        fu.log('Saving results to %s\n' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
-        data.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=True, float_format='%.3f')
+        scaler = MinMaxScaler()
+
+        df_scaled = pd.DataFrame(scaler.fit_transform(df_scaled))
+
+        data[self.columns] = df_scaled
+
+        hdr = False
+        if header == 0: hdr = True
+        fu.log('Saving dataset to %s' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
+        data.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
 
         return 0
 
 def main():
-    parser = argparse.ArgumentParser(description="Maps variables from a given dataset.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Scales columns from a given dataset", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -104,7 +109,7 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    MapVariables(input_dataset_path=args.input_dataset_path,
+    ScaleColumns(input_dataset_path=args.input_dataset_path,
                    output_dataset_path=args.output_dataset_path,
                    properties=properties).launch()
 

@@ -123,7 +123,7 @@ class RegressionNeuralNetwork():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], sep="\s+|;|:|,|\t",engine="python")
 
         targets = data[self.target].to_numpy()
         # the inputs are all the independent variables
@@ -139,11 +139,11 @@ class RegressionNeuralNetwork():
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
+        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
         
         # scale dataset
         fu.log('Scaling dataset', out_log, self.global_log)
-        X_train = scale(x_train)
+        X_train = scale(X_train)
 
         # build model
         fu.log('Building model', out_log, self.global_log)
@@ -181,7 +181,7 @@ class RegressionNeuralNetwork():
         # predict data from X_train
         train_predictions = model.predict(X_train)
         train_predictions = np.around(train_predictions, decimals=2)        
-        train_score = r2_score(train_predictions, y_train)
+        train_score = r2_score(y_train, train_predictions)
 
         train_metrics = pd.DataFrame()
         train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
@@ -190,7 +190,7 @@ class RegressionNeuralNetwork():
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
         # testing
-        X_test = scale(x_test)
+        X_test = scale(X_test)
         fu.log('Testing model', out_log, self.global_log)
         test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
 
@@ -198,7 +198,7 @@ class RegressionNeuralNetwork():
         test_predictions = model.predict(X_test)
         test_predictions = np.around(test_predictions, decimals=2)        
         tpr = np.squeeze(np.asarray(test_predictions))
-        score = r2_score(test_predictions, y_test)
+        score = r2_score(y_test, test_predictions)
 
         test_metrics = pd.DataFrame()
         test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']

@@ -1,5 +1,7 @@
 """ Common functions for package biobb_analysis.ambertools """
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from pathlib import Path, PurePath
 from biobb_common.tools import file_utils as fu
 
@@ -110,3 +112,36 @@ def plotResults(y_train, y_hat_train, y_test, y_hat_test):
     plt.tight_layout()
     
     return plt
+
+def getIndependentVars(independent_vars, data, out_log, classname):
+	if 'indexes' in independent_vars:
+		return data.iloc[:, independent_vars['indexes']]
+	elif 'range' in independent_vars:
+		ranges_list = []
+		for rng in independent_vars['range']:
+			for x in range (rng[0], (rng[1] + 1)):
+				ranges_list.append(x)
+		return data.iloc[:, ranges_list]
+	elif 'columns' in independent_vars:
+		return data.loc[:, independent_vars['columns']]
+	else:
+		fu.log(classname + ': Incorrect independent_vars format', out_log)
+		raise SystemExit(classname + ': Incorrect independent_vars format')
+
+def getTarget(target, data, out_log, classname):
+	if 'index' in target:
+		return data.iloc[:, target['index']]
+	elif 'column' in target:
+		return data[target['column']]
+	else:
+		fu.log(classname + ': Incorrect target format', out_log)
+		raise SystemExit(classname + ': Incorrect target format')
+
+def getWeight(weight, data, out_log, classname):
+	if 'index' in weight:
+		return data.iloc[:, weight['index']]
+	elif 'column' in weight:
+		return data[weight['column']]
+	else:
+		fu.log(classname + ': Incorrect weight format', out_log)
+		raise SystemExit(classname + ': Incorrect weight format')

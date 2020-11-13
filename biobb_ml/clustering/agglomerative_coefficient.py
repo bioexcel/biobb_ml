@@ -23,6 +23,8 @@ class AgglomerativeCoefficient():
         properties (dic):
             * **predictors** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
             * **max_clusters** (*int*) - (6) Maximum number of clusters to use by default for kmeans queries.
+            * **affinity** (*str*) - ("euclidean") Metric used to compute the linkage. If linkage is "ward", only "euclidean" is accepted. Values: euclidean, l1, l2, manhattan, cosine, precomputed.
+            * **linkage** (*int*) - ("ward") The linkage criterion determines which distance to use between sets of observation. The algorithm will merge the pairs of cluster that minimize this criterion. Values: ward, complete, average, single.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
@@ -40,6 +42,8 @@ class AgglomerativeCoefficient():
         # Properties specific for BB
         self.predictors = properties.get('predictors', [])
         self.max_clusters = properties.get('max_clusters', 6)
+        self.affinity = properties.get('affinity', 'euclidean')
+        self.linkage = properties.get('linkage', 'ward')
         self.properties = properties
 
         # Properties common in all BB
@@ -94,7 +98,7 @@ class AgglomerativeCoefficient():
         t_predictors = scaler.fit_transform(predictors)
 
         # calculate silhouette
-        silhouette_list, s_list = getSilhouetthe('agglomerative', t_predictors, self.max_clusters)
+        silhouette_list, s_list = getSilhouetthe('agglomerative', t_predictors, self.max_clusters, self.affinity, self.linkage)
 
         # silhouette table
         silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})

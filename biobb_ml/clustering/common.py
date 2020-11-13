@@ -179,7 +179,7 @@ def getGap(method, data, nrefs=3, maxClusters=15):
 
     return (gaps.argmax() + 1, resultsdf)  # Plus 1 because index of 0 means 1 cluster is optimal, index 2 = 3 clusters are optimal
 
-def getSilhouetthe(method, X, max_clusters):
+def getSilhouetthe(method, X, max_clusters, affinity, linkage):
     # Run clustering with different k and check the metrics
     silhouette_list = []
 
@@ -187,7 +187,7 @@ def getSilhouetthe(method, X, max_clusters):
     for p in k_list:
 
         if method == 'kmeans': clusterer = KMeans(p)
-        elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=p, linkage="average")
+        elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=p, affinity=affinity, linkage=linkage)
         elif method == 'spectral': clusterer = SpectralClustering(n_clusters=p, affinity = "nearest_neighbors")
 
         clusterer.fit(X)

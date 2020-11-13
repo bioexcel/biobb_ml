@@ -11,13 +11,13 @@ from biobb_ml.utils.common import *
 
 
 class DummyVariables():
-    """Maps dummy variables from a given dataset.
+    """Converts categorical variables into dummy/indicator variables (binaries).
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_dummy_variables.csv>`_. Accepted formats: csv.
-        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_map_variables.csv>`_. Accepted formats: csv.
+        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_dummy_variables.csv>`_. Accepted formats: csv.
         properties (dic):
-            * **columns** (*list*) - (None) List with all columns you want to map.
+            * **columns** (*list*) - (None) List with all columns you want to map. If None given, all the columns will be taken.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
