@@ -7,6 +7,7 @@ biobb_ml
    regression
    classification
    clustering
+   resampling
    utils
    neural_networks
    dimensionality_reduction
