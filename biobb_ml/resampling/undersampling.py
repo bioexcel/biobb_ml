@@ -4,24 +4,24 @@
 import argparse
 import pandas as pd
 import numpy as np
+from collections import Counter
 from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
-from imblearn.pipeline import Pipeline
-from biobb_ml.utils.resampler import resampler
+#from sklearn.utils.class_weight import compute_class_weight
+from biobb_ml.resampling.reg_resampler import resampler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
-from biobb_ml.utils.common import *
-import warnings
+from biobb_ml.resampling.common import *
 
 
 class Undersampling():
     """Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model.
     Wrapper of most of the imblearn.under_sampling methods
-    Visit the imbalanced-learn official website for the different methos accepted in this wrapper: 
+    Visit the imbalanced-learn official website for the different methods accepted in this wrapper: 
     `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_
     `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_
     `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_
@@ -38,8 +38,13 @@ class Undersampling():
             * **method** (*str*) - (None) Undersampling method. It's a mandatory property. Values: random (`RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_), nearmiss (`NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_), cnn (`CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_), tomeklinks (`TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_), enn (`EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_), ncr (`NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_), cluster (`ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_).
             * **type** (*str*) - (None) Type of undersampling. It's a mandatory property. Values: regression, classification.
             * **target** (*dict*) - (None) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset befaore and after applying the resampling.
             * **n_bins** (*int*) - (5) Only for regression undersampling. The number of classes that the user wants to generate with the target data.
             * **balanced_binning** (*bool*) - (False)  Only for regression undersampling. Decides whether samples are to be distributed roughly equally across all classes.
+            ###
+            # TODO DICTIONARY??????
+            # https://machinelearningmastery.com/multi-class-imbalanced-classification/
+            ###
             * **sampling_strategy** (*str*) - ("auto")  Sampling information to sample the data set. ONLY IN CASE OF BINARY CLASSIFICATION: A float corresponding to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling can be passed. Values: majority (resample only the majority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not minority').
             * **version** (*int*) - (1) Only for NearMiss method. Version of the NearMiss to use. Values: 1, 2, 3.
             * **n_neighbors** (*int*) - (1) Only for NearMiss, CondensedNearestNeighbour, EditedNearestNeighbours and NeighbourhoodCleaningRule methods. Size of the neighbourhood to consider to compute the average distance to the minority point samples.
@@ -62,6 +67,7 @@ class Undersampling():
         self.method = properties.get('method', None)
         self.type = properties.get('type', None)
         self.target = properties.get('target', None)
+        self.evaluate = properties.get('evaluate', False)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
         self.sampling_strategy = properties.get('sampling_strategy', 'auto')
@@ -131,6 +137,9 @@ class Undersampling():
         # calling undersample method
         if self.method == 'random':
             method = method(sampling_strategy=self.sampling_strategy)
+            # TODO!!!
+            #method = method(sampling_strategy={0:60, 1:16, 2:35, 3:23, 4:16})
+            #method = method(sampling_strategy={0:2000, 1:1000, 2:300, 3:100})
         elif self.method == 'nearmiss':
             if self.version == 3:
                 method = method(sampling_strategy=self.sampling_strategy, version=self.version, n_neighbors_ver3=self.n_neighbors)
@@ -141,39 +150,47 @@ class Undersampling():
         elif self.method == 'tomeklinks':
             method = method(sampling_strategy=self.sampling_strategy)
         elif self.method == 'enn':
+            #method = method(sampling_strategy=[0,1], n_neighbors=self.n_neighbors)
+            # TODO!!!
             method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.n_neighbors)
         elif self.method == 'ncr':
             method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.n_neighbors, threshold_cleaning=self.threshold_cleaning)
         elif self.method == 'cluster':
             method = method(sampling_strategy=self.sampling_strategy)
 
+        # undersampling
         if self.type == 'regression':
             fu.log('Undersampling regression dataset, continuous data will be classified', out_log, self.global_log)
             # call resampler class for Regression ReSampling            
             rs = resampler()
             # Create n_bins classes for the dataset
-            y = rs.fit(data, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning)
+            y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
             # Get the under-sampled data
             final_X, final_y = rs.resample(method, train_df, y)
         elif self.type == 'classification':
             # get X and y
-            y = getTarget(self.target, train_df, out_log, self.__class__.__name__)         
+            y = getTarget(self.target, train_df, out_log, self.__class__.__name__)
             # fit and resample
             final_X, final_y = method.fit_resample(X, y)
-        
+
         # evaluate undersampling
-        fu.log('Evaluating undersampling', out_log, self.global_log)
-        # define pipeline     
-        steps = [('under', method), ('model', RandomForestClassifier())]
-        pipeline = Pipeline(steps=steps)
-        # evaluate pipeline
-        warnings.filterwarnings("ignore")
-        cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=42)
-        # calculate score
-        scores = cross_val_score(pipeline, X, y, scoring='f1_micro', cv=cv, n_jobs=-1)
-        score = np.mean(scores)
-        fu.log('F1 Score after undersampling a %s dataset with %s method: %.3f' % (self.type, undersampling_methods[self.method]['method'], score), out_log, self.global_log)
-            
+        if self.evaluate:
+            fu.log('Evaluating data before undersampling with RandomForestClassifier', out_log, self.global_log)
+            cv = RepeatedStratifiedKFold(n_splits=3, n_repeats=3, random_state=42)
+            # evaluate model
+            scores = cross_val_score(RandomForestClassifier(class_weight='balanced'), X, y, scoring='accuracy', cv=cv, n_jobs=-1)
+            if not np.isnan(np.mean(scores)):
+                fu.log('Mean Accuracy before undersampling: %.3f' % (np.mean(scores)), out_log, self.global_log)
+            else:
+                fu.log('Unable to calculate cross validation score, NaN was returned.', out_log, self.global_log)
+        
+        # log distribution before undersampling
+        dist = ''
+        for k,v in Counter(y).items():
+            per = v / len(y) * 100
+            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+        fu.log('Classes distribution before undersampling:\n\n%s' % dist, out_log, self.global_log)
+
         # join final_X and final_y in the output dataframe
         if header is None:
             # numpy
@@ -192,6 +209,37 @@ class Undersampling():
                     out_df = out_df.astype({column: int } ) 
                 out_df[column] = le.inverse_transform(out_df[column].values.ravel())
 
+        # log distribution after undersampling
+        if self.type == 'regression':
+            y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+        elif self.type == 'classification':
+            y_out = getTarget(self.target, out_df, out_log, self.__class__.__name__)
+
+        dist = ''
+        for k,v in Counter(y_out).items():
+            per = v / len(y_out) * 100
+            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+        fu.log('Classes distribution after undersampling:\n\n%s' % dist, out_log, self.global_log)
+
+        ##################################
+        ## FOR TF???
+        ## https://towardsdatascience.com/machine-learning-multiclass-classification-with-imbalanced-data-set-29f6a177c1a
+        ## class_weight = compute_class_weight('balanced', np.unique(y), y)
+        ## print(class_weight)
+        ##################################
+
+        # evaluate undersampling
+        if self.evaluate:
+            fu.log('Evaluating data after undersampling with RandomForestClassifier', out_log, self.global_log)
+            cv = RepeatedStratifiedKFold(n_splits=3, n_repeats=3, random_state=42)
+            # evaluate model
+            scores = cross_val_score(RandomForestClassifier(class_weight='balanced'), final_X, y_out, scoring='accuracy', cv=cv, n_jobs=-1)
+            if not np.isnan(np.mean(scores)):
+                fu.log('Mean Accuracy after undersampling a %s dataset with %s method: %.3f' % (self.type, undersampling_methods[self.method]['method'], np.mean(scores)), out_log, self.global_log)
+            else:
+                fu.log('Unable to calculate cross validation score, NaN was returned.', out_log, self.global_log)
+
+        # save output
         hdr = False
         if header == 0: hdr = True
         fu.log('Saving undersampled dataset to %s' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
