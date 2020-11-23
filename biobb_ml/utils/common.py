@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from pathlib import Path, PurePath
 from importlib import import_module
 from biobb_common.tools import file_utils as fu
-import warnings
-
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 
 
 # CHECK PARAMETERS

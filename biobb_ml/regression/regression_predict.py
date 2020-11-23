@@ -94,6 +94,8 @@ class RegressionPredict():
                 except EOFError:
                     break
 
+        # TODO: CHECK IF SCALER
+
         pd.set_option('display.float_format', lambda x: '%.2f' % x)
         new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
         new_data = scaler.transform(new_data_table)

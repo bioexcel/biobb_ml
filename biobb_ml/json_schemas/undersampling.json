@@ -1,0 +1,207 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/undersampling",
+    "name": "biobb_ml Undersampling",
+    "title": "Wrapper of most of the imblearn.under_sampling methods",
+    "description": "Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: RandomUnderSampler, NearMiss, CondensedNearestNeighbour, TomekLinks, EditedNearestNeighbours, NeighbourhoodCleaningRule, ClusterCentroids.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "imbalanced-learn.under_sampling",
+            "version": ">0.7.0",
+            "license": "MIT"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_dataset_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": null,
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset"
+                }
+            ]
+        },
+        "output_dataset_path": {
+            "type": "string",
+            "description": "Path to the output dataset",
+            "filetype": "output",
+            "sample": null,
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the output dataset"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Undersampling method. It's a mandatory property. ",
+                    "enum": [
+                        "random",
+                        "nearmiss",
+                        "cnn",
+                        "tomeklinks",
+                        "enn",
+                        "ncr",
+                        "cluster"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "random",
+                            "description": "RandomUnderSampler"
+                        },
+                        {
+                            "name": "nearmiss",
+                            "description": "NearMiss"
+                        },
+                        {
+                            "name": "cnn",
+                            "description": "CondensedNearestNeighbour"
+                        },
+                        {
+                            "name": "tomeklinks",
+                            "description": "TomekLinks"
+                        },
+                        {
+                            "name": "enn",
+                            "description": "EditedNearestNeighbours"
+                        },
+                        {
+                            "name": "ncr",
+                            "description": "NeighbourhoodCleaningRule"
+                        },
+                        {
+                            "name": "cluster",
+                            "description": "ClusterCentroids"
+                        }
+                    ]
+                },
+                "type": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Type of undersampling. It's a mandatory property. ",
+                    "enum": [
+                        "regression",
+                        "classification"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "regression",
+                            "description": "dataset is for a regression analysis"
+                        },
+                        {
+                            "name": "classification",
+                            "description": "dataset is for a classification analysis"
+                        }
+                    ]
+                },
+                "target": {
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
+                },
+                "evaluate": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to evaluate the dataset before and after applying the resampling."
+                },
+                "n_bins": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "Only for regression undersampling. The number of classes that the user wants to generate with the target data."
+                },
+                "balanced_binning": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Only for regression undersampling. Decides whether samples are to be distributed roughly equally across all classes."
+                },
+                "sampling_strategy": {
+                    "type": "object",
+                    "default": {
+                        "target": "auto"
+                    },
+                    "wf_prop": false,
+                    "description": "Sampling information to sample the data set. Formats: { \"target\": \"auto\" }, { \"ratio\": 0.3 }, { \"dict\": { 0: 300, 1: 200, 2: 100 } } or { \"list\": [0, 2, 3] }. When \"target\", specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: majority (resample only the majority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not minority'). When \"ratio\", it corresponds to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling (ONLY IN CASE OF BINARY CLASSIFICATION). When \"dict\", the keys correspond to the targeted classes, the values correspond to the desired number of samples for each targeted class. When \"list\", the list contains the classes targeted by the resampling."
+                },
+                "version": {
+                    "type": "integer",
+                    "default": 1,
+                    "wf_prop": false,
+                    "description": "Only for NearMiss method. Version of the NearMiss to use. ",
+                    "enum": [
+                        "1",
+                        "2",
+                        "3"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "1",
+                            "description": null
+                        },
+                        {
+                            "name": "2",
+                            "description": null
+                        },
+                        {
+                            "name": "3",
+                            "description": null
+                        }
+                    ]
+                },
+                "n_neighbors": {
+                    "type": "integer",
+                    "default": 1,
+                    "wf_prop": false,
+                    "description": "Only for NearMiss, CondensedNearestNeighbour, EditedNearestNeighbours and NeighbourhoodCleaningRule methods. Size of the neighbourhood to consider to compute the average distance to the minority point samples."
+                },
+                "threshold_cleaning": {
+                    "type": "number",
+                    "default": 0.5,
+                    "wf_prop": false,
+                    "description": "Only for NeighbourhoodCleaningRule method. Threshold used to whether consider a class or not during the cleaning after applying ENN."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

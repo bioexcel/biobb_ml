@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from biobb_common.tools import file_utils as fu
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 sns.set()
 
 # CHECK PARAMETERS

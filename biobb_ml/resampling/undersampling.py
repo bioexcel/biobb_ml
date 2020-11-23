@@ -9,7 +9,6 @@ from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
-#from sklearn.utils.class_weight import compute_class_weight
 from biobb_ml.resampling.reg_resampler import resampler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
@@ -19,38 +18,37 @@ from biobb_ml.resampling.common import *
 
 
 class Undersampling():
-    """Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model.
-    Wrapper of most of the imblearn.under_sampling methods
-    Visit the imbalanced-learn official website for the different methods accepted in this wrapper: 
-    `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_
-    `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_
-    `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_
-    `TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_
-    `EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_
-    `NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_
-    `ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_
-    
+    """
+    | biobb_ml Undersampling
+    | Wrapper of most of the imblearn.under_sampling methods
+    | Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_, `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_, `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_, `TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_, `EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_, `NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_, `ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_.  
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <>`_. Accepted formats: csv.
         output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <>`_. Accepted formats: csv.
         properties (dic):
             * **method** (*str*) - (None) Undersampling method. It's a mandatory property. Values: random (`RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_), nearmiss (`NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_), cnn (`CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_), tomeklinks (`TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_), enn (`EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_), ncr (`NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_), cluster (`ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_).
-            * **type** (*str*) - (None) Type of undersampling. It's a mandatory property. Values: regression, classification.
-            * **target** (*dict*) - (None) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset befaore and after applying the resampling.
+            * **type** (*str*) - (None) Type of undersampling. It's a mandatory property. Values: regression (dataset is for a regression analysis), classification (dataset is for a classification analysis).
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset before and after applying the resampling.
             * **n_bins** (*int*) - (5) Only for regression undersampling. The number of classes that the user wants to generate with the target data.
             * **balanced_binning** (*bool*) - (False)  Only for regression undersampling. Decides whether samples are to be distributed roughly equally across all classes.
-            ###
-            # TODO DICTIONARY??????
-            # https://machinelearningmastery.com/multi-class-imbalanced-classification/
-            ###
-            * **sampling_strategy** (*str*) - ("auto")  Sampling information to sample the data set. ONLY IN CASE OF BINARY CLASSIFICATION: A float corresponding to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling can be passed. Values: majority (resample only the majority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not minority').
+            * **sampling_strategy** (*dict*) - ({ "target": "auto" })  Sampling information to sample the data set. Formats: { "target": "auto" }, { "ratio": 0.3 }, { "dict": { 0: 300, 1: 200, 2: 100 } } or { "list": [0, 2, 3] }. When "target", specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: majority (resample only the majority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not minority'). When "ratio", it corresponds to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling (ONLY IN CASE OF BINARY CLASSIFICATION). When "dict", the keys correspond to the targeted classes, the values correspond to the desired number of samples for each targeted class. When "list", the list contains the classes targeted by the resampling.
             * **version** (*int*) - (1) Only for NearMiss method. Version of the NearMiss to use. Values: 1, 2, 3.
             * **n_neighbors** (*int*) - (1) Only for NearMiss, CondensedNearestNeighbour, EditedNearestNeighbours and NeighbourhoodCleaningRule methods. Size of the neighbourhood to consider to compute the average distance to the minority point samples.
             * **threshold_cleaning** (*float*) - (0.5) Only for NeighbourhoodCleaningRule method. Threshold used to whether consider a class or not during the cleaning after applying ENN.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: imbalanced-learn.under_sampling
+            * version: >0.7.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path, 
@@ -66,11 +64,11 @@ class Undersampling():
         # Properties specific for BB
         self.method = properties.get('method', None)
         self.type = properties.get('type', None)
-        self.target = properties.get('target', None)
+        self.target = properties.get('target', {})
         self.evaluate = properties.get('evaluate', False)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
-        self.sampling_strategy = properties.get('sampling_strategy', 'auto')
+        self.sampling_strategy = properties.get('sampling_strategy', { 'target': 'auto' })
         self.version = properties.get('version', 1)
         self.n_neighbors = properties.get('n_neighbors', 1)
         self.threshold_cleaning = properties.get('threshold_cleaning', 1)
@@ -110,8 +108,10 @@ class Undersampling():
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
 
+        # check mandatory properties
         method = getResamplingMethod(self.method, 'undersampling', out_log, self.__class__.__name__)
         checkResamplingType(self.type, out_log, self.__class__.__name__)
+        sampling_strategy = getSamplingStrategy(self.sampling_strategy, out_log, self.__class__.__name__)
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
@@ -122,6 +122,7 @@ class Undersampling():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
 
         train_df = data
+        ranges = None
 
         le = preprocessing.LabelEncoder()
 
@@ -136,27 +137,22 @@ class Undersampling():
         X = train_df.loc[:, train_df.columns != getTargetValue(self.target, out_log, self.__class__.__name__)] 
         # calling undersample method
         if self.method == 'random':
-            method = method(sampling_strategy=self.sampling_strategy)
-            # TODO!!!
-            #method = method(sampling_strategy={0:60, 1:16, 2:35, 3:23, 4:16})
-            #method = method(sampling_strategy={0:2000, 1:1000, 2:300, 3:100})
+            method = method(sampling_strategy=sampling_strategy)
         elif self.method == 'nearmiss':
             if self.version == 3:
-                method = method(sampling_strategy=self.sampling_strategy, version=self.version, n_neighbors_ver3=self.n_neighbors)
+                method = method(sampling_strategy=sampling_strategy, version=self.version, n_neighbors_ver3=self.n_neighbors)
             else: 
-                method = method(sampling_strategy=self.sampling_strategy, version=self.version, n_neighbors=self.n_neighbors)
+                method = method(sampling_strategy=sampling_strategy, version=self.version, n_neighbors=self.n_neighbors)
         elif self.method == 'cnn':
-            method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.n_neighbors)
+            method = method(sampling_strategy=sampling_strategy, n_neighbors=self.n_neighbors)
         elif self.method == 'tomeklinks':
-            method = method(sampling_strategy=self.sampling_strategy)
+            method = method(sampling_strategy=sampling_strategy)
         elif self.method == 'enn':
-            #method = method(sampling_strategy=[0,1], n_neighbors=self.n_neighbors)
-            # TODO!!!
-            method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.n_neighbors)
+            method = method(sampling_strategy=sampling_strategy, n_neighbors=self.n_neighbors)
         elif self.method == 'ncr':
-            method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.n_neighbors, threshold_cleaning=self.threshold_cleaning)
+            method = method(sampling_strategy=sampling_strategy, n_neighbors=self.n_neighbors, threshold_cleaning=self.threshold_cleaning)
         elif self.method == 'cluster':
-            method = method(sampling_strategy=self.sampling_strategy)
+            method = method(sampling_strategy=sampling_strategy)
 
         # undersampling
         if self.type == 'regression':
@@ -164,7 +160,7 @@ class Undersampling():
             # call resampler class for Regression ReSampling            
             rs = resampler()
             # Create n_bins classes for the dataset
-            y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
             # Get the under-sampled data
             final_X, final_y = rs.resample(method, train_df, y)
         elif self.type == 'classification':
@@ -185,10 +181,12 @@ class Undersampling():
                 fu.log('Unable to calculate cross validation score, NaN was returned.', out_log, self.global_log)
         
         # log distribution before undersampling
-        dist = ''
+        dist = ''        
         for k,v in Counter(y).items():
             per = v / len(y) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution before undersampling:\n\n%s' % dist, out_log, self.global_log)
 
         # join final_X and final_y in the output dataframe
@@ -211,22 +209,17 @@ class Undersampling():
 
         # log distribution after undersampling
         if self.type == 'regression':
-            y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
         elif self.type == 'classification':
             y_out = getTarget(self.target, out_df, out_log, self.__class__.__name__)
 
         dist = ''
         for k,v in Counter(y_out).items():
             per = v / len(y_out) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution after undersampling:\n\n%s' % dist, out_log, self.global_log)
-
-        ##################################
-        ## FOR TF???
-        ## https://towardsdatascience.com/machine-learning-multiclass-classification-with-imbalanced-data-set-29f6a177c1a
-        ## class_weight = compute_class_weight('balanced', np.unique(y), y)
-        ## print(class_weight)
-        ##################################
 
         # evaluate undersampling
         if self.evaluate:

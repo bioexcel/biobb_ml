@@ -18,34 +18,36 @@ from biobb_ml.resampling.common import *
 
 
 class Oversampling():
-    """Involves supplementing the training data with multiple copies of some of the minority classes of a given dataset. If regression is specified as type, the data will be resampled to classes in order to apply the oversampling model.
-    Wrapper of most of the imblearn.over_sampling methods
-    Visit the imbalanced-learn official website for the different methods accepted in this wrapper: 
-    `RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.RandomOverSampler.html>`_
-    `SMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html>`_
-    `BorderlineSMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.BorderlineSMOTE.html>`_
-    `SVMSMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SVMSMOTE.html>`_
-    `ADASYN < https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.ADASYN.html>`_
-   
+    """
+    | biobb_ml Oversampling
+    | Wrapper of most of the imblearn.over_sampling methods
+    | Involves supplementing the training data with multiple copies of some of the minority classes of a given dataset. If regression is specified as type, the data will be resampled to classes in order to apply the oversampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.RandomOverSampler.html>`_, `SMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html>`_, `BorderlineSMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.BorderlineSMOTE.html>`_, `SVMSMOTE <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SVMSMOTE.html>`_, `ADASYN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.ADASYN.html>`_
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <>`_. Accepted formats: csv.
         output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <>`_. Accepted formats: csv.
         properties (dic):
-            * **method** (*str*) - (None) Oversampling method. It's a mandatory property. Values: random (`RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.RandomOverSampler.html>`_), smote (`RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html>`_), `borderline <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.BorderlineSMOTE.html>`_, `svmsmote <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SVMSMOTE.html>`_, `adasyn < https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.ADASYN.html>`_
+            * **method** (*str*) - (None) Oversampling method. It's a mandatory property. Values: random (`RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.RandomOverSampler.html>`_), smote (`RandomOverSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html>`_), `borderline <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.BorderlineSMOTE.html>`_, `svmsmote <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SVMSMOTE.html>`_, `adasyn <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.ADASYN.html>`_
             * **type** (*str*) - (None) Type of oversampling. It's a mandatory property. Values: regression, classification.
-            * **target** (*dict*) - (None) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset befaore and after applying the resampling.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset before and after applying the resampling.
             * **n_bins** (*int*) - (5) Only for regression oversampling. The number of classes that the user wants to generate with the target data.
             * **balanced_binning** (*bool*) - (False)  Only for regression oversampling. Decides whether samples are to be distributed roughly equally across all classes.
-            ###
-            # TODO DICTIONARY??????
-            # https://machinelearningmastery.com/multi-class-imbalanced-classification/
-            ###
-            * **sampling_strategy** (*str*) - ("auto")  Sampling information to sample the data set. ONLY IN CASE OF BINARY CLASSIFICATION: A float corresponding to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling can be passed. Values: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not majority').
+            * **sampling_strategy** (*dict*) - ({ "target": "auto" })  Sampling information to sample the data set. Formats: { "target": "auto" }, { "ratio": 0.3 }, { "dict": { 0: 300, 1: 200, 2: 100 } } or { "list": [0, 2, 3] }. When "target", specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not majority'). When "ratio", it corresponds to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling (ONLY IN CASE OF BINARY CLASSIFICATION).  When "dict", the keys correspond to the targeted classes, the values correspond to the desired number of samples for each targeted class. When "list", the list contains the classes targeted by the resampling.
             * **k_neighbors** (*int*) - (5) Only for SMOTE, BorderlineSMOTE, SVMSMOTE, ADASYN. The number of nearest neighbours used to construct synthetic samples.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: imbalanced-learn.under_sampling
+            * version: >0.7.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
+
     """
 
     def __init__(self, input_dataset_path, 
@@ -61,11 +63,11 @@ class Oversampling():
         # Properties specific for BB
         self.method = properties.get('method', None)
         self.type = properties.get('type', None)
-        self.target = properties.get('target', None)
+        self.target = properties.get('target', {})
         self.evaluate = properties.get('evaluate', False)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
-        self.sampling_strategy = properties.get('sampling_strategy', 'auto')
+        self.sampling_strategy = properties.get('sampling_strategy', { 'target': 'auto' })
         self.k_neighbors = properties.get('k_neighbors', 5)
         self.properties = properties
 
@@ -104,8 +106,10 @@ class Oversampling():
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
 
+        # check mandatory properties
         method = getResamplingMethod(self.method, 'oversampling', out_log, self.__class__.__name__)
         checkResamplingType(self.type, out_log, self.__class__.__name__)
+        sampling_strategy = getSamplingStrategy(self.sampling_strategy, out_log, self.__class__.__name__)
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
@@ -116,6 +120,7 @@ class Oversampling():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
 
         train_df = data
+        ranges = None
 
         le = preprocessing.LabelEncoder()
 
@@ -130,15 +135,15 @@ class Oversampling():
         X = train_df.loc[:, train_df.columns != getTargetValue(self.target, out_log, self.__class__.__name__)] 
         # calling oversample method
         if self.method == 'random':
-            method = method(sampling_strategy=self.sampling_strategy)
+            method = method(sampling_strategy=sampling_strategy)
         elif self.method == 'smote':
-            method = method(sampling_strategy=self.sampling_strategy, k_neighbors=self.k_neighbors)
+            method = method(sampling_strategy=sampling_strategy, k_neighbors=self.k_neighbors)
         elif self.method == 'borderline':
-            method = method(sampling_strategy=self.sampling_strategy, k_neighbors=self.k_neighbors)
+            method = method(sampling_strategy=sampling_strategy, k_neighbors=self.k_neighbors)
         elif self.method == 'svmsmote':
-            method = method(sampling_strategy=self.sampling_strategy, k_neighbors=self.k_neighbors)
+            method = method(sampling_strategy=sampling_strategy, k_neighbors=self.k_neighbors)
         elif self.method == 'adasyn':
-            method = method(sampling_strategy=self.sampling_strategy, n_neighbors=self.k_neighbors)
+            method = method(sampling_strategy=sampling_strategy, n_neighbors=self.k_neighbors)
         
         # oversampling
         if self.type == 'regression':
@@ -146,7 +151,7 @@ class Oversampling():
             # call resampler class for Regression ReSampling            
             rs = resampler()
             # Create n_bins classes for the dataset
-            y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
             # Get the over-sampled data
             final_X, final_y = rs.resample(method, train_df, y)
         elif self.type == 'classification':
@@ -170,7 +175,9 @@ class Oversampling():
         dist = ''
         for k,v in Counter(y).items():
             per = v / len(y) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution before oversampling:\n\n%s' % dist, out_log, self.global_log)
 
         # join final_X and final_y in the output dataframe
@@ -193,14 +200,16 @@ class Oversampling():
 
         # log distribution after oversampling
         if self.type == 'regression':
-            y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
         elif self.type == 'classification':
             y_out = getTarget(self.target, out_df, out_log, self.__class__.__name__)
 
         dist = ''
         for k,v in Counter(y_out).items():
             per = v / len(y_out) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution after oversampling:\n\n%s' % dist, out_log, self.global_log)
 
         # evaluate oversampling

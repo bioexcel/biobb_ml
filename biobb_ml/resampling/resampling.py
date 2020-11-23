@@ -18,11 +18,10 @@ from biobb_ml.resampling.common import *
 
 
 class Resampling():
-    """Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model.
-    Wrapper of the imblearn.combine methods
-    Visit the imbalanced-learn official website for the different methods accepted in this wrapper: 
-    `SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_
-    `SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_
+    """
+    | biobb_ml Resampling
+    | Wrapper of the imblearn.combine methods
+    | Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_, `SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_.
     
 
     Args:
@@ -31,17 +30,24 @@ class Resampling():
         properties (dic):
             * **method** (*str*) - (None) Resampling method. It's a mandatory property. Values: smotetomek (`SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_), smotenn (`SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_).
             * **type** (*str*) - (None) Type of resampling. It's a mandatory property. Values: regression, classification.
-            * **target** (*dict*) - (None) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset befaore and after applying the resampling.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset before and after applying the resampling.
             * **n_bins** (*int*) - (5) Only for regression resampling. The number of classes that the user wants to generate with the target data.
             * **balanced_binning** (*bool*) - (False)  Only for regression resampling. Decides whether samples are to be distributed roughly equally across all classes.
-            ###
-            # TODO DICTIONARY??????
-            # https://machinelearningmastery.com/multi-class-imbalanced-classification/
-            ###
-            * **sampling_strategy** (*str*) - ("auto")  Sampling information to sample the data set. ONLY IN CASE OF BINARY CLASSIFICATION: A float corresponding to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling can be passed. Values: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not majority').
+            * **sampling_strategy_over** (*dict*) - ({ "target": "auto" })  Sampling information applied in the dataset oversampling process. Formats: { "target": "auto" }, { "ratio": 0.3 } or { "dict": { 0: 300, 1: 200, 2: 100 } }. When "target", specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not majority'). When "ratio", it corresponds to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling (ONLY IN CASE OF BINARY CLASSIFICATION).  When "dict", the keys correspond to the targeted classes and the values correspond to the desired number of samples for each targeted class.
+            * **sampling_strategy_under** (*dict*) - ({ "target": "auto" })  Sampling information applied in the dataset cleaning process. Formats: { "target": "auto" } or { "list": [0, 2, 3] }. When "target", specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: majority (resample only the majority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not minority'). When "list", the list contains the classes targeted by the resampling.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: imbalanced-learn.under_sampling
+            * version: >0.7.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path, 
@@ -57,11 +63,12 @@ class Resampling():
         # Properties specific for BB
         self.method = properties.get('method', None)
         self.type = properties.get('type', None)
-        self.target = properties.get('target', None)
+        self.target = properties.get('target', {})
         self.evaluate = properties.get('evaluate', False)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
-        self.sampling_strategy = properties.get('sampling_strategy', 'auto')
+        self.sampling_strategy_over = properties.get('sampling_strategy_over', { 'target': 'auto' })
+        self.sampling_strategy_under = properties.get('sampling_strategy_under', { 'target': 'auto' })
         self.properties = properties
 
         # Properties common in all BB
@@ -98,8 +105,11 @@ class Resampling():
                 fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
                 return 0
 
-        method = getResamplingMethod(self.method, 'resampling', out_log, self.__class__.__name__)
+        # check mandatory properties
+        method, over, under = getCombinedMethod(self.method, out_log, self.__class__.__name__)
         checkResamplingType(self.type, out_log, self.__class__.__name__)
+        sampling_strategy_over = getSamplingStrategy(self.sampling_strategy_over, out_log, self.__class__.__name__)
+        sampling_strategy_under = getSamplingStrategy(self.sampling_strategy_under, out_log, self.__class__.__name__)
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
@@ -110,6 +120,7 @@ class Resampling():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
 
         train_df = data
+        ranges = None
 
         le = preprocessing.LabelEncoder()
 
@@ -124,9 +135,9 @@ class Resampling():
         X = train_df.loc[:, train_df.columns != getTargetValue(self.target, out_log, self.__class__.__name__)] 
         # calling resample method
         if self.method == 'smotetomek':
-            method = method(sampling_strategy=self.sampling_strategy)
+            method = method(smote = over(sampling_strategy=sampling_strategy_over), tomek = under(sampling_strategy=sampling_strategy_under))
         elif self.method == 'smotenn':
-            method = method(sampling_strategy=self.sampling_strategy)
+            method = method(smote = over(sampling_strategy=sampling_strategy_over), enn = under(sampling_strategy=sampling_strategy_under))
 
         # resampling
         if self.type == 'regression':
@@ -134,7 +145,7 @@ class Resampling():
             # call resampler class for Regression ReSampling            
             rs = resampler()
             # Create n_bins classes for the dataset
-            y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
             # Get the re-sampled data
             final_X, final_y = rs.resample(method, train_df, y)
         elif self.type == 'classification':
@@ -158,7 +169,9 @@ class Resampling():
         dist = ''
         for k,v in Counter(y).items():
             per = v / len(y) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution before resampling:\n\n%s' % dist, out_log, self.global_log)
 
         # join final_X and final_y in the output dataframe
@@ -181,14 +194,16 @@ class Resampling():
 
         # log distribution after resampling
         if self.type == 'regression':
-            y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y_out = rs.fit(out_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
         elif self.type == 'classification':
             y_out = getTarget(self.target, out_df, out_log, self.__class__.__name__)
 
         dist = ''
         for k,v in Counter(y_out).items():
             per = v / len(y_out) * 100
-            dist = dist + 'Class=%d, n=%d (%.3f%%)\n' % (k, v, per)
+            rng = ''
+            if ranges: rng = str(ranges[k])
+            dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution after resampling:\n\n%s' % dist, out_log, self.global_log)
 
         # evaluate resampling

@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 from pathlib import Path, PurePath
 from biobb_common.tools import file_utils as fu
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 
 # CHECK PARAMETERS
 

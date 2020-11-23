@@ -14,6 +14,9 @@ from sklearn.metrics import silhouette_score
 from random import sample
 from math import isnan
 from biobb_common.tools import file_utils as fu
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 sns.set()
 
 # CHECK PARAMETERS

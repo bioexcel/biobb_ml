@@ -5,6 +5,7 @@ import argparse
 import h5py
 import json
 from tensorflow.python.keras.saving import hdf5_format
+from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
@@ -19,9 +20,10 @@ from biobb_ml.neural_networks.common import *
 
 
 class RegressionNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a Neural Network Regression.
-    Wrapper of the tf.keras.Sequential model
-    Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_. 
+    """
+    | biobb_ml RegressionNeuralNetwork
+    | Wrapper of the tf.keras.Sequential model
+    | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv.
@@ -29,8 +31,9 @@ class RegressionNeuralNetwork():
         output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
         output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
         properties (dic):
-            * **features** (*list*) - (None) Independent variables or columns from your dataset you want to train.
-            * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
+            * **features** (*dict*) - ({}) Independent variables or columns from your dataset you want to train. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
             * **test_size** (*float*) - (0.1) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
@@ -39,8 +42,20 @@ class RegressionNeuralNetwork():
             * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
             * **batch_size** (*int*) - (100) Number of samples per gradient update.
             * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split. .
+            * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: tensorflow
+            * version: >2.1.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path,
@@ -54,8 +69,9 @@ class RegressionNeuralNetwork():
         }
 
         # Properties specific for BB
-        self.features = properties.get('features', [])
-        self.target = properties.get('target', '')
+        self.features = properties.get('features', {})
+        self.target = properties.get('target', {})
+        self.weight = properties.get('weight', {})
         self.validation_size = properties.get('validation_size', 0.1)
         self.test_size = properties.get('test_size', 0.1)
         self.hidden_layers = properties.get('hidden_layers', [])
@@ -64,6 +80,8 @@ class RegressionNeuralNetwork():
         self.learning_rate = properties.get('learning_rate', 0.02)
         self.batch_size = properties.get('batch_size', 100)
         self.max_epochs = properties.get('max_epochs', 100)
+        self.random_state = properties.get('random_state', 5)
+        self.scale = properties.get('scale', False)
         self.properties = properties
 
         # Properties common in all BB
@@ -125,25 +143,40 @@ class RegressionNeuralNetwork():
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], sep="\s+|;|:|,|\t",engine="python")
 
-        targets = data[self.target].to_numpy()
+        #y = data[self.target].to_numpy()
         # the inputs are all the independent variables
-        inputs = data.filter(self.features)
+        #X = data.filter(self.features)
+
+        X = getFeatures(self.features, data, out_log, self.__class__.__name__)
+        # target
+        y = getTarget(self.target, data, out_log, self.__class__.__name__)
+        # weights
+        if self.weight:
+            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
 
         # shuffle dataset
         fu.log('Shuffling dataset', out_log, self.global_log)
-        shuffled_indices = np.arange(inputs.shape[0])
+        shuffled_indices = np.arange(X.shape[0])
         np.random.shuffle(shuffled_indices)
-        np_inputs = inputs.to_numpy()
-        shuffled_inputs = np_inputs[shuffled_indices]
-        shuffled_targets = targets[shuffled_indices]
+        np_X = X.to_numpy()
+        shuffled_X = np_X[shuffled_indices]
+        shuffled_y = y[shuffled_indices]
+        if self.weight: shuffled_w = w[shuffled_indices]
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        X_train, X_test, y_train, y_test = train_test_split(shuffled_inputs, shuffled_targets, test_size=self.test_size, random_state=1)
-        
+        arrays_sets = (shuffled_X, shuffled_y)
+        # if user provide weights
+        if self.weight:
+            arrays_sets = arrays_sets + (shuffled_w,)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+
         # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        X_train = scale(X_train)
+        if self.scale: 
+            fu.log('Scaling dataset', out_log, self.global_log)
+            X_train = scale(X_train)
 
         # build model
         fu.log('Building model', out_log, self.global_log)
@@ -160,16 +193,27 @@ class RegressionNeuralNetwork():
         opt_class = getattr(mod, self.optimizer)
         opt = opt_class(lr = self.learning_rate)
         # compile model
-        model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'])
+        model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'], sample_weight_mode='samplewise')
 
         # fitting
         fu.log('Training model', out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
         early_stopping = EarlyStopping(patience=2)
+
+        if self.weight: 
+            sample_weight = w_train
+            class_weight = []
+        else:
+            fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
+            sample_weight = None
+            class_weight = compute_class_weight('balanced', np.unique(y_train), y_train)
+
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 
+                       class_weight=class_weight,
+                       sample_weight = sample_weight,
                        batch_size=self.batch_size, 
                        epochs=self.max_epochs, 
                        callbacks=[early_stopping], 
@@ -180,8 +224,14 @@ class RegressionNeuralNetwork():
 
         # predict data from X_train
         train_predictions = model.predict(X_train)
-        train_predictions = np.around(train_predictions, decimals=2)        
-        train_score = r2_score(y_train, train_predictions)
+        train_predictions = np.around(train_predictions, decimals=2)    
+
+        score_train_inputs = (y_train, train_predictions)
+        if self.weight:
+            score_train_inputs = score_train_inputs + (w_train,)
+        train_score = r2_score(*score_train_inputs)    
+
+        #train_score = r2_score(y_train, train_predictions)
 
         train_metrics = pd.DataFrame()
         train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
@@ -190,7 +240,8 @@ class RegressionNeuralNetwork():
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
 
         # testing
-        X_test = scale(X_test)
+        if self.scale: 
+            X_test = scale(X_test)
         fu.log('Testing model', out_log, self.global_log)
         test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
 
@@ -198,7 +249,13 @@ class RegressionNeuralNetwork():
         test_predictions = model.predict(X_test)
         test_predictions = np.around(test_predictions, decimals=2)        
         tpr = np.squeeze(np.asarray(test_predictions))
-        score = r2_score(y_test, test_predictions)
+
+        score_test_inputs = (y_test, test_predictions)
+        if self.weight:
+            score_test_inputs = score_test_inputs + (w_test,)
+        score = r2_score(*score_test_inputs)
+
+        #score = r2_score(y_test, test_predictions)
 
         test_metrics = pd.DataFrame()
         test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']
@@ -234,6 +291,7 @@ class RegressionNeuralNetwork():
         vars_obj = {
             'features': self.features,
             'target': self.target,
+            'scale': self.scale,
             'type': 'regression'
         }
         variables = json.dumps(vars_obj)

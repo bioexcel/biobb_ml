@@ -64,11 +64,19 @@ oversampling_methods = {
 resampling_methods = {
 	'smotetomek':{
 		'method': 'SMOTETomek',
-		'module': 'imblearn.combine'
+		'module': 'imblearn.combine',
+		'method_over': 'SMOTE',
+		'module_over': 'imblearn.over_sampling',
+		'method_under': 'TomekLinks',
+		'module_under': 'imblearn.under_sampling'
 	},
 	'smotenn':{
 		'method': 'SMOTEENN',
-		'module': 'imblearn.combine'	
+		'module': 'imblearn.combine',
+		'method_over': 'SMOTE',
+		'module_over': 'imblearn.over_sampling',
+		'method_under': 'EditedNearestNeighbours',
+		'module_under': 'imblearn.under_sampling'
 	}
 }
 
@@ -108,22 +116,6 @@ def is_valid_file(ext, argument):
 	}
 	return ext in formats[argument]
 
-def getIndependentVars(independent_vars, data, out_log, classname):
-	""" Gets independent vars """
-	if 'indexes' in independent_vars:
-		return data.iloc[:, independent_vars['indexes']]
-	elif 'range' in independent_vars:
-		ranges_list = []
-		for rng in independent_vars['range']:
-			for x in range (rng[0], (rng[1] + 1)):
-				ranges_list.append(x)
-		return data.iloc[:, ranges_list]
-	elif 'columns' in independent_vars:
-		return data.loc[:, independent_vars['columns']]
-	else:
-		fu.log(classname + ': Incorrect independent_vars format', out_log)
-		raise SystemExit(classname + ': Incorrect independent_vars format')
-
 def getTarget(target, data, out_log, classname):
 	""" Gets targets """
 	if 'index' in target:
@@ -155,7 +147,7 @@ def checkResamplingType(type_, out_log, classname):
 
 
 def getResamplingMethod(method, type_, out_log, classname):
-	""" Gets undersampling method """
+	""" Gets resampling method """
 	if type_ == 'undersampling': methods = undersampling_methods
 	elif type_ == 'oversampling': methods = oversampling_methods
 	elif type_ == 'resampling': methods = resampling_methods
@@ -173,5 +165,47 @@ def getResamplingMethod(method, type_, out_log, classname):
 
 	fu.log('%s method selected' % methods[method]['method'], out_log)
 	return method_to_call
+
+def getCombinedMethod(method, out_log, classname):
+	""" Gets combinded method """
+	methods = resampling_methods
+
+	if not method:
+		fu.log(classname + ': Missed mandatory method property', out_log)
+		raise SystemExit(classname + ': Missed mandatory method property')
+	if not method in methods:
+		fu.log(classname + ': Unknown %s method property' % method, out_log)
+		raise SystemExit(classname + ': Unknown %s method property' % method)
+
+	mod = import_module(methods[method]['module'])
+	warnings.filterwarnings("ignore")
+	method_to_call = getattr(mod, methods[method]['method'])
+
+	fu.log('%s method selected' % methods[method]['method'], out_log)
+
+	mod_over = import_module(methods[method]['module_over'])
+	method_over_to_call = getattr(mod_over, methods[method]['method_over'])
+	mod_under = import_module(methods[method]['module_under'])
+	method_under_to_call = getattr(mod_under, methods[method]['method_under'])
+
+	return method_to_call, method_over_to_call, method_under_to_call
+
+def getSamplingStrategy(sampling_strategy, out_log, classname):
+	""" Gets sampling strategy """
+	if 'target' in sampling_strategy:
+		if isinstance(sampling_strategy['target'], str):
+			return sampling_strategy['target']
+	if 'ratio' in sampling_strategy:
+		if isinstance(sampling_strategy['ratio'], float) and sampling_strategy['ratio'] >= 0 and sampling_strategy['ratio'] <= 1:
+			return sampling_strategy['ratio']
+	if 'dict' in sampling_strategy:
+		if isinstance(sampling_strategy['dict'], dict):
+			return sampling_strategy['dict']
+	if 'list' in sampling_strategy:
+		if isinstance(sampling_strategy['list'], list):
+			return sampling_strategy['list']
+
+	fu.log(classname + ': Incorrect sampling_strategy format', out_log)
+	raise SystemExit(classname + ': Incorrect sampling_strategy format')
 
 

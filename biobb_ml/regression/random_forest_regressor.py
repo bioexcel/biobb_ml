@@ -13,16 +13,14 @@ from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.regression.common import *
-from warnings import simplefilter
-# ignore all future warnings
-simplefilter(action='ignore', category=FutureWarning)
 sns.set()
 
 
 class RandomForestRegressor():
-    """Trains and tests a given dataset and saves the model and scaler for a random forest regressor.
-    Wrapper of the sklearn.ensemble.RandomForestRegressor module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>`_. 
+    """
+    | biobb_ml RandomForestRegressor
+    | Wrapper of the sklearn.ensemble.RandomForestRegressor module
+    | Trains and tests a given dataset and saves the model and scaler for a random forest regressor. Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>`_. 
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_random_forest_regressor.csv>`_. Accepted formats: csv.
@@ -30,9 +28,9 @@ class RandomForestRegressor():
         output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_random_forest_regressor.csv>`_. Accepted formats: csv.
         output_plot_path (str) (Optional): Residual plot checks the error between actual values and predicted values. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_random_forest_regressor.png>`_. Accepted formats: png.
         properties (dic):
-            * **independent_vars** (*dict*) - (None) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
-            * **target** (*dict*) - (None) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **weight** (*dict*) - (None) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **independent_vars** (*dict*) - ({}) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **n_estimators** (*int*) - (10) The number of trees in the forest.
             * **max_depth** (*int*) - (None) The maximum depth of the tree.
@@ -40,6 +38,16 @@ class RandomForestRegressor():
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path,
@@ -53,9 +61,9 @@ class RandomForestRegressor():
         }
 
         # Properties specific for BB
-        self.independent_vars = properties.get('independent_vars', None)
-        self.target = properties.get('target', None)
-        self.weight = properties.get('weight', None)
+        self.independent_vars = properties.get('independent_vars', {})
+        self.target = properties.get('target', {})
+        self.weight = properties.get('weight', {})
         self.n_estimators = properties.get('n_estimators', 10)
         self.max_depth = properties.get('max_depth', None)
         self.random_state = properties.get('random_state', 5)

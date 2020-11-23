@@ -7,6 +7,9 @@ import itertools
 from pathlib import Path, PurePath
 from sklearn.metrics import roc_curve, auc
 from biobb_common.tools import file_utils as fu
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 sns.set()
 
 # CHECK PARAMETERS
@@ -282,3 +285,36 @@ def plotResultsReg(data, test_labels, test_predictions, train_labels, train_pred
     plt.tight_layout()
     
     return plt
+
+def getFeatures(independent_vars, data, out_log, classname):
+    if 'indexes' in independent_vars:
+        return data.iloc[:, independent_vars['indexes']]
+    elif 'range' in independent_vars:
+        ranges_list = []
+        for rng in independent_vars['range']:
+            for x in range (rng[0], (rng[1] + 1)):
+                ranges_list.append(x)
+        return data.iloc[:, ranges_list]
+    elif 'columns' in independent_vars:
+        return data.loc[:, independent_vars['columns']]
+    else:
+        fu.log(classname + ': Incorrect independent_vars format', out_log)
+        raise SystemExit(classname + ': Incorrect independent_vars format')
+
+def getTarget(target, data, out_log, classname):
+    if 'index' in target:
+        return data.iloc[:, target['index']]
+    elif 'column' in target:
+        return data[target['column']]
+    else:
+        fu.log(classname + ': Incorrect target format', out_log)
+        raise SystemExit(classname + ': Incorrect target format')
+
+def getWeight(weight, data, out_log, classname):
+    if 'index' in weight:
+        return data.iloc[:, weight['index']]
+    elif 'column' in weight:
+        return data[weight['column']]
+    else:
+        fu.log(classname + ': Incorrect weight format', out_log)
+        raise SystemExit(classname + ': Incorrect weight format')

@@ -123,6 +123,8 @@ class PredictNeuralNetwork():
             pd.set_option('display.float_format', lambda x: '%.2f' % x)
             new_data_table["predictions"] = predictions 
         
+        # TODO: CHECK IF SCALER
+
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
