@@ -38,10 +38,6 @@ class Oversampling():
             * **evaluate** (*bool*) - (False)  Whether or not to evaluate the dataset befaore and after applying the resampling.
             * **n_bins** (*int*) - (5) Only for regression oversampling. The number of classes that the user wants to generate with the target data.
             * **balanced_binning** (*bool*) - (False)  Only for regression oversampling. Decides whether samples are to be distributed roughly equally across all classes.
-            ###
-            # TODO DICTIONARY??????
-            # https://machinelearningmastery.com/multi-class-imbalanced-classification/
-            ###
             * **sampling_strategy** (*str*) - ("auto")  Sampling information to sample the data set. ONLY IN CASE OF BINARY CLASSIFICATION: A float corresponding to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling can be passed. Values: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to 'not majority').
             * **k_neighbors** (*int*) - (5) Only for SMOTE, BorderlineSMOTE, SVMSMOTE, ADASYN. The number of nearest neighbours used to construct synthetic samples.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
