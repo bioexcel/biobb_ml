@@ -1,0 +1,169 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/support_vector_machine",
+    "name": "biobb_ml SupportVectorMachine",
+    "title": "Wrapper of the scikit-learn SupportVectorMachine method.",
+    "description": "Trains and tests a given dataset and saves the model and scaler. Visit the SupportVectorMachine documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_support_vector_machine.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_support_vector_machine.pkl",
+            "enum": [
+                ".*\\.pkl$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pkl$",
+                    "description": "Path to the output model file",
+                    "edam": "format_3653"
+                }
+            ]
+        },
+        "output_test_table_path": {
+            "type": "string",
+            "description": "Path to the test table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_support_vector_machine.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test table file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_support_vector_machine.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "independent_vars": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to train."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "kernel": {
+                    "type": "string",
+                    "default": "rbf",
+                    "wf_prop": false,
+                    "description": "Specifies the kernel type to be used in the algorithm. ",
+                    "enum": [
+                        "linear",
+                        "poly",
+                        "rbf",
+                        "sigmoid",
+                        "precomputed"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "linear",
+                            "description": "It's used when the data is Linearly separable; that is; it can be separated using a single Line"
+                        },
+                        {
+                            "name": "poly",
+                            "description": "Represents the similarity of vectors -training samples- in a feature space over polynomials of the original variables; allowing learning of non-linear models"
+                        },
+                        {
+                            "name": "rbf",
+                            "description": "It's a function whose value depends on the distance from the origin or from some point"
+                        },
+                        {
+                            "name": "sigmoid",
+                            "description": "In Neural Networks field the bipolar sigmoid function is often used as an activation function for artificial neurons"
+                        },
+                        {
+                            "name": "precomputed",
+                            "description": "Precomputed kernel"
+                        }
+                    ]
+                },
+                "normalize_cm": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to normalize the confusion matrix."
+                },
+                "test_size": {
+                    "type": "number",
+                    "default": 0.2,
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

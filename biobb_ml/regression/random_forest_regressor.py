@@ -27,15 +27,15 @@ class RandomForestRegressor():
         output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_random_forest_regressor.pkl>`_. Accepted formats: pkl.
         output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_random_forest_regressor.csv>`_. Accepted formats: csv.
         output_plot_path (str) (Optional): Residual plot checks the error between actual values and predicted values. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_random_forest_regressor.png>`_. Accepted formats: png.
-        properties (dic):
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*dict*) - ({}) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **n_estimators** (*int*) - (10) The number of trees in the forest.
             * **max_depth** (*int*) - (None) The maximum depth of the tree.
-            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split. .
+            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
@@ -135,13 +135,11 @@ class RandomForestRegressor():
         else:
             X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
 
-
         # scale dataset
         if self.scale: 
             fu.log('Scaling dataset', out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
-            ## PUT HERE SCALER FOR TARGET????
 
         # regression
         fu.log('Training dataset applying random forest regressor', out_log, self.global_log)

@@ -1,0 +1,178 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/logistic_regression",
+    "name": "biobb_ml LogisticRegression",
+    "title": "Wrapper of the scikit-learn LogisticRegression method.",
+    "description": "Trains and tests a given dataset and saves the model and scaler. Visit the LogisticRegression documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_logistic_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_logistic_regression.pkl",
+            "enum": [
+                ".*\\.pkl$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pkl$",
+                    "description": "Path to the output model file",
+                    "edam": "format_3653"
+                }
+            ]
+        },
+        "output_test_table_path": {
+            "type": "string",
+            "description": "Path to the test table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_logistic_regression.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test table file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_logistic_regression.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "independent_vars": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to train."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "solver": {
+                    "type": "string",
+                    "default": "liblinear",
+                    "wf_prop": false,
+                    "description": "Numerical optimizer to find parameters. ",
+                    "enum": [
+                        "newton-cg",
+                        "lbfgs",
+                        "liblinear",
+                        "sag",
+                        "saga"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "newton-cg",
+                            "description": "Recall the motivation for gradient descent step at x: we minimize the quadratic function"
+                        },
+                        {
+                            "name": "lbfgs",
+                            "description": "It's analogue of the Newton's Method but here the Hessian matrix is approximated using updates specified by gradient evaluations"
+                        },
+                        {
+                            "name": "liblinear",
+                            "description": "It's a linear classification that supports logistic regression and linear support vector machines"
+                        },
+                        {
+                            "name": "sag",
+                            "description": "SAG method optimizes the sum of a finite number of smooth convex functions"
+                        },
+                        {
+                            "name": "saga",
+                            "description": "It's a variant of SAG that also supports the non-smooth penalty=l1 option"
+                        }
+                    ]
+                },
+                "c_parameter": {
+                    "type": "number",
+                    "default": 0.01,
+                    "wf_prop": false,
+                    "description": "Inverse of regularization strength; must be a positive float. Smaller values specify stronger regularization.",
+                    "min": 0.0,
+                    "max": 100.0,
+                    "step": 0.01
+                },
+                "normalize_cm": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to normalize the confusion matrix."
+                },
+                "test_size": {
+                    "type": "number",
+                    "default": 0.2,
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

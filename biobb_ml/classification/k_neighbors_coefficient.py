@@ -15,22 +15,33 @@ from biobb_ml.classification.common import *
 
 
 class KNeighborsCoefficient():
-    """Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.
-    Wrapper of the sklearn.neighbors.KNeighborsClassifier module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_. 
+    """
+    | biobb_ml KNeighborsCoefficient
+    | Wrapper of the scikit-learn KNeighborsClassifier method. 
+    | Trains and tests a given dataset and calculates best K coefficient. Visit the `KNeighborsClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv.
-        output_results_path (str): Path to the accuracy values list. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the accuracy plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors_coefficient.png>`_. Accepted formats: png.
-        properties (dic):
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv csv (edam:format_3752).
+        output_results_path (str): Path to the accuracy values list. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv>`_. Accepted formats: csv csv (edam:format_3752).
+        output_plot_path (str) (Optional): Path to the accuracy plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors_coefficient.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean, manhattan, chebyshev, minkowski, wminkowski, seuclidean, mahalanobi.
-            * **max_neighbors** (*int*) - (6) Maximum number of neighbors to use by default for kneighbors queries.
-            * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean (`Euclidean distance <https://en.wikipedia.org/wiki/Euclidean_distance>`_), manhattan (`Manhattan distance <https://en.wikipedia.org/wiki/Taxicab_geometry>`_), chebyshev (`Chebyshev distance <https://en.wikipedia.org/wiki/Chebyshev_distance>`_), minkowski (`Minkowski distance <https://en.wikipedia.org/wiki/Minkowski_distance>`_), wminkowski (`Weighted Minkowski distance <https://en.wikipedia.org/wiki/Minkowski_distance>`_), seuclidean (`Standardized euclidean distance <https://en.wikipedia.org/wiki/Euclidean_distance>`_), mahalanobi (`Mahalanobis distance <https://en.wikipedia.org/wiki/Mahalanobis_distance>`_).
+            * **max_neighbors** (*int*) - (6) [1~100|1] Maximum number of neighbors to use by default for kneighbors queries.
+            * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >=0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path,

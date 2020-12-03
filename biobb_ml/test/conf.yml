@@ -72,12 +72,15 @@ decision_tree:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_decision_tree.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
-    criterion: 'entropy'
+    independent_vars: 
+      columns: [interest_rate, credit, march, previous, duration]
+    target: 
+      column: y
+    criterion: entropy
     max_depth: 4
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 k_neighbors_coefficient:
   paths:
@@ -163,14 +166,15 @@ support_vector_machine:
 classification_predict:
   paths:
     input_model_path: file:test_data_dir/classification/model_classification_predict.pkl
+    input_dataset_path: file:test_data_dir/classification/input_classification_predict.csv
     output_results_path: output_results.csv
     ref_output_results_path: file:test_reference_dir/classification/ref_output_classification_predict.csv
-  properties:
-    predictions: [ 
-      { 'duration': 117.000, 'interest_rate': 1.334, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 },
-      { 'duration': 274.000, 'interest_rate': 0.767, 'march': 0.000, 'credit': 0.000, 'previous': 1.000 }, 
-      { 'duration': 167.000, 'interest_rate': 4.858, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 }, 
-    ]
+  #properties:
+  #  predictions: [ 
+  #    { 'duration': 117.000, 'interest_rate': 1.334, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 },
+  #    { 'duration': 274.000, 'interest_rate': 0.767, 'march': 0.000, 'credit': 0.000, 'previous': 1.000 }, 
+  #    { 'duration': 167.000, 'interest_rate': 4.858, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 }, 
+  #  ]
 
 # CLUSTERING
 

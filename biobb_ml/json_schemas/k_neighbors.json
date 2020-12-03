@@ -1,0 +1,194 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/k_neighbors",
+    "name": "biobb_ml KNeighborsTrain",
+    "title": "Wrapper of the scikit-learn KNeighborsClassifier method.",
+    "description": "Trains and tests a given dataset and saves the model and scaler. Visit the KNeighborsClassifier documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_k_neighbors.pkl",
+            "enum": [
+                ".*\\.pkl$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pkl$",
+                    "description": "Path to the output model file",
+                    "edam": "format_3653"
+                }
+            ]
+        },
+        "output_test_table_path": {
+            "type": "string",
+            "description": "Path to the test table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test table file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "independent_vars": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to train."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "metric": {
+                    "type": "string",
+                    "default": "minkowski",
+                    "wf_prop": false,
+                    "description": "The distance metric to use for the tree. ",
+                    "enum": [
+                        "euclidean",
+                        "manhattan",
+                        "chebyshev",
+                        "minkowski",
+                        "wminkowski",
+                        "seuclidean",
+                        "mahalanobi"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "euclidean",
+                            "description": "Euclidean distance"
+                        },
+                        {
+                            "name": "manhattan",
+                            "description": "Manhattan distance"
+                        },
+                        {
+                            "name": "chebyshev",
+                            "description": "Chebyshev distance"
+                        },
+                        {
+                            "name": "minkowski",
+                            "description": "Minkowski distance"
+                        },
+                        {
+                            "name": "wminkowski",
+                            "description": "Weighted Minkowski distance"
+                        },
+                        {
+                            "name": "seuclidean",
+                            "description": "Standardized euclidean distance"
+                        },
+                        {
+                            "name": "mahalanobi",
+                            "description": "Mahalanobis distance"
+                        }
+                    ]
+                },
+                "n_neighbors": {
+                    "type": "integer",
+                    "default": 6,
+                    "wf_prop": false,
+                    "description": "Number of neighbors to use by default for kneighbors queries.",
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                "normalize_cm": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to normalize the confusion matrix."
+                },
+                "test_size": {
+                    "type": "number",
+                    "default": 0.2,
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
+                },
+                "scale": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to scale the input dataset."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

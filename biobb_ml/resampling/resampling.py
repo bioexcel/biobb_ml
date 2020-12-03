@@ -27,7 +27,7 @@ class Resampling():
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <>`_. Accepted formats: csv.
         output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <>`_. Accepted formats: csv.
-        properties (dic):
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **method** (*str*) - (None) Resampling method. It's a mandatory property. Values: smotetomek (`SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_), smotenn (`SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_).
             * **type** (*str*) - (None) Type of resampling. It's a mandatory property. Values: regression, classification.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.

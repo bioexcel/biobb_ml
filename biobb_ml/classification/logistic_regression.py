@@ -16,24 +16,35 @@ from biobb_ml.classification.common import *
 
 
 class LogisticRegression():
-    """Trains and tests a given dataset and saves the model and scaler for a logistic regression.
-    Wrapper of the sklearn.linear_model.LogisticRegression module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html>`_. 
+    """
+    | biobb_ml LogisticRegression
+    | Wrapper of the scikit-learn LogisticRegression method.
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `LogisticRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_logistic_regression.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_logistic_regression.pkl>`_. Accepted formats: pkl.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_logistic_regression.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_logistic_regression.png>`_. Accepted formats: png.
-        properties (dic):
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_logistic_regression.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_logistic_regression.pkl>`_. Accepted formats: pkl (edam:format_3653).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_logistic_regression.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_logistic_regression.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **solver** (*string*) - ("liblinear") Numerical optimizer to find parameters. Values: newton-cg, lbfgs, liblinear, sag, saga
-            * **c_parameter** (*float*) - (0.01) Inverse of regularization strength; must be a positive float. Smaller values specify stronger regularization.
+            * **solver** (*string*) - ("liblinear") Numerical optimizer to find parameters. Values: newton-cg (Recall the motivation for gradient descent step at x: we minimize the quadratic function), lbfgs (It's analogue of the Newton's Method but here the Hessian matrix is approximated using updates specified by gradient evaluations), liblinear (It's a linear classification that supports logistic regression and linear support vector machines), sag (SAG method optimizes the sum of a finite number of smooth convex functions), saga (It's a variant of SAG that also supports the non-smooth penalty=l1 option).
+            * **c_parameter** (*float*) - (0.01) [0~100|0.01] Inverse of regularization strength; must be a positive float. Smaller values specify stronger regularization.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >=0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path,

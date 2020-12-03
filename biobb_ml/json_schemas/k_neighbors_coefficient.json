@@ -1,0 +1,164 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/k_neighbors_coefficient",
+    "name": "biobb_ml KNeighborsCoefficient",
+    "title": "Wrapper of the scikit-learn KNeighborsClassifier method.",
+    "description": "Trains and tests a given dataset and calculates best K coefficient. Visit the KNeighborsClassifier documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset"
+                }
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Path to the accuracy values list",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the accuracy values list"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the accuracy plot",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors_coefficient.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the accuracy plot",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "independent_vars": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to train."
+                },
+                "target": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Dependent variable or column from your dataset you want to predict."
+                },
+                "metric": {
+                    "type": "string",
+                    "default": "minkowski",
+                    "wf_prop": false,
+                    "description": "The distance metric to use for the tree. ",
+                    "enum": [
+                        "euclidean",
+                        "manhattan",
+                        "chebyshev",
+                        "minkowski",
+                        "wminkowski",
+                        "seuclidean",
+                        "mahalanobi"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "euclidean",
+                            "description": "Euclidean distance"
+                        },
+                        {
+                            "name": "manhattan",
+                            "description": "Manhattan distance"
+                        },
+                        {
+                            "name": "chebyshev",
+                            "description": "Chebyshev distance"
+                        },
+                        {
+                            "name": "minkowski",
+                            "description": "Minkowski distance"
+                        },
+                        {
+                            "name": "wminkowski",
+                            "description": "Weighted Minkowski distance"
+                        },
+                        {
+                            "name": "seuclidean",
+                            "description": "Standardized euclidean distance"
+                        },
+                        {
+                            "name": "mahalanobi",
+                            "description": "Mahalanobis distance"
+                        }
+                    ]
+                },
+                "max_neighbors": {
+                    "type": "integer",
+                    "default": 6,
+                    "wf_prop": false,
+                    "description": "Maximum number of neighbors to use by default for kneighbors queries.",
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                "test_size": {
+                    "type": "number",
+                    "default": 0.2,
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

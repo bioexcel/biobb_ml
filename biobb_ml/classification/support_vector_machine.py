@@ -15,23 +15,34 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
 class SupportVectorMachine():
-    """Trains and tests a given dataset and saves the model and scaler for a support vector machine.
-    Wrapper of the sklearn.svm.SVC module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_. 
+    """
+    | biobb_ml SupportVectorMachine
+    | Wrapper of the scikit-learn SupportVectorMachine method.
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `SupportVectorMachine documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_support_vector_machine.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_support_vector_machine.pkl>`_. Accepted formats: pkl.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_support_vector_machine.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_support_vector_machine.png>`_. Accepted formats: png.
-        properties (dic):
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_support_vector_machine.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_support_vector_machine.pkl>`_. Accepted formats: pkl (edam:format_3653).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_support_vector_machine.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_support_vector_machine.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **kernel** (*string*) - ("rbf") Specifies the kernel type to be used in the algorithm. Values: linear, poly, rbf, sigmoid, precomputed.
+            * **kernel** (*string*) - ("rbf") Specifies the kernel type to be used in the algorithm. Values: linear (It's used when the data is Linearly separable; that is; it can be separated using a single Line), poly (Represents the similarity of vectors -training samples- in a feature space over polynomials of the original variables; allowing learning of non-linear models), rbf (It's a function whose value depends on the distance from the origin or from some point), sigmoid (In Neural Networks field the bipolar sigmoid function is often used as an activation function for artificial neurons), precomputed (Precomputed kernel).
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >=0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
     def __init__(self, input_dataset_path,
