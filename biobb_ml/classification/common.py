@@ -2,6 +2,7 @@
 from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 import itertools
+import csv
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -256,3 +257,9 @@ def getWeight(weight, data, out_log, classname):
     else:
         fu.log(classname + ': Incorrect weight format', out_log)
         raise SystemExit(classname + ': Incorrect weight format')
+
+def getHeader(file):
+    with open(file, newline='') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+    return header

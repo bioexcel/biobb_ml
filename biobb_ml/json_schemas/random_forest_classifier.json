@@ -89,16 +89,22 @@
             "type": "object",
             "properties": {
                 "independent_vars": {
-                    "type": "array",
-                    "default": null,
+                    "type": "object",
+                    "default": {},
                     "wf_prop": false,
-                    "description": "Independent variables or columns from your dataset you want to train."
+                    "description": "Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { \"columns\": [\"column1\", \"column2\"] } or { \"indexes\": [0, 2, 3, 10, 11, 17] } or { \"range\": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked."
                 },
                 "target": {
-                    "type": "string",
-                    "default": null,
+                    "type": "object",
+                    "default": {},
                     "wf_prop": false,
-                    "description": "Dependent variable or column from your dataset you want to predict."
+                    "description": "Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
+                },
+                "weight": {
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Weight variable from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
                 },
                 "n_estimators": {
                     "type": "integer",
@@ -118,6 +124,18 @@
                     "wf_prop": false,
                     "description": "Whether or not to normalize the confusion matrix."
                 },
+                "random_state_method": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "Controls the randomness of the estimator."
+                },
+                "random_state_train_test": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "Controls the shuffling applied to the data before applying the split."
+                },
                 "test_size": {
                     "type": "number",
                     "default": 0.2,
@@ -126,6 +144,12 @@
                     "min": 0.0,
                     "max": 1.0,
                     "step": 0.05
+                },
+                "scale": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to scale the input dataset."
                 },
                 "remove_tmp": {
                     "type": "boolean",

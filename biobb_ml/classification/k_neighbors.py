@@ -28,10 +28,11 @@ class KNeighborsTrain():
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*dict*) - ({}) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean (`Euclidean distance <https://en.wikipedia.org/wiki/Euclidean_distance>`_), manhattan (`Manhattan distance <https://en.wikipedia.org/wiki/Taxicab_geometry>`_), chebyshev (`Chebyshev distance <https://en.wikipedia.org/wiki/Chebyshev_distance>`_), minkowski (`Minkowski distance <https://en.wikipedia.org/wiki/Minkowski_distance>`_), wminkowski (`Weighted Minkowski distance <https://en.wikipedia.org/wiki/Minkowski_distance>`_), seuclidean (`Standardized euclidean distance <https://en.wikipedia.org/wiki/Euclidean_distance>`_), mahalanobi (`Mahalanobis distance <https://en.wikipedia.org/wiki/Mahalanobis_distance>`_).
             * **n_neighbors** (*int*) - (6) [1~100|1] Number of neighbors to use by default for kneighbors queries.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -65,7 +66,7 @@ class KNeighborsTrain():
         self.metric = properties.get('metric', 'minkowski')
         self.n_neighbors = properties.get('n_neighbors', 6)
         self.normalize_cm =  properties.get('normalize_cm', False)
-        self.random_state = properties.get('random_state', 5)
+        self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
         self.scale = properties.get('scale', False)
         self.properties = properties
@@ -93,7 +94,7 @@ class KNeighborsTrain():
         Examples:
             This is a use example of how to use the KNeighborsTrain module from Python
 
-            >>> from biobb_ml.classification.decision_tree import KNeighborsTrain
+            >>> from biobb_ml.classification.k_neighbors import KNeighborsTrain
             >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_neighbors': 6, 'test_size': 0.2 }
             >>> KNeighborsTrain(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
 
@@ -118,10 +119,12 @@ class KNeighborsTrain():
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         if 'columns' in self.independent_vars:
-            header = 0
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
         else:
-            header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -141,9 +144,9 @@ class KNeighborsTrain():
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
 
         # scale dataset
         if self.scale: 
@@ -154,7 +157,6 @@ class KNeighborsTrain():
         # classification
         fu.log('Training dataset applying k neighbors classification', out_log, self.global_log)
         model = KNeighborsClassifier(n_neighbors = self.n_neighbors)
-        #model.fit(X_train,y_train)
 
         arrays_fit = (X_train, y_train)
         # if user provide weights
@@ -220,7 +222,6 @@ class KNeighborsTrain():
 
         # plot 
         if self.io_dict["out"]["output_plot_path"]: 
-            #vs = targets.unique().tolist()
             vs = y.unique().tolist()
             vs.sort()
             if len(vs) > 2:
@@ -232,7 +233,6 @@ class KNeighborsTrain():
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # save model, scaler and parameters
-        #tv = targets.unique().tolist()
         tv = y.unique().tolist()
         tv.sort()
         variables = {

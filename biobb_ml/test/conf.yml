@@ -90,11 +90,14 @@ k_neighbors_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_k_neighbors_coefficient.png
   properties:
-    independent_vars: ['region', 'tenure','age', 'marital', 'address', 'income', 'ed', 'employ','retire', 'gender', 'reside']
-    target: 'custcat'
-    metric: 'minkowski'
+    independent_vars: 
+      columns: [region, tenure, age, marital, address, income, ed, employ, retire, gender, reside]
+    target: 
+      column: custcat
+    metric: minkowski
     max_neighbors: 15
     test_size: 0.2
+    scale: true
 
 k_neighbors:
   paths:
@@ -106,12 +109,15 @@ k_neighbors:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_k_neighbors.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
-    metric: 'minkowski'
+    independent_vars: 
+      columns: [interest_rate, credit, march, previous, duration]
+    target: 
+      column: y
+    metric: minkowski
     n_neighbors: 5
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 logistic_regression:
   paths:
@@ -123,12 +129,15 @@ logistic_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_logistic_regression.png
   properties:
-    independent_vars: ['mean area', 'mean compactness']
-    target: 'benign'
-    solver: 'liblinear'
+    independent_vars: 
+      columns: [mean area, mean compactness]
+    target: 
+      column: benign
+    solver: liblinear
     c_parameter: 0.01
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 random_forest_classifier:
   paths:
@@ -140,12 +149,15 @@ random_forest_classifier:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_random_forest_classifier.png
   properties:
-    independent_vars: ['Age', 'Sex', 'BP', 'Cholesterol', 'Na_to_K']
-    target: 'Drug'
+    independent_vars: 
+      indexes: [0,1,2,3,4]
+    target: 
+      index: 5
     n_estimators: 100
     bootstrap: true
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 support_vector_machine:
   paths:
@@ -157,11 +169,14 @@ support_vector_machine:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_support_vector_machine.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
+    independent_vars: 
+      range: [[0, 2], [4,5]]
+    target: 
+      index: 6
     kernel: 'rbf'
     normalize_cm: false                              
     test_size: 0.2
+    scale: true
 
 classification_predict:
   paths:

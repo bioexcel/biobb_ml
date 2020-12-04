@@ -32,7 +32,8 @@ class DecisionTree():
             * **criterion** (*string*) - ("gini") The function to measure the quality of a split. Values: gini (for the Gini impurity), entropy (for the information gain).
             * **max_depth** (*int*) - (4) [1~100|1] The maximum depth of the model. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_method** (*int*) - (5) Controls the randomness of the estimator.
+            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -66,7 +67,8 @@ class DecisionTree():
         self.criterion = properties.get('criterion', 'gini')
         self.max_depth = properties.get('max_depth', 4)
         self.normalize_cm =  properties.get('normalize_cm', False)
-        self.random_state = properties.get('random_state', 5)
+        self.random_state_method = properties.get('random_state_method', 5)
+        self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
         self.scale = properties.get('scale', False)
         self.properties = properties
@@ -119,10 +121,12 @@ class DecisionTree():
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         if 'columns' in self.independent_vars:
-            header = 0
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
         else:
-            header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -142,9 +146,9 @@ class DecisionTree():
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
 
         # scale dataset
         if self.scale: 
@@ -154,7 +158,7 @@ class DecisionTree():
 
         # classification
         fu.log('Training dataset applying decision tree classification', out_log, self.global_log)
-        model = DecisionTreeClassifier(criterion = self.criterion, max_depth = self.max_depth, random_state = self.random_state)
+        model = DecisionTreeClassifier(criterion = self.criterion, max_depth = self.max_depth, random_state = self.random_state_method)
         arrays_fit = (X_train, y_train)
         # if user provide weights
         if self.weight:

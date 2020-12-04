@@ -123,12 +123,14 @@ class ClassificationPredict():
 
         if self.io_dict["in"]["input_dataset_path"]:
             # load dataset from input_dataset_path file
-            fu.log('Getting input dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
             if 'columns' in variables['independent_vars']:
-                header = 0
+                labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+                skiprows = 1
             else:
-                header = None
-            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
+                labels = None
+                skiprows = None
+            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
         else:
             # load dataset from properties
             if 'columns' in variables['independent_vars']:
