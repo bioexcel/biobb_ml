@@ -572,11 +572,14 @@ pls_components:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_pls_components.png
   properties:
-    features: ['mean radius', 'mean texture', 'mean perimeter', 'mean area', 'mean smoothness', 'mean compactness', 'mean concavity', 'mean concave points', 'mean symmetry', 'mean fractal dimension', 'radius error', 'texture error', 'perimeter error', 'area error', 'smoothness error', 'compactness error', 'concavity error', 'concave points error', 'symmetry error', 'fractal dimension error', 'worst radius', 'worst texture', 'worst perimeter', 'worst area', 'worst smoothness', 'worst compactness', 'worst concavity', 'worst concave points', 'worst symmetry', 'worst fractal dimension']
-    target: 'benign'
-    optimise: False
+    features: 
+      range: [[0,29]]
+    target: 
+      index: 30
+    optimise: false
     max_components: 30
     cv: 10
+    scale: true
 
 pls_regression:
   paths:
@@ -586,10 +589,13 @@ pls_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_pls_regression.png
   properties:
-    features: ['mean radius', 'mean texture', 'mean perimeter', 'mean area', 'mean smoothness', 'mean compactness', 'mean concavity', 'mean concave points', 'mean symmetry', 'mean fractal dimension', 'radius error', 'texture error', 'perimeter error', 'area error', 'smoothness error', 'compactness error', 'concavity error', 'concave points error', 'symmetry error', 'fractal dimension error', 'worst radius', 'worst texture', 'worst perimeter', 'worst area', 'worst smoothness', 'worst compactness', 'worst concavity', 'worst concave points', 'worst symmetry', 'worst fractal dimension']
-    target: 'benign'
+    features: 
+      range: [[0,29]]
+    target: 
+      index: 30
     n_components: 12
     cv: 10
+    scale: true
 
 principal_component:
   paths:
@@ -599,6 +605,10 @@ principal_component:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_principal_component.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
-    target: 'target'
+    features: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    target: 
+      column:
+        'target'
     n_components: 2
+    scale: true

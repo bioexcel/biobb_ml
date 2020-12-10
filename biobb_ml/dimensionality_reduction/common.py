@@ -5,6 +5,7 @@ from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import csv
 from biobb_common.tools import file_utils as fu
 from warnings import simplefilter
 # ignore all future warnings
@@ -173,3 +174,56 @@ def PLSRegPlot(y, y_c, y_cv):
     plt.tight_layout()
     
     return plt
+
+def getIndependentVars(independent_vars, data, out_log, classname):
+    if 'indexes' in independent_vars:
+        return data.iloc[:, independent_vars['indexes']]
+    elif 'range' in independent_vars:
+        ranges_list = []
+        for rng in independent_vars['range']:
+            for x in range (rng[0], (rng[1] + 1)):
+                ranges_list.append(x)
+        return data.iloc[:, ranges_list]
+    elif 'columns' in independent_vars:
+        return data.loc[:, independent_vars['columns']]
+    else:
+        fu.log(classname + ': Incorrect independent_vars format', out_log)
+        raise SystemExit(classname + ': Incorrect independent_vars format')
+
+def getIndependentVarsList(independent_vars):
+    if 'indexes' in independent_vars:
+        return ', '.join(str(x) for x in independent_vars['indexes'])
+    elif 'range' in independent_vars:
+        return ', '.join([str(y) for r in independent_vars['range'] for y in range(r[0], r[1] + 1)])
+    elif 'columns' in independent_vars:
+        return ', '.join(independent_vars['columns'])
+
+def getTarget(target, data, out_log, classname):
+    if 'index' in target:
+        return data.iloc[:, target['index']]
+    elif 'column' in target:
+        return data[target['column']]
+    else:
+        fu.log(classname + ': Incorrect target format', out_log)
+        raise SystemExit(classname + ': Incorrect target format')
+
+def getTargetValue(target):
+    if 'index' in target:
+        return str(target['index'])
+    elif 'column' in target:
+        return target['column']
+
+def getWeight(weight, data, out_log, classname):
+    if 'index' in weight:
+        return data.iloc[:, weight['index']]
+    elif 'column' in weight:
+        return data[weight['column']]
+    else:
+        fu.log(classname + ': Incorrect weight format', out_log)
+        raise SystemExit(classname + ': Incorrect weight format')
+
+def getHeader(file):
+    with open(file, newline='') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+    return header
