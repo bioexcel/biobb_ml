@@ -1,0 +1,252 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/dbscan",
+    "name": "biobb_ml DBSCANClustering",
+    "title": "Wrapper of the scikit-learn DBSCAN method.",
+    "description": "Clusters a given dataset. Visit the DBSCAN documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_dbscan.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Path to the clustered dataset",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_dbscan.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the clustered dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the clustering plot",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_dbscan.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the clustering plot",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "predictors": {
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Features or columns from your dataset you want to use for fitting. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { \"columns\": [\"column1\", \"column2\"] } or { \"indexes\": [0, 2, 3, 10, 11, 17] } or { \"range\": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked."
+                },
+                "eps": {
+                    "type": "number",
+                    "default": 0.5,
+                    "wf_prop": false,
+                    "description": "The maximum distance between two samples for one to be considered as in the neighborhood of the other.",
+                    "min": 0.0,
+                    "max": 10.0,
+                    "step": 0.1
+                },
+                "min_samples": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "The number of samples (or total weight) in a neighborhood for a point to be considered as a core point. This includes the point itself.",
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                "metric": {
+                    "type": "string",
+                    "default": "euclidean",
+                    "wf_prop": false,
+                    "description": "The metric to use when calculating distance between instances in a feature array. ",
+                    "enum": [
+                        "cityblock",
+                        "cosine",
+                        "euclidean",
+                        "l1",
+                        "l2",
+                        "manhattan",
+                        "braycurtis",
+                        "canberra",
+                        "chebyshev",
+                        "correlation",
+                        "dice",
+                        "hamming",
+                        "jaccard",
+                        "kulsinski",
+                        "mahalanobis",
+                        "minkowski",
+                        "rogerstanimoto",
+                        "russellrao",
+                        "seuclidean",
+                        "sokalmichener",
+                        "sokalsneath",
+                        "sqeuclidean",
+                        "yule"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "cityblock",
+                            "description": "Compute the City Block -Manhattan- distance"
+                        },
+                        {
+                            "name": "cosine",
+                            "description": "Compute the Cosine distance between 1-D arrays"
+                        },
+                        {
+                            "name": "euclidean",
+                            "description": "Computes the Euclidean distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "l1",
+                            "description": null
+                        },
+                        {
+                            "name": "l2",
+                            "description": null
+                        },
+                        {
+                            "name": "manhattan",
+                            "description": "Compute the Manhattan distance"
+                        },
+                        {
+                            "name": "braycurtis",
+                            "description": "Compute the Bray-Curtis distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "canberra",
+                            "description": "Compute the Canberra distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "chebyshev",
+                            "description": "Compute the Chebyshev distance"
+                        },
+                        {
+                            "name": "correlation",
+                            "description": "Compute the correlation distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "dice",
+                            "description": "Compute the Dice dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "hamming",
+                            "description": "Compute the Hamming distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "jaccard",
+                            "description": "Compute the Jaccard-Needham dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "kulsinski",
+                            "description": "Compute the Kulsinski dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "mahalanobis",
+                            "description": "Compute the Mahalanobis distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "minkowski",
+                            "description": "Compute the Minkowski distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "rogerstanimoto",
+                            "description": "Compute the Rogers-Tanimoto dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "russellrao",
+                            "description": "Compute the Russell-Rao dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "seuclidean",
+                            "description": "Return the standardized Euclidean distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "sokalmichener",
+                            "description": "Compute the Sokal-Michener dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "sokalsneath",
+                            "description": "Compute the Sokal-Sneath dissimilarity between two boolean 1-D arrays"
+                        },
+                        {
+                            "name": "sqeuclidean",
+                            "description": "Compute the squared Euclidean distance between two 1-D arrays"
+                        },
+                        {
+                            "name": "yule",
+                            "description": "Compute the Yule dissimilarity between two boolean 1-D arrays"
+                        }
+                    ]
+                },
+                "plots": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ]."
+                },
+                "scale": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to scale the input dataset."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

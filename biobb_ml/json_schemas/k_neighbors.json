@@ -123,31 +123,31 @@
                     "property_formats": [
                         {
                             "name": "euclidean",
-                            "description": "Euclidean distance"
+                            "description": "Computes the Euclidean distance between two 1-D arrays"
                         },
                         {
                             "name": "manhattan",
-                            "description": "Manhattan distance"
+                            "description": "Compute the Manhattan distance"
                         },
                         {
                             "name": "chebyshev",
-                            "description": "Chebyshev distance"
+                            "description": "Compute the Chebyshev distance"
                         },
                         {
                             "name": "minkowski",
-                            "description": "Minkowski distance"
+                            "description": "Compute the Minkowski distance between two 1-D arrays"
                         },
                         {
                             "name": "wminkowski",
-                            "description": "Weighted Minkowski distance"
+                            "description": "Compute the weighted Minkowski distance between two 1-D arrays"
                         },
                         {
                             "name": "seuclidean",
-                            "description": "Standardized euclidean distance"
+                            "description": "Return the standardized Euclidean distance between two 1-D arrays"
                         },
                         {
                             "name": "mahalanobi",
-                            "description": "Mahalanobis distance"
+                            "description": "Compute the Mahalanobis distance between two 1-D arrays"
                         }
                     ]
                 },

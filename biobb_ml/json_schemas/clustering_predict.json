@@ -1,9 +1,9 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/classification_predict",
-    "name": "biobb_ml ClassificationPredict",
-    "title": "Makes predictions from an input dataset and a given classification model.",
-    "description": "Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given classification model trained with DecisionTreeClassifier, KNeighborsClassifier, LogisticRegression, RandomForestClassifier, Support Vector Machine methods.",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/clustering_predict",
+    "name": "biobb_ml ClusteringPredict",
+    "title": "Makes predictions from an input dataset and a given clustering model.",
+    "description": "Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given clustering model fitted with KMeans method.",
     "type": "object",
     "info": {
         "wrapped_software": {
@@ -25,7 +25,7 @@
             "type": "string",
             "description": "Path to the input model",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/model_classification_predict.pkl",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/model_clustering_predict.pkl",
             "enum": [
                 ".*\\.pkl$"
             ],
@@ -41,7 +41,7 @@
             "type": "string",
             "description": "Path to the dataset to predict",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/input_classification_predict.csv",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/input_clustering_predict.csv",
             "enum": [
                 ".*\\.csv$"
             ],
@@ -57,7 +57,7 @@
             "type": "string",
             "description": "Path to the output results file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_classification_predict.csv",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_clustering_predict.csv",
             "enum": [
                 ".*\\.csv$"
             ],

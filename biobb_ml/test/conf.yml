@@ -184,12 +184,6 @@ classification_predict:
     input_dataset_path: file:test_data_dir/classification/input_classification_predict.csv
     output_results_path: output_results.csv
     ref_output_results_path: file:test_reference_dir/classification/ref_output_classification_predict.csv
-  #properties:
-  #  predictions: [ 
-  #    { 'duration': 117.000, 'interest_rate': 1.334, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 },
-  #    { 'duration': 274.000, 'interest_rate': 0.767, 'march': 0.000, 'credit': 0.000, 'previous': 1.000 }, 
-  #    { 'duration': 167.000, 'interest_rate': 4.858, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 }, 
-  #  ]
 
 # CLUSTERING
 
@@ -201,9 +195,10 @@ agglomerative_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_agglomerative_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
-    scale: true
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 agglomerative_clustering:
   paths:
@@ -213,7 +208,8 @@ agglomerative_clustering:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_agglomerative_clustering.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     linkage: average
     plots: [
@@ -238,6 +234,7 @@ agglomerative_clustering:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 dbscan:
   paths:
@@ -247,7 +244,8 @@ dbscan:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_dbscan.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     eps: 1.4
     min_samples: 3
     plots: [
@@ -272,6 +270,7 @@ dbscan:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 k_means_coefficient:
   paths:
@@ -281,8 +280,10 @@ k_means_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_k_means_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 k_means:
   paths:
@@ -294,7 +295,8 @@ k_means:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_k_means.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     plots: [
       { 
@@ -318,6 +320,7 @@ k_means:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 spectral_coefficient:
   paths:
@@ -327,8 +330,10 @@ spectral_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_spectral_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 spectral_clustering:
   paths:
@@ -338,7 +343,8 @@ spectral_clustering:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_spectral_clustering.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     affinity: 'nearest_neighbors'
     plots: [
@@ -363,6 +369,7 @@ spectral_clustering:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 clustering_predict:
   paths:

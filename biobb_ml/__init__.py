@@ -1,3 +1,3 @@
 name = "biobb_ml"
 #__all__ = ["regression", "classification", "clustering", "neural_networks", "dimensionality_reduction", "utils", "resampling"]
-__all__ = ["classification", "clustering"]
+__all__ = ["classification", "clustering", "dimensionality_reduction"]

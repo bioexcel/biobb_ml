@@ -1,0 +1,154 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/spectral_clustering",
+    "name": "biobb_ml SpecClustering",
+    "title": "Wrapper of the scikit-learn SpectralClustering method.",
+    "description": "Clusters a given dataset. Visit the SpectralClustering documentation page in the sklearn official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_dataset_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the input dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_spectral_clustering.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Path to the clustered dataset",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_results_spectral_clustering.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the clustered dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_plot_path": {
+            "type": "string",
+            "description": "Path to the clustering plot",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/clustering/ref_output_plot_spectral_clustering.png",
+            "enum": [
+                ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the clustering plot",
+                    "edam": "format_3603"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "predictors": {
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Features or columns from your dataset you want to use for fitting. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { \"columns\": [\"column1\", \"column2\"] } or { \"indexes\": [0, 2, 3, 10, 11, 17] } or { \"range\": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked."
+                },
+                "clusters": {
+                    "type": "integer",
+                    "default": 3,
+                    "wf_prop": false,
+                    "description": "The number of clusters to form as well as the number of centroids to generate.",
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                "affinity": {
+                    "type": "string",
+                    "default": "rbf",
+                    "wf_prop": false,
+                    "description": "How to construct the affinity matrix. ",
+                    "enum": [
+                        "nearest_neighbors",
+                        "rbf",
+                        "precomputed",
+                        "precomputed_nearest_neighbors"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "nearest_neighbors",
+                            "description": "construct the affinity matrix by computing a graph of nearest neighbors"
+                        },
+                        {
+                            "name": "rbf",
+                            "description": "construct the affinity matrix using a radial basis function -RBF- kernel"
+                        },
+                        {
+                            "name": "precomputed",
+                            "description": "interpret X as a precomputed affinity matrix"
+                        },
+                        {
+                            "name": "precomputed_nearest_neighbors",
+                            "description": "interpret X as a sparse graph of precomputed nearest neighbors and constructs the affinity matrix by selecting the n_neighbors nearest neighbors"
+                        }
+                    ]
+                },
+                "plots": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ]."
+                },
+                "random_state_method": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization."
+                },
+                "scale": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to scale the input dataset."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}
