@@ -2,7 +2,6 @@
 
 """Module containing the RandomForestRegressor class and the command line interface."""
 import argparse
-import seaborn as sns
 import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -13,27 +12,27 @@ from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.regression.common import *
-sns.set()
 
 
 class RandomForestRegressor():
     """
     | biobb_ml RandomForestRegressor
-    | Wrapper of the sklearn.ensemble.RandomForestRegressor module
-    | Trains and tests a given dataset and saves the model and scaler for a random forest regressor. Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>`_. 
+    | Wrapper of the scikit-learn RandomForestRegressor method.
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `RandomForestRegressor documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html>`_. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_random_forest_regressor.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_random_forest_regressor.pkl>`_. Accepted formats: pkl.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_random_forest_regressor.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Residual plot checks the error between actual values and predicted values. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_random_forest_regressor.png>`_. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_random_forest_regressor.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_random_forest_regressor.pkl>`_. Accepted formats: pkl (edam:format_3653).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_random_forest_regressor.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Residual plot checks the error between actual values and predicted values. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_random_forest_regressor.png>`_. Accepted formats: png (edam:format_3603).
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*dict*) - ({}) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **n_estimators** (*int*) - (10) The number of trees in the forest.
             * **max_depth** (*int*) - (None) The maximum depth of the tree.
-            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_method** (*int*) - (5) [1~1000|1] Controls the randomness of the estimator.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -66,7 +65,8 @@ class RandomForestRegressor():
         self.weight = properties.get('weight', {})
         self.n_estimators = properties.get('n_estimators', 10)
         self.max_depth = properties.get('max_depth', None)
-        self.random_state = properties.get('random_state', 5)
+        self.random_state_method = properties.get('random_state_method', 5)
+        self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
         self.scale = properties.get('scale', False)
         self.properties = properties
@@ -89,7 +89,16 @@ class RandomForestRegressor():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RandomForestRegressor module."""
+        """Launches the execution of the RandomForestRegressor module.
+
+        Examples:
+            This is a use example of how to use the RandomForestRegressor module from Python
+
+            >>> from biobb_ml.regression.random_forest_regressor import RandomForestRegressor
+            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_estimators': 10, 'max_depth': 5, 'test_size': 0.2 }
+            >>> RandomForestRegressor(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
+
+        """
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -110,20 +119,24 @@ class RandomForestRegressor():
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         if 'columns' in self.independent_vars:
-            header = 0
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
         else:
-            header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
-        #pd.set_option('display.float_format', lambda x: '%.6f' % x)
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
         X = getIndependentVars(self.independent_vars, data, out_log, self.__class__.__name__)
+        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), out_log, self.global_log)
         # target
         y = getTarget(self.target, data, out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
         # weights
         if self.weight:
             w = getWeight(self.weight, data, out_log, self.__class__.__name__)
+            fu.log('Weight column provided', out_log, self.global_log)
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
@@ -131,9 +144,10 @@ class RandomForestRegressor():
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+
 
         # scale dataset
         if self.scale: 
@@ -143,8 +157,7 @@ class RandomForestRegressor():
 
         # regression
         fu.log('Training dataset applying random forest regressor', out_log, self.global_log)
-        #model = ensemble.RandomForestRegressor(max_depth = self.max_depth, n_estimators = self.n_estimators)
-        model = ensemble.RandomForestRegressor(max_depth = self.max_depth, n_estimators = self.n_estimators, random_state = self.random_state)
+        model = ensemble.RandomForestRegressor(max_depth = self.max_depth, n_estimators = self.n_estimators, random_state = self.random_state_method)
         arrays_fit = (X_train, y_train)
         # if user provide weights
         if self.weight:
@@ -160,12 +173,9 @@ class RandomForestRegressor():
         if self.weight:
             score_train_inputs = score_train_inputs + (w_train,)
         score = r2_score(*score_train_inputs)
-        #adj_r2 = adjusted_r2(X_train, y_train, score)
 
         # r-squared
         r2_table = pd.DataFrame()
-        #r2_table["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
-        #r2_table['coefficient'] = [score, adj_r2, rmse, rss]
         r2_table["feature"] = ['R2','RMSE', 'RSS']
         r2_table['coefficient'] = [score, rmse, rss]
 
@@ -185,7 +195,6 @@ class RandomForestRegressor():
         # calculate difference between target and prediction (absolute and %)
         test_table['residual'] = test_table['target'] - test_table['prediction']
         test_table['difference %'] = np.absolute(test_table['residual']/test_table['target']*100)
-        #pd.set_option('display.float_format', lambda x: '%.2f' % x)
         # sort by difference in %
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
@@ -196,15 +205,11 @@ class RandomForestRegressor():
         if self.weight:
             score_test_inputs = score_test_inputs + (w_test,)
         r2_test = r2_score(*score_test_inputs)
-        #adj_r2_test = adjusted_r2(X_test, y_test, r2_test)
         rmse_test = np.sqrt(mean_squared_error(y_test, y_hat_test))
         rss_test = ((y_test - y_hat_test) ** 2).sum()
 
         # r-squared
-        #pd.set_option('display.float_format', lambda x: '%.6f' % x)
         r2_table_test = pd.DataFrame()
-        #r2_table_test["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
-        #r2_table_test['coefficient'] = [r2_test, adj_r2_test, rmse_test, rss_test]
         r2_table_test["feature"] = ['R2','RMSE', 'RSS']
         r2_table_test['coefficient'] = [r2_test, rmse_test, rss_test]
 
@@ -223,10 +228,10 @@ class RandomForestRegressor():
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # save model, scaler and parameters
-        # MODIFY
         variables = {
             'target': self.target,
-            'independent_vars': self.independent_vars
+            'independent_vars': self.independent_vars,
+            'scale': self.scale
         }
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:

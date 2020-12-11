@@ -1,14 +1,14 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/decision_tree",
-    "name": "biobb_ml DecisionTree",
-    "title": "Wrapper of the scikit-learn DecisionTreeClassifier method.",
-    "description": "Trains and tests a given dataset and saves the model and scaler. Visit the DecisionTreeClassifier documentation page in the sklearn official website for further information.",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/random_forest_regressor",
+    "name": "biobb_ml RandomForestRegressor",
+    "title": "Wrapper of the scikit-learn RandomForestRegressor method.",
+    "description": "Trains and tests a given dataset and saves the model and scaler. Visit the RandomForestRegressor documentation page.",
     "type": "object",
     "info": {
         "wrapped_software": {
             "name": "scikit-learn",
-            "version": ">=0.23.1",
+            "version": ">0.23.1",
             "license": "BSD 3-Clause"
         },
         "ontology": {
@@ -25,7 +25,7 @@
             "type": "string",
             "description": "Path to the input dataset",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_decision_tree.csv",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_random_forest_regressor.csv",
             "enum": [
                 ".*\\.csv$"
             ],
@@ -41,7 +41,7 @@
             "type": "string",
             "description": "Path to the output model file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_decision_tree.pkl",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_random_forest_regressor.pkl",
             "enum": [
                 ".*\\.pkl$"
             ],
@@ -57,7 +57,7 @@
             "type": "string",
             "description": "Path to the test table file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_decision_tree.csv",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_random_forest_regressor.csv",
             "enum": [
                 ".*\\.csv$"
             ],
@@ -71,16 +71,16 @@
         },
         "output_plot_path": {
             "type": "string",
-            "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+            "description": "Residual plot checks the error between actual values and predicted values",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_decision_tree.png",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_random_forest_regressor.png",
             "enum": [
                 ".*\\.png$"
             ],
             "file_formats": [
                 {
                     "extension": ".*\\.png$",
-                    "description": "Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix",
+                    "description": "Residual plot checks the error between actual values and predicted values",
                     "edam": "format_3603"
                 }
             ]
@@ -106,40 +106,17 @@
                     "wf_prop": false,
                     "description": "Weight variable from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
                 },
-                "criterion": {
-                    "type": "string",
-                    "default": "gini",
+                "n_estimators": {
+                    "type": "integer",
+                    "default": 10,
                     "wf_prop": false,
-                    "description": "The function to measure the quality of a split. ",
-                    "enum": [
-                        "gini",
-                        "entropy"
-                    ],
-                    "property_formats": [
-                        {
-                            "name": "gini",
-                            "description": "for the Gini impurity"
-                        },
-                        {
-                            "name": "entropy",
-                            "description": "for the information gain"
-                        }
-                    ]
+                    "description": "The number of trees in the forest."
                 },
                 "max_depth": {
                     "type": "integer",
-                    "default": 4,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "The maximum depth of the model. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.",
-                    "min": 1,
-                    "max": 100,
-                    "step": 1
-                },
-                "normalize_cm": {
-                    "type": "boolean",
-                    "default": false,
-                    "wf_prop": false,
-                    "description": "Whether or not to normalize the confusion matrix."
+                    "description": "The maximum depth of the tree."
                 },
                 "random_state_method": {
                     "type": "integer",
@@ -163,10 +140,7 @@
                     "type": "number",
                     "default": 0.2,
                     "wf_prop": false,
-                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
-                    "min": 0.0,
-                    "max": 1.0,
-                    "step": 0.05
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0."
                 },
                 "scale": {
                     "type": "boolean",

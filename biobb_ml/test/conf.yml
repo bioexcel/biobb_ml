@@ -12,9 +12,12 @@ linear_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_linear_regression.png
   properties:
-    independent_vars: ['size', 'year', 'view']
-    target: 'price'
+    independent_vars: 
+      columns: ['size', 'year', 'view']
+    target: 
+      column: 'price'
     test_size: 0.2
+    scale: true
 
 polynomial_regression:
   paths:
@@ -26,10 +29,13 @@ polynomial_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_polynomial_regression.png
   properties:
-    independent_vars: ['LSTAT','RM']
-    target: 'MEDV'
+    independent_vars: 
+      columns: ['LSTAT', 'RM', 'ZN', 'AGE']
+    target: 
+      column: 'MEDV'
     degree: 2
     test_size: 0.2
+    scale: true
 
 random_forest_regressor:
   paths:
@@ -42,12 +48,13 @@ random_forest_regressor:
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_random_forest_regressor.png
   properties:
     independent_vars: 
-      columns: [LSTAT,RM]
+      range: [[0,5], [7,12]]
     target: 
-      column: MEDV
+      index: 13
     n_estimators: 10
     max_depth: 5
     test_size: 0.2
+    scale: true
 
 regression_predict:
   paths:
@@ -56,8 +63,8 @@ regression_predict:
     ref_output_results_path: file:test_reference_dir/regression/ref_output_regression_predict.csv
   properties:
     predictions: [ 
-      { 'LSTAT': 4.98, 'RM': 6.575 }, 
-      { 'LSTAT': 9.14, 'RM': 6.421 }
+      { 'LSTAT': 4.98, 'ZN': 18.0, 'RM': 6.575, 'AGE': 65.2 }, 
+      { 'LSTAT': 9.14, 'ZN': 0.0, 'RM': 6.421, 'AGE': 78.9 }
     ]
 
 # CLASSIFICATION

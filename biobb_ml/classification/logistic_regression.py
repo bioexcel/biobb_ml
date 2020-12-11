@@ -33,8 +33,8 @@ class LogisticRegression():
             * **solver** (*string*) - ("liblinear") Numerical optimizer to find parameters. Values: newton-cg (Recall the motivation for gradient descent step at x: we minimize the quadratic function), lbfgs (It's analogue of the Newton's Method but here the Hessian matrix is approximated using updates specified by gradient evaluations), liblinear (It's a linear classification that supports logistic regression and linear support vector machines), sag (SAG method optimizes the sum of a finite number of smooth convex functions), saga (It's a variant of SAG that also supports the non-smooth penalty=l1 option).
             * **c_parameter** (*float*) - (0.01) [0~100|0.01] Inverse of regularization strength; must be a positive float. Smaller values specify stronger regularization.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **random_state_method** (*int*) - (5) Controls the randomness of the estimator.
-            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_method** (*int*) - (5) [1~1000|1] Controls the randomness of the estimator.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

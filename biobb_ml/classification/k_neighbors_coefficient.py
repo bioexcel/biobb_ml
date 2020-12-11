@@ -29,7 +29,7 @@ class KNeighborsCoefficient():
             * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
             * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean (Computes the Euclidean distance between two 1-D arrays), manhattan (Compute the Manhattan distance), chebyshev (Compute the Chebyshev distance), minkowski (Compute the Minkowski distance between two 1-D arrays), wminkowski (Compute the weighted Minkowski distance between two 1-D arrays), seuclidean (Return the standardized Euclidean distance between two 1-D arrays), mahalanobi (Compute the Mahalanobis distance between two 1-D arrays).
             * **max_neighbors** (*int*) - (6) [1~100|1] Maximum number of neighbors to use by default for kneighbors queries.
-            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

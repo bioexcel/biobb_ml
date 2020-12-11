@@ -24,7 +24,7 @@ class SpectralCoefficient():
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **predictors** (*dict*) - ({}) Features or columns from your dataset you want to use for fitting. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **max_clusters** (*int*) - (6) [1~100|1] Maximum number of clusters to use by default for kmeans queries.
-            * **random_state_method** (*int*) - (5) A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization.
+            * **random_state_method** (*int*) - (5) [1~1000|1] A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.

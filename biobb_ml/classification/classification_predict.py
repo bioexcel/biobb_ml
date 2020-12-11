@@ -43,8 +43,8 @@ class ClassificationPredict():
 
     """
 
-    def __init__(self, input_model_path, input_dataset_path,
-                 output_results_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path,
+                 output_results_path, input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files

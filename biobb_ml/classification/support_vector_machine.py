@@ -31,8 +31,8 @@ class SupportVectorMachine():
             * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **kernel** (*string*) - ("rbf") Specifies the kernel type to be used in the algorithm. Values: linear (It's used when the data is Linearly separable; that is; it can be separated using a single Line), poly (Represents the similarity of vectors -training samples- in a feature space over polynomials of the original variables; allowing learning of non-linear models), rbf (It's a function whose value depends on the distance from the origin or from some point), sigmoid (In Neural Networks field the bipolar sigmoid function is often used as an activation function for artificial neurons), precomputed (Precomputed kernel).
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **random_state_method** (*int*) - (5) Controls the randomness of the estimator.
-            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_method** (*int*) - (5) [1~1000|1] Controls the randomness of the estimator.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

@@ -127,7 +127,10 @@
                     "type": "integer",
                     "default": 5,
                     "wf_prop": false,
-                    "description": "A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization."
+                    "description": "A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization.",
+                    "min": 1,
+                    "max": 1000,
+                    "step": 1
                 },
                 "scale": {
                     "type": "boolean",

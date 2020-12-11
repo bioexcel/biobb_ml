@@ -170,7 +170,10 @@
                     "type": "integer",
                     "default": 5,
                     "wf_prop": false,
-                    "description": "Controls the shuffling applied to the data before applying the split."
+                    "description": "Controls the shuffling applied to the data before applying the split.",
+                    "min": 1,
+                    "max": 1000,
+                    "step": 1
                 },
                 "test_size": {
                     "type": "number",

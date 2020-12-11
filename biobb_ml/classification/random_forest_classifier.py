@@ -32,8 +32,8 @@ class RandomForestClassifier():
             * **n_estimators** (*int*) - (100) The number of trees in the forest.
             * **bootstrap** (*bool*) - (True) Whether bootstrap samples are used when building trees. If False, the whole dataset is used to build each tree.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **random_state_method** (*int*) - (5) Controls the randomness of the estimator.
-            * **random_state_train_test** (*int*) - (5) Controls the shuffling applied to the data before applying the split.
+            * **random_state_method** (*int*) - (5) [1~1000|1] Controls the randomness of the estimator.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
             * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

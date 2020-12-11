@@ -26,7 +26,7 @@ class SpecClustering():
             * **clusters** (*int*) - (3) [1~100|1] The number of clusters to form as well as the number of centroids to generate.
             * **affinity** (*string*) - ("rbf") How to construct the affinity matrix. Values:  nearest_neighbors (construct the affinity matrix by computing a graph of nearest neighbors), rbf (construct the affinity matrix using a radial basis function -RBF- kernel), precomputed (interpret X as a precomputed affinity matrix), precomputed_nearest_neighbors (interpret X as a sparse graph of precomputed nearest neighbors and constructs the affinity matrix by selecting the n_neighbors nearest neighbors).
             * **plots** (*list*) - (None) List of dictionaries with all plots you want to generate. Only 2D or 3D plots accepted. Format: [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ].
-            * **random_state_method** (*int*) - (5) A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization.
+            * **random_state_method** (*int*) - (5) [1~1000|1] A pseudo random number generator used for the initialization of the lobpcg eigen vectors decomposition when *eigen_solver='amg'* and by the K-Means initialization.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
