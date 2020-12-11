@@ -610,5 +610,6 @@ principal_component:
     target: 
       column:
         'target'
-    n_components: 2
+    n_components: 
+      value: 2
     scale: true

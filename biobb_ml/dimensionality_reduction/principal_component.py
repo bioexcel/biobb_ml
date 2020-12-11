@@ -25,7 +25,7 @@ class PrincipalComponentAnalysis():
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **features** (*dict*) - ({}) Features or columns from your dataset you want to use for fitting. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **n_components** (*int*) - (None) [1~1000|1] Number of components to keep (int) or minimum number of principal components such the 0 to 1 range of the variance (float) is retained. If n_components is not set (None) all components are kept.
+            * **n_components** (*dict*) - ({}) Dictionary containing the number of components to keep (int) or the minimum number of principal components such the 0 to 1 range of the variance (float) is retained. If not set ({}) all components are kept. Formats for integer values: { "value": 2 } or for float values: { "value": 0.3 }
             * **random_state_method** (*int*) - (5) Controls the randomness of the estimator.
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -39,7 +39,7 @@ class PrincipalComponentAnalysis():
         * ontology:
             * name: EDAM
             * schema: http://edamontology.org/EDAM.owl
-            
+
     """
 
     def __init__(self, input_dataset_path,
@@ -53,9 +53,9 @@ class PrincipalComponentAnalysis():
         }
 
         # Properties specific for BB
-        self.features = properties.get('features', [])
-        self.target = properties.get('target', '')
-        self.n_components = properties.get('n_components', None)
+        self.features = properties.get('features', {})
+        self.target = properties.get('target', {})
+        self.n_components = properties.get('n_components', {})
         self.random_state_method = properties.get('random_state_method', 5)
         self.scale = properties.get('scale', False)
         self.properties = properties
@@ -83,7 +83,7 @@ class PrincipalComponentAnalysis():
             This is a use example of how to use the PrincipalComponentAnalysis module from Python
 
             >>> from biobb_ml.dimensionality_reduction.pincipal_component import PrincipalComponentAnalysis
-            >>> prop = { 'features': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_components': 2 }
+            >>> prop = { 'features': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_components': { 'int': 2 } }
             >>> PrincipalComponentAnalysis(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
 
         """
@@ -127,9 +127,13 @@ class PrincipalComponentAnalysis():
             scaler = StandardScaler()
             features = scaler.fit_transform(features)
 
-        # create a PCA object with self.n_components n_components
+        # create a PCA object with self.n_components['value'] n_components
+        if not 'value' in self.n_components:
+            n_c = None
+        else:
+            n_c = self.n_components['value']
         fu.log('Fitting dataset', out_log, self.global_log)
-        model = PCA(n_components = self.n_components, random_state = self.random_state_method)
+        model = PCA(n_components = n_c, random_state = self.random_state_method)
         # fit the data
         model.fit(features)
 
