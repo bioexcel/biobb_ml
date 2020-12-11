@@ -3,6 +3,9 @@ from pathlib import Path, PurePath
 from importlib import import_module
 from biobb_common.tools import file_utils as fu
 import warnings
+import csv
+import re
+import pandas as pd
 
 # UNDERSAMPLING METHODS
 undersampling_methods = {
@@ -135,6 +138,18 @@ def getTargetValue(target, out_log, classname):
 	else:
 		fu.log(classname + ': Incorrect target format', out_log)
 		raise SystemExit(classname + ': Incorrect target format')
+
+def getHeader(file):
+	
+	with open(file, newline='') as f:
+		reader = csv.reader(f)
+		header = next(reader)
+        
+	if(len(header) == 1):
+		return list(re.sub('\s+|;|:|,|\t', ',', header[0]).split(","))
+	else:
+		return header
+
 
 def checkResamplingType(type_, out_log, classname):
 	""" Gets resampling type """

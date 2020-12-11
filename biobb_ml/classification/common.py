@@ -262,4 +262,8 @@ def getHeader(file):
     with open(file, newline='') as f:
         reader = csv.reader(f)
         header = next(reader)
-    return header
+
+    if(len(header) == 1):
+        return list(re.sub('\s+|;|:|,|\t', ',', header[0]).split(","))
+    else:
+        return header
