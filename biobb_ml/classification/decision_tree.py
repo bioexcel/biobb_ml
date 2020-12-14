@@ -39,6 +39,27 @@ class DecisionTree():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.classification.decision_tree import decision_tree
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'criterion': 'entropy', 
+                'test_size': 0.2 
+            }
+            decision_tree(input_dataset_path='/path/to/myDataset.csv', 
+                            output_model_path='/path/to/newModel.pkl', 
+                            output_test_table_path='/path/to/newTable.csv', 
+                            output_plot_path='/path/to/newPlot.png', 
+                            properties=prop)
+
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -91,16 +112,7 @@ class DecisionTree():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the DecisionTree module.
-
-        Examples:
-            This is a use example of how to use the DecisionTree module from Python
-
-            >>> from biobb_ml.classification.decision_tree import DecisionTree
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'criterion': 'entropy', 'test_size': 0.2 }
-            >>> DecisionTree(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`DecisionTree <classification.decision_tree.DecisionTree>` classification.decision_tree.DecisionTree object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -250,7 +262,18 @@ class DecisionTree():
 
         return 0
 
+def decision_tree(input_dataset_path, output_model_path, output_test_table_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`DecisionTree <classification.decision_tree.DecisionTree>` class and
+    execute the :meth:`launch() <classification.decision_tree.DecisionTree.launch> method."""
+
+    return DecisionTree(input_dataset_path=input_dataset_path, 
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a decision tree classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

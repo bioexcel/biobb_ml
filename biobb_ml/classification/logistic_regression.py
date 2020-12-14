@@ -40,6 +40,27 @@ class LogisticRegression():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.classification.logistic_regression import logistic_regression
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'solver': 'liblinear', 
+                'c_parameter': 0.01, 
+                'test_size': 0.2 
+            }
+            logistic_regression(input_dataset_path='/path/to/myDataset.csv', 
+                                output_model_path='/path/to/newModel.pkl', 
+                                output_test_table_path='/path/to/newTable.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -92,16 +113,7 @@ class LogisticRegression():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the LogisticRegression module.
-
-        Examples:
-            This is a use example of how to use the LogisticRegression module from Python
-
-            >>> from biobb_ml.classification.logistic_regression import LogisticRegression
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'solver': 'liblinear', 'c_parameter': 0.01 'test_size': 0.2 }
-            >>> LogisticRegression(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`LogisticRegression <classification.logistic_regression.LogisticRegression>` classification.logistic_regression.LogisticRegression object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -253,7 +265,18 @@ class LogisticRegression():
 
         return 0
 
+def logistic_regression(input_dataset_path, output_model_path, output_test_table_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`LogisticRegression <classification.logistic_regression.LogisticRegression>` class and
+    execute the :meth:`launch() <classification.logistic_regression.LogisticRegression.launch> method."""
+
+    return LogisticRegression(input_dataset_path=input_dataset_path, 
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a logistic regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

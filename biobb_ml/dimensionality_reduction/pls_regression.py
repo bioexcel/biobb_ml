@@ -35,6 +35,25 @@ class PLS_Regression():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.dimensionality_reduction.pls_regression import pls_regression
+            prop = { 
+                'features': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'n_components': 12, 
+                'cv': 10 
+            }
+            pls_regression(input_dataset_path='/path/to/myDataset.csv', 
+                            output_results_path='/path/to/newTable.csv', 
+                            output_plot_path='/path/to/newPlot.png', 
+                            properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -84,16 +103,7 @@ class PLS_Regression():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PLS_Regression module.
-
-        Examples:
-            This is a use example of how to use the PLS_Regression module from Python
-
-            >>> from biobb_ml.dimensionality_reduction.pls_components import PLS_Regression
-            >>> prop = { 'features': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_components': 12, 'cv': 10 }
-            >>> PLS_Regression(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`PLS_Regression <dimensionality_reduction.pls_regression.PLS_Regression>` dimensionality_reduction.pls_regression.PLS_Regression object."""
 
         # trick for disable warnings in interations
         warnings.warn = self.warn
@@ -170,7 +180,17 @@ class PLS_Regression():
 
         return 0
 
+def pls_regression(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`PLS_Regression <dimensionality_reduction.pls_regression.PLS_Regression>` class and
+    execute the :meth:`launch() <dimensionality_reduction.pls_regression.PLS_Regression.launch> method."""
+
+    return PLS_Regression(input_dataset_path=input_dataset_path,  
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Gives results for a Partial Least Square (PLS) Regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

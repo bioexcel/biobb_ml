@@ -29,6 +29,28 @@ class RegressionPredict():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.regression.regression_predict import regression_predict
+            prop = { 
+                'predictions': [
+                    { 
+                        'var1': 1.0, 
+                        'var2': 2.0 
+                    }, 
+                    { 
+                        'var1': 4.0, 
+                        'var2': 2.7 
+                    }
+                ] 
+            }
+            regression_predict(input_model_path='/path/to/myModel.pkl', 
+                                input_dataset_path='/path/to/myDataset.csv', 
+                                output_results_path='/path/to/newPredictedResults.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -72,16 +94,7 @@ class RegressionPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RegressionPredict module.
-
-        Examples:
-            This is a use example of how to use the RegressionPredict module from Python
-
-            >>> from biobb_ml.regression.regression_predict import RegressionPredict
-            >>> prop = { 'predictions': [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] }
-            >>> RegressionPredict(input_model_path='/path/to/myModel.pkl', input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newPredictedResults.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`RegressionPredict <regression.regression_predict.RegressionPredict>` regression.regression_predict.RegressionPredict object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -160,7 +173,17 @@ class RegressionPredict():
 
         return 0
 
+def regression_predict(input_model_path, input_dataset_path, output_results_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`RegressionPredict <regression.regression_predict.RegressionPredict>` class and
+    execute the :meth:`launch() <regression.regression_predict.RegressionPredict.launch> method."""
+
+    return RegressionPredict(input_model_path=input_model_path,  
+                   input_dataset_path=input_dataset_path, 
+                   output_results_path=output_results_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

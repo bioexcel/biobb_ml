@@ -39,6 +39,26 @@ class PolynomialRegression():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.regression.polynomial_regression import polynomial_regression
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'degree': 2, 
+                'test_size': 0.2 
+            }
+            polynomial_regression(input_dataset_path='/path/to/myDataset.csv', 
+                                output_model_path='/path/to/newModel.pkl', 
+                                output_test_table_path='/path/to/newTable.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -88,16 +108,7 @@ class PolynomialRegression():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PolynomialRegression module.
-
-        Examples:
-            This is a use example of how to use the PolynomialRegression module from Python
-
-            >>> from biobb_ml.regression.polynomial_regression import PolynomialRegression
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'degree': 2, 'test_size': 0.2 }
-            >>> PolynomialRegression(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`PolynomialRegression <regression.polynomial_regression.PolynomialRegression>` regression.polynomial_regression.PolynomialRegression object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -238,7 +249,18 @@ class PolynomialRegression():
 
         return 0
 
+def polynomial_regression(input_dataset_path, output_model_path, output_test_table_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`PolynomialRegression <regression.polynomial_regression.PolynomialRegression>` class and
+    execute the :meth:`launch() <regression.polynomial_regression.PolynomialRegression.launch> method."""
+
+    return PolynomialRegression(input_dataset_path=input_dataset_path,  
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a polynomial regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

@@ -30,6 +30,29 @@ class AgglomerativeCoefficient():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.clustering.agglomerative_coefficient import agglomerative_coefficient
+            prop = { 
+                'predictors': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'clusters': 3, 
+                'affinity': 'euclidean', 
+                'linkage': 'ward', 
+                'plots': [ 
+                    { 
+                        'title': 'Plot 1', 
+                        'features': ['feat1', 'feat2'] 
+                    } 
+                ] 
+            }
+            agglomerative_coefficient(input_dataset_path='/path/to/myDataset.csv', 
+                                    output_results_path='/path/to/newTable.csv', 
+                                    output_plot_path='/path/to/newPlot.png', 
+                                    properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -76,16 +99,7 @@ class AgglomerativeCoefficient():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the AgglomerativeCoefficient module.
-
-        Examples:
-            This is a use example of how to use the AgglomerativeCoefficient module from Python
-
-            >>> from biobb_ml.clustering.agglomerative_coefficient import AgglomerativeCoefficient
-            >>> prop = { 'predictors': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'clusters': 3, 'affinity': 'euclidean', 'linkage': 'ward', 'plots': [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ] }
-            >>> AgglomerativeCoefficient(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`AgglomerativeCoefficient <clustering.agglomerative_coefficient.AgglomerativeCoefficient>` clustering.agglomerative_coefficient.AgglomerativeCoefficient object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -153,7 +167,17 @@ class AgglomerativeCoefficient():
 
         return 0
 
+def agglomerative_coefficient(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`AgglomerativeCoefficient <clustering.agglomerative_coefficient.AgglomerativeCoefficient>` class and
+    execute the :meth:`launch() <clustering.agglomerative_coefficient.AgglomerativeCoefficient.launch> method."""
+
+    return AgglomerativeCoefficient(input_dataset_path=input_dataset_path,  
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Clusters a given dataset and calculates best K coefficient for a k-means clustering.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

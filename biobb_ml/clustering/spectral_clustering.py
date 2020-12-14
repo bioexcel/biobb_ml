@@ -31,6 +31,28 @@ class SpecClustering():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.clustering.spectral_clustering import spectral_clustering
+            prop = { 
+                'predictors': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'clusters': 3, 
+                'affinity': 'rbf', 
+                'plots': [ 
+                    { 
+                        'title': 'Plot 1', 
+                        'features': ['feat1', 'feat2'] 
+                    } 
+                ]
+            }
+            spectral_clustering(input_dataset_path='/path/to/myDataset.csv', 
+                                output_results_path='/path/to/newTable.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -78,16 +100,7 @@ class SpecClustering():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the SpecClustering module.
-    
-        Examples:
-            This is a use example of how to use the SpecClustering module from Python
-
-            >>> from biobb_ml.clustering.spectral_clustering import SpecClustering
-            >>> prop = { 'predictors': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'clusters': 3, 'affinity': 'rbf', 'plots': [ { 'title': 'Plot 1', 'features': ['feat1', 'feat2'] } ] }
-            >>> SpecClustering(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`SpecClustering <clustering.spectral_clustering.SpecClustering>` clustering.spectral_clustering.SpecClustering object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -161,7 +174,17 @@ class SpecClustering():
 
         return 0
 
+def spectral_clustering(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`SpecClustering <clustering.spectral_clustering.SpecClustering>` class and
+    execute the :meth:`launch() <clustering.spectral_clustering.SpecClustering.launch> method."""
+
+    return SpecClustering(input_dataset_path=input_dataset_path,  
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Clusters a given dataset with spectral clustering method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

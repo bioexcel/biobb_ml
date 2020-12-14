@@ -35,6 +35,25 @@ class KNeighborsCoefficient():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.classification.k_neighbors_coefficient import k_neighbors_coefficient
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'max_neighbors': 6, 
+                'test_size': 0.2 
+            }
+            k_neighbors_coefficient(input_dataset_path='/path/to/myDataset.csv', 
+                                    output_results_path='/path/to/newTable.csv', 
+                                    output_plot_path='/path/to/newPlot.png', 
+                                    properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -84,16 +103,7 @@ class KNeighborsCoefficient():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the KNeighborsCoefficient module.
-
-        Examples:
-            This is a use example of how to use the KNeighborsCoefficient module from Python
-
-            >>> from biobb_ml.classification.k_neighbors_coefficient import KNeighborsCoefficient
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'max_neighbors': 6, 'test_size': 0.2 }
-            >>> KNeighborsCoefficient(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`KNeighborsCoefficient <classification.k_neighbors_coefficient.KNeighborsCoefficient>` classification.k_neighbors_coefficient.KNeighborsCoefficient object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -211,7 +221,17 @@ class KNeighborsCoefficient():
 
         return 0
 
+def k_neighbors_coefficient(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`KNeighborsCoefficient <classification.k_neighbors_coefficient.KNeighborsCoefficient>` class and
+    execute the :meth:`launch() <classification.k_neighbors_coefficient.KNeighborsCoefficient.launch> method."""
+
+    return KNeighborsCoefficient(input_dataset_path=input_dataset_path, 
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates best K coefficient for a k-nearest neighbors classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

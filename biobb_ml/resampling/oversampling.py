@@ -267,8 +267,7 @@ class Oversampling():
 
         return 0
 
-def oversampling(input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+def oversampling(input_dataset_path, output_dataset_path, properties=None, **kwargs) -> None:
     """Execute the :class:`Oversampling <resampling.oversampling.Oversampling>` class and
     execute the :meth:`launch() <resampling.oversampling.Oversampling.launch> method."""
 

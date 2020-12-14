@@ -32,6 +32,28 @@ class ClassificationPredict():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.classification.classification_predict import classification_predict
+            prop = { 
+                'predictions': [
+                    { 
+                        'var1': 1.0, 
+                        'var2': 2.0 
+                    }, 
+                    { 
+                        'var1': 4.0, 
+                        'var2': 2.7 
+                    }
+                ] 
+            }
+            classification_predict(input_model_path='/path/to/myModel.pkl', 
+                                    input_dataset_path='/path/to/myDataset.csv', 
+                                    output_results_path='/path/to/newPredictedResults.csv', 
+                                    output_plot_path='/path/to/newPlot.png', 
+                                    properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -75,16 +97,7 @@ class ClassificationPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClassificationPredict module.
-
-        Examples:
-            This is a use example of how to use the ClassificationPredict module from Python
-
-            >>> from biobb_ml.classification.classification_predict import ClassificationPredict
-            >>> prop = { 'predictions': [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] }
-            >>> ClassificationPredict(input_model_path='/path/to/myModel.pkl', input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newPredictedResults.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-    
-        """
+        """Execute the :class:`ClassificationPredict <classification.classification_predict.ClassificationPredict>` classification.classification_predict.ClassificationPredict object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -164,7 +177,17 @@ class ClassificationPredict():
 
         return 0
 
+def classification_predict(input_model_path, input_dataset_path, output_results_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`ClassificationPredict <classification.classification_predict.ClassificationPredict>` class and
+    execute the :meth:`launch() <classification.classification_predict.ClassificationPredict.launch> method."""
+
+    return ClassificationPredict(input_model_path=input_model_path, 
+                    input_dataset_path=input_dataset_path,
+                    output_results_path=output_results_path, 
+                    properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
@@ -179,9 +202,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClassificationPredict(input_model_path=args.input_model_path, input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   properties=properties).launch()
+    ClassificationPredict(input_model_path=args.input_model_path, 
+                    input_dataset_path=args.input_dataset_path,
+                    output_results_path=args.output_results_path, 
+                    properties=properties).launch()
 
 if __name__ == '__main__':
     main()

@@ -38,6 +38,27 @@ class RandomForestRegressor():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.regression.random_forest_regressor import random_forest_regressor
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'n_estimators': 10, 
+                'max_depth': 5, 
+                'test_size': 0.2 
+            }
+            random_forest_regressor(input_dataset_path='/path/to/myDataset.csv', 
+                                    output_model_path='/path/to/newModel.pkl', 
+                                    output_test_table_path='/path/to/newTable.csv', 
+                                    output_plot_path='/path/to/newPlot.png', 
+                                    properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -89,16 +110,7 @@ class RandomForestRegressor():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RandomForestRegressor module.
-
-        Examples:
-            This is a use example of how to use the RandomForestRegressor module from Python
-
-            >>> from biobb_ml.regression.random_forest_regressor import RandomForestRegressor
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_estimators': 10, 'max_depth': 5, 'test_size': 0.2 }
-            >>> RandomForestRegressor(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`RandomForestRegressor <regression.random_forest_regressor.RandomForestRegressor>` regression.random_forest_regressor.RandomForestRegressor object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -241,7 +253,18 @@ class RandomForestRegressor():
 
         return 0
 
+def random_forest_regressor(input_dataset_path, output_model_path, output_test_table_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`RandomForestRegressor <regression.random_forest_regressor.RandomForestRegressor>` class and
+    execute the :meth:`launch() <regression.random_forest_regressor.RandomForestRegressor.launch> method."""
+
+    return RandomForestRegressor(input_dataset_path=input_dataset_path,  
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a random forest regressor.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

@@ -287,8 +287,7 @@ class Undersampling():
 
         return 0
 
-def undersampling(input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+def undersampling(input_dataset_path, output_dataset_path, properties=None, **kwargs) -> None:
     """Execute the :class:`Undersampling <resampling.undersampling.Undersampling>` class and
     execute the :meth:`launch() <resampling.undersampling.Undersampling.launch> method."""
 

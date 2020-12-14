@@ -37,6 +37,25 @@ class LinearRegression():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.regression.linear_regression import linear_regression
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'test_size': 0.2 
+            }
+            linear_regression(input_dataset_path='/path/to/myDataset.csv', 
+                            output_model_path='/path/to/newModel.pkl', 
+                            output_test_table_path='/path/to/newTable.csv', 
+                            output_plot_path='/path/to/newPlot.png', 
+                            properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -85,16 +104,7 @@ class LinearRegression():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the LinearRegression module.
-
-        Examples:
-            This is a use example of how to use the LinearRegression module from Python
-
-            >>> from biobb_ml.regression.linear_regression import LinearRegression
-            >>> prop = { 'independent_vars': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'test_size': 0.2 }
-            >>> LinearRegression(input_dataset_path='/path/to/myDataset.csv', output_model_path='/path/to/newModel.pkl', output_test_table_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`LinearRegression <regression.linear_regression.LinearRegression>` regression.linear_regression.LinearRegression object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -250,7 +260,18 @@ class LinearRegression():
 
         return 0
 
+def linear_regression(input_dataset_path, output_model_path, output_test_table_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`LinearRegression <regression.linear_regression.LinearRegression>` class and
+    execute the :meth:`launch() <regression.linear_regression.LinearRegression.launch> method."""
+
+    return LinearRegression(input_dataset_path=input_dataset_path,  
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a linear regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

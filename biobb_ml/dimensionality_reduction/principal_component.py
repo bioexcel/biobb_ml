@@ -30,6 +30,26 @@ class PrincipalComponentAnalysis():
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+    
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.dimensionality_reduction.pincipal_component import pincipal_component
+            prop = { 
+                'features': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'n_components': { 
+                    'int': 2 
+                } 
+            }
+            pincipal_component(input_dataset_path='/path/to/myDataset.csv', 
+                                output_results_path='/path/to/newTable.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
 
     Info:
         * wrapped_software:
@@ -77,16 +97,7 @@ class PrincipalComponentAnalysis():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PrincipalComponentAnalysis module.
-
-        Examples:
-            This is a use example of how to use the PrincipalComponentAnalysis module from Python
-
-            >>> from biobb_ml.dimensionality_reduction.pincipal_component import PrincipalComponentAnalysis
-            >>> prop = { 'features': { 'columns': [ 'column1', 'column2', 'column3' ] }, 'target': { 'column': 'target' }, 'n_components': { 'int': 2 } }
-            >>> PrincipalComponentAnalysis(input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newTable.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis>` dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -177,7 +188,17 @@ class PrincipalComponentAnalysis():
 
         return 0
 
+def pincipal_component(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis>` class and
+    execute the :meth:`launch() <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis.launch> method."""
+
+    return PrincipalComponentAnalysis(input_dataset_path=input_dataset_path,  
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Analyses a given dataset through Principal Component Analysis (PCA).", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

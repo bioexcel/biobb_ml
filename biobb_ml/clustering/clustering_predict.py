@@ -27,6 +27,28 @@ class ClusteringPredict():
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
 
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.clustering.clustering_predict import clustering_predict
+            prop = { 
+                'predictions': [
+                    { 
+                        'var1': 1.0, 
+                        'var2': 2.0 
+                    }, 
+                    { 
+                        'var1': 4.0, 
+                        'var2': 2.7 
+                    }
+                ] 
+            }
+            clustering_predict(input_model_path='/path/to/myModel.pkl', 
+                                input_dataset_path='/path/to/myDataset.csv', 
+                                output_results_path='/path/to/newPredictedResults.csv', 
+                                output_plot_path='/path/to/newPlot.png', 
+                                properties=prop)
+
     Info:
         * wrapped_software:
             * name: scikit-learn
@@ -70,16 +92,7 @@ class ClusteringPredict():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ClusteringPredict module.
-
-        Examples:
-            This is a use example of how to use the ClusteringPredict module from Python
-
-            >>> from biobb_ml.clustering.classification_predict import ClusteringPredict
-            >>> prop = { 'predictions': [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] }
-            >>> ClusteringPredict(input_model_path='/path/to/myModel.pkl', input_dataset_path='/path/to/myDataset.csv', output_results_path='/path/to/newPredictedResults.csv', output_plot_path='/path/to/newPlot.png', properties=prop).launch()
-
-        """
+        """Execute the :class:`ClusteringPredict <clustering.clustering_predict.ClusteringPredict>` clustering.clustering_predict.ClusteringPredict object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -150,7 +163,17 @@ class ClusteringPredict():
 
         return 0
 
+def clustering_predict(input_model_path, input_dataset_path, output_results_path, properties=None, **kwargs) -> None:
+    """Execute the :class:`ClusteringPredict <clustering.clustering_predict.ClusteringPredict>` class and
+    execute the :meth:`launch() <clustering.clustering_predict.ClusteringPredict.launch> method."""
+
+    return ClusteringPredict(input_model_path=input_model_path, 
+                    input_dataset_path=input_dataset_path,  
+                    output_results_path=output_results_path, 
+                    properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
@@ -165,9 +188,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClusteringPredict(input_model_path=args.input_model_path, input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   properties=properties).launch()
+    ClusteringPredict(input_model_path=args.input_model_path, 
+                    input_dataset_path=args.input_dataset_path,
+                    output_results_path=args.output_results_path, 
+                    properties=properties).launch()
 
 if __name__ == '__main__':
     main()
