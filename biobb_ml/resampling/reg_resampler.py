@@ -38,8 +38,11 @@ class resampler:
                     self.X[str(i)] = X.iloc[:, i]
             #self.X["target"] = X[:,target]
             self.X["target"] = X.iloc[:,target]
+            # if no header, get new target position
+            target_pos = self.X.columns.get_loc('target')
             target = "target"
         else:
+            target_pos = None
             self.X = X.copy()
             
 
@@ -97,7 +100,7 @@ class resampler:
             self.target = tmp
         else:
             self.target = target
-        return ranges, self.Y_classes 
+        return ranges, self.Y_classes, target_pos
 
 
     

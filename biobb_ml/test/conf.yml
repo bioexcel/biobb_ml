@@ -620,3 +620,51 @@ principal_component:
     n_components: 
       value: 2
     scale: true
+
+# RESAMPLING
+
+oversampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_oversampling.csv
+  properties:
+    method: random
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    sampling_strategy: 
+      target: minority
+
+resampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_resampling.csv
+  properties:
+    method: smotenn
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    sampling_strategy_over: 
+      dict: { 4: 1000, 5: 1000, 6: 1000, 7: 1000 }
+    sampling_strategy_under: 
+      list: [0,1]
+
+undersampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_undersampling.csv
+  properties:
+    method: enn
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    n_neighbors: 3
