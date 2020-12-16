@@ -191,6 +191,8 @@ classification_predict:
     input_dataset_path: file:test_data_dir/classification/input_classification_predict.csv
     output_results_path: output_results.csv
     ref_output_results_path: file:test_reference_dir/classification/ref_output_classification_predict.csv
+  properties:
+    remove_tmp: false
 
 # CLUSTERING
 
@@ -398,13 +400,26 @@ correlation_matrix:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_correlation_matrix.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    features: 
+      columns: [sepal_length, sepal_width, petal_length, petal_width]
 
 dendrogram:
   paths:
     input_dataset_path: file:test_data_dir/utils/dataset_dendrogram.csv
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_dendrogram.png
+  properties:
+    features: 
+      columns: [Satisfaction,Loyalty]
+
+drop_columns:
+  paths:
+    input_dataset_path: file:test_data_dir/utils/dataset_drop.csv
+    output_dataset_path: output_dataset.csv
+    ref_output_dataset_path: file:test_reference_dir/utils/ref_output_drop.csv
+  properties:
+    targets:
+      columns: [WEIGHT, SCORE]
 
 dummy_variables:
   paths:
@@ -412,7 +427,8 @@ dummy_variables:
     output_dataset_path: output_dataset.csv
     ref_output_dataset_path: file:test_reference_dir/utils/ref_output_dataset_dummy_variables.csv
   properties:
-    columns: ['view']
+    targets:
+      columns: [view]
 
 map_variables:
   paths:
@@ -420,7 +436,8 @@ map_variables:
     output_dataset_path: output_dataset.csv
     ref_output_dataset_path: file:test_reference_dir/utils/ref_output_dataset_map_variables.csv
   properties:
-    columns: ['target']
+    targets:
+      columns: [target]
 
 pairwise_comparison:
   paths:
@@ -428,7 +445,17 @@ pairwise_comparison:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_pairwise_comparison.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    features: 
+      indexes: [0,1,2,3]
+
+scale_columns:
+  paths:
+    input_dataset_path: file:test_data_dir/utils/dataset_scale.csv
+    output_dataset_path: output_dataset.csv
+    ref_output_dataset_path: file:test_reference_dir/utils/ref_output_scale.csv
+  properties:
+    targets:
+      columns: [VALUE]
 
 # NEURAL NETWORKS
 
@@ -458,8 +485,10 @@ classification_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_classification.png
   properties:
-    features: ['mean radius','mean texture','mean perimeter','mean area','mean smoothness','mean compactness','mean concavity','mean concave points','mean symmetry','mean fractal dimension','radius error','texture error','perimeter error','area error','smoothness error','compactness error','concavity error','concave points error','symmetry error','fractal dimension error','worst radius','worst texture','worst perimeter','worst area','worst smoothness','worst compactness','worst concavity','worst concave points','worst symmetry','worst fractal dimension']
-    target: 'benign'
+    features: 
+      columns: ['mean radius','mean texture','mean perimeter','mean area','mean smoothness','mean compactness','mean concavity','mean concave points','mean symmetry','mean fractal dimension','radius error','texture error','perimeter error','area error','smoothness error','compactness error','concavity error','concave points error','symmetry error','fractal dimension error','worst radius','worst texture','worst perimeter','worst area','worst smoothness','worst compactness','worst concavity','worst concave points','worst symmetry','worst fractal dimension']
+    target: 
+      column: 'benign'
     validation_size: .2
     test_size: .1
     hidden_layers: [
@@ -471,6 +500,7 @@ classification_neural_network:
     learning_rate: .02
     batch_size: 100
     max_epochs: 100
+    scale: true
 
 recurrent_neural_network:
   paths:
@@ -482,7 +512,8 @@ recurrent_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_recurrent.png
   properties:
-    target: 'Sales'
+    target: 
+      index: 1
     window_size: 5
     validation_size: .2
     test_size: 12
@@ -506,10 +537,12 @@ regression_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_regression.png
   properties:
-    features: ['CRIM','ZN','INDUS','CHAS','NOX','RM','AGE','DIS','RAD','TAX','PTRATIO','B','LSTAT']
-    target: 'MEDV'
+    features: 
+      columns: ['ZN','RM','AGE','LSTAT']
+    target: 
+      column: 'MEDV'
     validation_size: .2
-    test_size: .33
+    test_size: .2
     hidden_layers: [
       { 'size': 10, 'activation': 'relu' },
       { 'size': 8, 'activation': 'relu' },
@@ -527,6 +560,8 @@ neural_network_decode:
     ref_output_decode_path: file:test_reference_dir/neural_networks/ref_output_decode_decoder.csv
     output_predict_path: output_predict.csv
     ref_output_predict_path: file:test_reference_dir/neural_networks/ref_output_predict_decoder.csv
+  properties:
+    remove_tmp: false
 
 neural_network_predict:
   paths:
@@ -535,39 +570,10 @@ neural_network_predict:
     ref_output_results_path: file:test_reference_dir/neural_networks/ref_output_predict.csv
   properties:
     predictions: [
-    { 
-      'mean radius': 17.99,
-      'mean texture': 10.38,
-      'mean perimeter': 122.8,
-      'mean area': 1001,
-      'mean smoothness': 0.1184,
-      'mean compactness': 0.2776,
-      'mean concavity': 0.3001,
-      'mean concave points': 0.1471,
-      'mean symmetry': 0.2419,
-      'mean fractal dimension': 0.07871,
-      'radius error': 1.095,
-      'texture error': 0.9053,
-      'perimeter error': 8.589,
-      'area error': 153.4,
-      'smoothness error': 0.006399,
-      'compactness error': 0.04904,
-      'concavity error': 0.05373,
-      'concave points error': 0.01587,
-      'symmetry error': 0.03003,
-      'fractal dimension error': 0.006193,
-      'worst radius': 25.38,
-      'worst texture': 17.33,
-      'worst perimeter': 184.6,
-      'worst area': 2019,
-      'worst smoothness': 0.1622,
-      'worst compactness': 0.6656,
-      'worst concavity': 0.7119,
-      'worst concave points': 0.2654,
-      'worst symmetry': 0.4601,
-      'worst fractal dimension': 0.1189
-    }
-  ]
+      { 'ZN': 18.0,'RM': 6.575,'AGE': 65.2,'LSTAT': 4.98 },
+      { 'ZN': 0.0,'RM': 6.421,'AGE': 78.9,'LSTAT': 9.14 },
+      { 'ZN': 0.0,'RM': 7.185,'AGE': 61.1,'LSTAT': 4.03 }
+    ]
 
 # DIMENSIONALITY REDUCTION
 

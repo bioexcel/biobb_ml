@@ -1,0 +1,13 @@
+properties:
+  independent_vars:
+    range:
+    - - 0
+      - 2
+    - - 4
+      - 5
+  kernel: rbf
+  normalize_cm: false
+  scale: true
+  target:
+    index: 6
+  test_size: 0.2

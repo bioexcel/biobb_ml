@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import csv
+import re
 from pathlib import Path, PurePath
 from biobb_common.tools import file_utils as fu
 from warnings import simplefilter

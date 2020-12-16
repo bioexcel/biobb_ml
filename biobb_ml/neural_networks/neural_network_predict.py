@@ -13,25 +13,59 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 class PredictNeuralNetwork():
-    """Calculates prediction for a NN classification given a model file.
-    Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf>`_. 
+    """
+    | biobb_ml PredictNeuralNetwork
+    | Makes predictions from an input dataset and a given classification model.
+    | Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given classification model trained with `TensorFlow Keras Sequential <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ and `TensorFlow Keras LSTM <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_
 
     Args:
-        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: h5.
-        output_results_path (str): Path to the output results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv>`_. Accepted formats: csv.
-        properties (dic):
-            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets.
+        input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: h5 (edam:format_3590).
+        input_dataset_path (str) (Optional): Path to the dataset to predict. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_predict.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_results_path (str): Path to the output results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv>`_. Accepted formats: csv (edam:format_3752).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
+            * **predictions** (*list*) - (None) List of dictionaries with all values you want to predict targets. It will be taken into account only in case **input_dataset_path** is not provided. Format: [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] for datasets with headers and [[ 1.0, 2.0 ], [ 4.0, 2.7 ]] for datasets without headers.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.neural_networks.neural_network_predict import neural_network_predict
+            prop = { 
+                'predictions': [
+                    { 
+                        'var1': 1.0, 
+                        'var2': 2.0 
+                    }, 
+                    { 
+                        'var1': 4.0, 
+                        'var2': 2.7 
+                    }
+                ] 
+            }
+            neural_network_predict(input_model_path='/path/to/myModel.h5', 
+                                    input_dataset_path='/path/to/myDataset.csv', 
+                                    output_results_path='/path/to/newPredictedResults.csv',
+                                    properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: tensorflow
+            * version: >2.1.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+            
     """
 
-    def __init__(self, input_model_path,
-                 output_results_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path, output_results_path, 
+                input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = { 
-            "in": { "input_model_path": input_model_path }, 
+            "in": { "input_model_path": input_model_path, "input_dataset_path": input_dataset_path }, 
             "out": { "output_results_path": output_results_path } 
         }
 
@@ -52,10 +86,12 @@ class PredictNeuralNetwork():
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", False, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        if self.io_dict["in"]["input_dataset_path"]:
+            self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PredictNeuralNetwork module."""
+        """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` neural_networks.neural_network_predict.PredictNeuralNetwork object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -86,30 +122,59 @@ class PredictNeuralNetwork():
         model_summary = "\n".join(stringlist)
         fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
 
+        if self.io_dict["in"]["input_dataset_path"]:
+            # load dataset from input_dataset_path file
+            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+            if 'features' not in vars_obj:
+                # recurrent
+                labels = None
+                skiprows = None
+                with open(self.io_dict["in"]["input_dataset_path"]) as csvfile:
+                    reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
+                    for row in reader: # each row is a list
+                        self.predictions.append(row)
+            else:
+                # classification or regression
+                if 'columns' in vars_obj['features']:
+                    labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+                    skiprows = 1
+                else:
+                    labels = None
+                    skiprows = None
+            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        else:
+            if vars_obj['type'] != 'recurrent':
+                new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+            else:
+                new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
+
         # prediction
         if vars_obj['type'] != 'recurrent':
             # classification or regression
 
-            new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
-            new_data = scale(new_data_table)
+            #new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+            new_data = new_data_table
+            if vars_obj['scale']: new_data = scale(new_data)
 
             predictions = new_model.predict(new_data)
             predictions = np.around(predictions, decimals=2)
 
             clss = ''
-            if predictions.shape[1] > 1:
+            #if predictions.shape[1] > 1:
+            if vars_obj['type'] == 'classification':
                 # classification
                 pr = tuple(map(tuple, predictions))
                 clss = ' (' + ', '.join(str(x) for x in vars_obj['vs']) + ')'
             else:
                 # regression
                 pr = np.squeeze(np.asarray(predictions))
-            new_data_table[vars_obj['target'] + clss] = pr
+
+            new_data_table[getTargetValue(vars_obj['target']) + clss] = pr
 
         else:
             # recurrent
 
-            new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
+            #new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
             predictions = []
 
             for r in self.predictions:
@@ -120,10 +185,8 @@ class PredictNeuralNetwork():
 
                 predictions.append(pred[0][0])
 
-            pd.set_option('display.float_format', lambda x: '%.2f' % x)
+            #pd.set_option('display.float_format', lambda x: '%.2f' % x)
             new_data_table["predictions"] = predictions 
-        
-        # TODO: CHECK IF SCALER
 
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
@@ -131,14 +194,25 @@ class PredictNeuralNetwork():
 
         return 0
 
+def neural_network_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` class and
+    execute the :meth:`launch() <neural_networks.neural_network_predict.PredictNeuralNetwork.launch> method."""
+
+    return PredictNeuralNetwork(input_model_path=input_model_path,  
+                   output_results_path=output_results_path, 
+                   input_dataset_path=input_dataset_path,
+                   properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Calculates prediction for a NN classification given a model file.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Makes predictions from an input dataset and a given classification model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_model_path', required=True, help='Path to the input model. Accepted formats: h5.')
     required_args.add_argument('--output_results_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    parser.add_argument('--input_dataset_path', required=False, help='Path to the dataset to predict. Accepted formats: csv.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
@@ -147,8 +221,8 @@ def main():
     # Specific call of each building block
     PredictNeuralNetwork(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
+                   input_dataset_path=args.input_dataset_path,
                    properties=properties).launch()
 
 if __name__ == '__main__':
     main()
-

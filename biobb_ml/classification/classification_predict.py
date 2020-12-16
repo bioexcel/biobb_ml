@@ -49,9 +49,8 @@ class ClassificationPredict():
                 ] 
             }
             classification_predict(input_model_path='/path/to/myModel.pkl', 
+                                    output_results_path='/path/to/newPredictedResults.csv',
                                     input_dataset_path='/path/to/myDataset.csv', 
-                                    output_results_path='/path/to/newPredictedResults.csv', 
-                                    output_plot_path='/path/to/newPlot.png', 
                                     properties=prop)
 
     Info:
@@ -65,8 +64,8 @@ class ClassificationPredict():
 
     """
 
-    def __init__(self, input_model_path,
-                 output_results_path, input_dataset_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path, output_results_path, 
+                input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -177,18 +176,18 @@ class ClassificationPredict():
 
         return 0
 
-def classification_predict(input_model_path, input_dataset_path, output_results_path, properties=None, **kwargs) -> None:
+def classification_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`ClassificationPredict <classification.classification_predict.ClassificationPredict>` class and
     execute the :meth:`launch() <classification.classification_predict.ClassificationPredict.launch> method."""
 
     return ClassificationPredict(input_model_path=input_model_path, 
-                    input_dataset_path=input_dataset_path,
                     output_results_path=output_results_path, 
+                    input_dataset_path=input_dataset_path,
                     properties=properties).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Makes predictions from an input dataset and a given classification model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -203,8 +202,8 @@ def main():
 
     # Specific call of each building block
     ClassificationPredict(input_model_path=args.input_model_path, 
-                    input_dataset_path=args.input_dataset_path,
                     output_results_path=args.output_results_path, 
+                    input_dataset_path=args.input_dataset_path,
                     properties=properties).launch()
 
 if __name__ == '__main__':

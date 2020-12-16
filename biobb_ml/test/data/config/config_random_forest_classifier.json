@@ -1,16 +1,21 @@
 {
-    "properties": {
-        "independent_vars": [
-            "Age",
-            "Sex",
-            "BP",
-            "Cholesterol",
-            "Na_to_K"
-        ],
-        "target": "Drug",
-        "n_estimators": 100,
-        "bootstrap": true,
-        "normalize_cm": false,
-        "test_size": 0.2
-    }
+  "properties": {
+    "independent_vars": {
+      "indexes": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "target": {
+      "index": 5
+    },
+    "n_estimators": 100,
+    "bootstrap": true,
+    "normalize_cm": false,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

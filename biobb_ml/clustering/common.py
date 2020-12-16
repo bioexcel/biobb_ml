@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import itertools
 import csv
+import re
 import numpy as np
 import pandas as pd
 import seaborn as sns

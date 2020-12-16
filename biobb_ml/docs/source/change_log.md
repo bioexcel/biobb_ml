@@ -1,5 +1,19 @@
 # Biobb Machine Learning changelog
 
+## What's new in version [3.0.3](https://github.com/bioexcel/biobb_ml/releases/tag/v3.0.3)?
+In version 3.0.3 there have been implemented the new version of docstrings, therefore the JSON Schemas have been modified. There has been implemented some new utils as well the new Resampling package. Finally, the method for inserting new datasets to the tools has been improved
+
+### New features
+
+* New extended and improved JSON schemas (Galaxy and CWL-compliant)
+* New Drop Columns and Scale Columns utils
+* New Resampling module: Oversampling, Undersampling and Resampling.
+
+### Other changes
+
+* New docstrings
+* New input datasets method: now unlabeled datasets are supported.
+
 ## What's new in version [3.0.2](https://github.com/bioexcel/biobb_ml/releases/tag/v3.0.2)?
 In version 3.0.2 the dependency biobb_common has been updated to 3.0.1 version.
 

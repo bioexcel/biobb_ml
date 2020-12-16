@@ -1,0 +1,8 @@
+properties:
+  evaluate: true
+  method: enn
+  n_bins: 10
+  n_neighbors: 3
+  target:
+    column: VALUE
+  type: regression

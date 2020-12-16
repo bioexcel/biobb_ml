@@ -46,9 +46,8 @@ class RegressionPredict():
                 ] 
             }
             regression_predict(input_model_path='/path/to/myModel.pkl', 
-                                input_dataset_path='/path/to/myDataset.csv', 
                                 output_results_path='/path/to/newPredictedResults.csv', 
-                                output_plot_path='/path/to/newPlot.png', 
+                                input_dataset_path='/path/to/myDataset.csv', 
                                 properties=prop)
 
     Info:
@@ -62,8 +61,8 @@ class RegressionPredict():
 
     """
 
-    def __init__(self, input_model_path,
-                 output_results_path, input_dataset_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path, output_results_path, 
+                input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -173,18 +172,18 @@ class RegressionPredict():
 
         return 0
 
-def regression_predict(input_model_path, input_dataset_path, output_results_path, properties=None, **kwargs) -> None:
+def regression_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RegressionPredict <regression.regression_predict.RegressionPredict>` class and
     execute the :meth:`launch() <regression.regression_predict.RegressionPredict.launch> method."""
 
-    return RegressionPredict(input_model_path=input_model_path,  
-                   input_dataset_path=input_dataset_path, 
-                   output_results_path=output_results_path,
-                   properties=properties).launch()
+    return RegressionPredict(input_model_path=input_model_path, 
+                    output_results_path=output_results_path, 
+                    input_dataset_path=input_dataset_path, 
+                    properties=properties).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Makes predictions from a given model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Makes predictions from an input dataset and a given regression model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
@@ -198,8 +197,9 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    RegressionPredict(input_model_path=args.input_model_path, input_dataset_path=args.input_dataset_path,
+    RegressionPredict(input_model_path=args.input_model_path,
                    output_results_path=args.output_results_path, 
+                   input_dataset_path=args.input_dataset_path,
                    properties=properties).launch()
 
 if __name__ == '__main__':

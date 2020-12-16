@@ -1,0 +1,10 @@
+properties:
+  independent_vars:
+    columns:
+    - size
+    - year
+    - view
+  scale: true
+  target:
+    column: price
+  test_size: 0.2

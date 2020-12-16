@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/resampling",
     "name": "biobb_ml Resampling",
-    "title": "Wrapper of the imblearn.combine methods",
+    "title": "Wrapper of the imblearn.combine methods.",
     "description": "Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: SMOTETomek, SMOTEENN.",
     "type": "object",
     "info": {

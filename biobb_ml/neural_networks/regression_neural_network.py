@@ -22,30 +22,64 @@ from biobb_ml.neural_networks.common import *
 class RegressionNeuralNetwork():
     """
     | biobb_ml RegressionNeuralNetwork
-    | Wrapper of the tf.keras.Sequential model
-    | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_. 
+    | Wrapper of the TensorFlow Keras Sequential method.
+    | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `Sequential documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ in the TensorFlow Keras official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: h5.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <http://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_regression.h5>`_. Accepted formats: h5 (edam:format_3590).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_regression.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Loss, MAE and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_regression.png>`_. Accepted formats: png (edam:format_3603).
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **features** (*dict*) - ({}) Independent variables or columns from your dataset you want to train. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
             * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
-            * **test_size** (*float*) - (0.1) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **validation_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
+            * **test_size** (*float*) - (0.1) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
-            * **output_layer_activation** (*string*) - ("softmax") Activation function to use in the output layer. Values: sigmoid, tanh, relu, softmax.
-            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
-            * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
-            * **batch_size** (*int*) - (100) Number of samples per gradient update.
-            * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
-            * **random_state** (*int*) - (5) Controls the shuffling applied to the data before applying the split. .
+            * **output_layer_activation** (*string*) - ("softmax") Activation function to use in the output layer. Values: sigmoid (Sigmoid activation function: sigmoid[x] = 1 / [1 + exp[-x]]), tanh (Hyperbolic tangent activation function), relu (Applies the rectified linear unit activation function), softmax(Softmax converts a real vector to a vector of categorical probabilities).
+            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta (Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate), Adagrad (Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates), Adam (Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments), Adamax (It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings), Ftrl (Optimizer that implements the FTRL algorithm), Nadam (Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum), RMSprop (Optimizer that implements the RMSprop algorithm), SGD (Gradient descent -with momentum- optimizer).
+            * **learning_rate** (*float*) - (0.02) [0~100|0.01] Determines the step size at each iteration while moving toward a minimum of a loss function
+            * **batch_size** (*int*) - (100) [0~1000|1] Number of samples per gradient update.
+            * **max_epochs** (*int*) - (100) [0~1000|1] Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+            * **random_state** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split. .
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.neural_networks.regression_neural_network import regression_neural_network
+            prop = { 
+                'features': {
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                },
+                'target': { 
+                    'column': 'target' 
+                },
+                'validation_size': 0.2,
+                'test_size': .33,
+                'hidden_layers': [
+                    { 
+                        'size': 10, 
+                        'activation': 'relu' 
+                    },
+                    { 
+                        'size': 8, 
+                        'activation': 'relu' 
+                    }
+                ],
+                'optimizer': 'Adam',
+                'learning_rate': 0.01,
+                'batch_size': 32,
+                'max_epochs': 150
+            }
+            regression_neural_network(input_dataset_path='/path/to/myDataset.csv', 
+                                        output_model_path='/path/to/newModel.h5', 
+                                        output_test_table_path='/path/to/newTable.csv', 
+                                        output_plot_path='/path/to/newPlot.png',
+                                        properties=prop)
 
     Info:
         * wrapped_software:
@@ -101,6 +135,8 @@ class RegressionNeuralNetwork():
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, input_shape):
+        """ Builds Neural network according to hidden_layers property """
+
         # create model
         model = Sequential([])
 
@@ -121,7 +157,7 @@ class RegressionNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RegressionNeuralNetwork module."""
+        """Execute the :class:`RegressionNeuralNetwork <neural_networks.regression_neural_network.RegressionNeuralNetwork>` neural_networks.regression_neural_network.RegressionNeuralNetwork object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -141,15 +177,19 @@ class RegressionNeuralNetwork():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], sep="\s+|;|:|,|\t",engine="python")
-
-        #y = data[self.target].to_numpy()
-        # the inputs are all the independent variables
-        #X = data.filter(self.features)
+        if 'columns' in self.features:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
+        else:
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         X = getFeatures(self.features, data, out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
         # target
         y = getTarget(self.target, data, out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (str(getTargetValue(self.target))), out_log, self.global_log)
         # weights
         if self.weight:
             w = getWeight(self.weight, data, out_log, self.__class__.__name__)
@@ -231,8 +271,6 @@ class RegressionNeuralNetwork():
             score_train_inputs = score_train_inputs + (w_train,)
         train_score = r2_score(*score_train_inputs)    
 
-        #train_score = r2_score(y_train, train_predictions)
-
         train_metrics = pd.DataFrame()
         train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
         train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], train_score, mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
@@ -254,8 +292,6 @@ class RegressionNeuralNetwork():
         if self.weight:
             score_test_inputs = score_test_inputs + (w_test,)
         score = r2_score(*score_test_inputs)
-
-        #score = r2_score(y_test, test_predictions)
 
         test_metrics = pd.DataFrame()
         test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']
@@ -302,16 +338,27 @@ class RegressionNeuralNetwork():
 
         return 0
 
+def regression_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`RegressionNeuralNetwork <neural_networks.regression_neural_network.RegressionNeuralNetwork>` class and
+    execute the :meth:`launch() <neural_networks.regression_neural_network.RegressionNeuralNetwork.launch> method."""
+
+    return RegressionNeuralNetwork(input_dataset_path=input_dataset_path,  
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path,
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and calculates coefficients and predictions for a NN classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper of the TensorFlow Keras Sequential method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: csv.')
-    parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: h5.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: h5.')
+    parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
+    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')    
 
     args = parser.parse_args()
     args.config = args.config or "{}"

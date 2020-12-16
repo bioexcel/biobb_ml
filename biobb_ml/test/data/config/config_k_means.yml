@@ -1,0 +1,32 @@
+properties:
+  clusters: 3
+  plots:
+  - features:
+    - sepal_length
+    - sepal_width
+    title: Plot 1
+  - features:
+    - petal_length
+    - petal_width
+    title: Plot 2
+  - features:
+    - sepal_length
+    - sepal_width
+    - petal_length
+    title: Plot 3
+  - features:
+    - petal_length
+    - petal_width
+    - sepal_width
+    title: Plot 4
+  - features:
+    - sepal_length
+    - petal_width
+    title: Plot 5
+  predictors:
+    columns:
+    - sepal_length
+    - sepal_width
+    - petal_length
+    - petal_width
+  scale: true

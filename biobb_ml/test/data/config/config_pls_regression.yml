@@ -1,0 +1,10 @@
+properties:
+  cv: 10
+  features:
+    range:
+    - - 0
+      - 29
+  n_components: 12
+  scale: true
+  target:
+    index: 30

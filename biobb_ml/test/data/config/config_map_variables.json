@@ -1,7 +1,9 @@
 {
-    "properties": {
-        "columns": [
-            "target"
-        ]
+  "properties": {
+    "targets": {
+      "columns": [
+        "target"
+      ]
     }
+  }
 }

@@ -1,7 +1,9 @@
 {
-    "properties": {
-        "columns": [
-            "view"
-        ]
+  "properties": {
+    "targets": {
+      "columns": [
+        "view"
+      ]
     }
+  }
 }

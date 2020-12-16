@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "method": "enn",
+    "type": "regression",
+    "target": {
+      "column": "VALUE"
+    },
+    "evaluate": true,
+    "n_bins": 10,
+    "n_neighbors": 3
+  }
+}

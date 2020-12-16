@@ -72,8 +72,8 @@ class Oversampling():
 
     """
 
-    def __init__(self, input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path, 
+                properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -267,7 +267,7 @@ class Oversampling():
 
         return 0
 
-def oversampling(input_dataset_path, output_dataset_path, properties=None, **kwargs) -> None:
+def oversampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Oversampling <resampling.oversampling.Oversampling>` class and
     execute the :meth:`launch() <resampling.oversampling.Oversampling.launch> method."""
 
@@ -277,7 +277,7 @@ def oversampling(input_dataset_path, output_dataset_path, properties=None, **kwa
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Involves supplementing the training data with multiple copies of some of the minority classes of a given dataset. If regression is specified as type, the data will be resampled to classes in order to apply the oversampling model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Wrapper of most of the imblearn.over_sampling methods.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

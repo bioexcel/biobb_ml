@@ -1,0 +1,7 @@
+properties:
+  max_clusters: 10
+  predictors:
+    columns:
+    - sepal_length
+    - sepal_width
+  scale: true

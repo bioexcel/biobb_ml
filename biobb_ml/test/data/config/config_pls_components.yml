@@ -1,0 +1,11 @@
+properties:
+  cv: 10
+  features:
+    range:
+    - - 0
+      - 29
+  max_components: 30
+  optimise: false
+  scale: true
+  target:
+    index: 30

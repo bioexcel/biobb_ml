@@ -20,7 +20,7 @@ from biobb_ml.resampling.common import *
 class Undersampling():
     """
     | biobb_ml Undersampling
-    | Wrapper of most of the imblearn.under_sampling methods
+    | Wrapper of most of the imblearn.under_sampling methods.
     | Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_, `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_, `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_, `TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_, `EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_, `NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_, `ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_.  
 
     Args:
@@ -76,8 +76,8 @@ class Undersampling():
 
     """
 
-    def __init__(self, input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path, 
+                properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -287,7 +287,7 @@ class Undersampling():
 
         return 0
 
-def undersampling(input_dataset_path, output_dataset_path, properties=None, **kwargs) -> None:
+def undersampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Undersampling <resampling.undersampling.Undersampling>` class and
     execute the :meth:`launch() <resampling.undersampling.Undersampling.launch> method."""
 
@@ -297,7 +297,7 @@ def undersampling(input_dataset_path, output_dataset_path, properties=None, **kw
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Wrapper of most of the imblearn.under_sampling methods.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

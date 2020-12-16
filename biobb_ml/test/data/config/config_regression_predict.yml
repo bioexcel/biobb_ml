@@ -1,0 +1,10 @@
+properties:
+  predictions:
+  - AGE: 65.2
+    LSTAT: 4.98
+    RM: 6.575
+    ZN: 18.0
+  - AGE: 78.9
+    LSTAT: 9.14
+    RM: 6.421
+    ZN: 0.0

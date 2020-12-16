@@ -20,7 +20,7 @@ from biobb_ml.resampling.common import *
 class Resampling():
     """
     | biobb_ml Resampling
-    | Wrapper of the imblearn.combine methods
+    | Wrapper of the imblearn.combine methods.
     | Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_, `SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_.
     
 
@@ -77,8 +77,8 @@ class Resampling():
 
     """
 
-    def __init__(self, input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path, 
+                properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -266,7 +266,7 @@ class Resampling():
 
         return 0
 
-def resampling(input_dataset_path, output_dataset_path, properties=None, **kwargs) -> None:
+def resampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Resampling <resampling.resampling.Resampling>` class and
     execute the :meth:`launch() <resampling.resampling.Resampling.launch> method."""
 
@@ -276,7 +276,7 @@ def resampling(input_dataset_path, output_dataset_path, properties=None, **kwarg
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Wrapper of the imblearn.combine methods.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

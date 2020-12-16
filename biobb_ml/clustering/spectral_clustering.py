@@ -64,8 +64,8 @@ class SpecClustering():
 
     """
 
-    def __init__(self, input_dataset_path,
-                 output_results_path, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path, 
+                output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -96,7 +96,8 @@ class SpecClustering():
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_plot_path"]:
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -174,7 +175,7 @@ class SpecClustering():
 
         return 0
 
-def spectral_clustering(input_dataset_path, output_results_path, output_plot_path, properties=None, **kwargs) -> None:
+def spectral_clustering(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`SpecClustering <clustering.spectral_clustering.SpecClustering>` class and
     execute the :meth:`launch() <clustering.spectral_clustering.SpecClustering.launch> method."""
 
@@ -185,7 +186,7 @@ def spectral_clustering(input_dataset_path, output_results_path, output_plot_pat
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Clusters a given dataset with spectral clustering method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Wrapper of the scikit-learn SpectralClustering method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

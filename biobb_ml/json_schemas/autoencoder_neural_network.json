@@ -1,0 +1,200 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/autoencoder_neural_network",
+    "name": "biobb_ml AutoencoderNeuralNetwork",
+    "title": "Wrapper of the TensorFlow Keras LSTM method for encoding.",
+    "description": "Fits and tests a given dataset and save the compiled model for an Autoencoder Neural Network. Visit the LSTM documentation page in the TensorFlow Keras official website for further information.",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "tensorflow",
+            "version": ">2.1.0",
+            "license": "MIT"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_decode_path",
+        "output_model_path"
+    ],
+    "properties": {
+        "input_decode_path": {
+            "type": "string",
+            "description": "Path to the input decode dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input decode dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "input_predict_path": {
+            "type": "string",
+            "description": "Path to the input predict dataset",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input predict dataset",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_model_path": {
+            "type": "string",
+            "description": "Path to the output model file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_autoencoder.h5",
+            "enum": [
+                ".*\\.h5$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.h5$",
+                    "description": "Path to the output model file",
+                    "edam": "format_3590"
+                }
+            ]
+        },
+        "output_test_decode_path": {
+            "type": "string",
+            "description": "Path to the test decode table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_decode_autoencoder.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test decode table file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_test_predict_path": {
+            "type": "string",
+            "description": "Path to the test predict table file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_predict_autoencoder.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test predict table file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "optimizer": {
+                    "type": "string",
+                    "default": "Adam",
+                    "wf_prop": false,
+                    "description": "Name of optimizer instance. ",
+                    "enum": [
+                        "Adadelta",
+                        "Adagrad",
+                        "Adam",
+                        "Adamax",
+                        "Ftrl",
+                        "Nadam",
+                        "RMSprop",
+                        "SGD"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "Adadelta",
+                            "description": "Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate"
+                        },
+                        {
+                            "name": "Adagrad",
+                            "description": "Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates"
+                        },
+                        {
+                            "name": "Adam",
+                            "description": "Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments"
+                        },
+                        {
+                            "name": "Adamax",
+                            "description": "It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings"
+                        },
+                        {
+                            "name": "Ftrl",
+                            "description": "Optimizer that implements the FTRL algorithm"
+                        },
+                        {
+                            "name": "Nadam",
+                            "description": "Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum"
+                        },
+                        {
+                            "name": "RMSprop",
+                            "description": "Optimizer that implements the RMSprop algorithm"
+                        },
+                        {
+                            "name": "SGD",
+                            "description": "Gradient descent -with momentum- optimizer"
+                        }
+                    ]
+                },
+                "learning_rate": {
+                    "type": "number",
+                    "default": 0.02,
+                    "wf_prop": false,
+                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function",
+                    "min": 0.0,
+                    "max": 100.0,
+                    "step": 0.01
+                },
+                "batch_size": {
+                    "type": "integer",
+                    "default": 100,
+                    "wf_prop": false,
+                    "description": "Number of samples per gradient update.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
+                },
+                "max_epochs": {
+                    "type": "integer",
+                    "default": 100,
+                    "wf_prop": false,
+                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

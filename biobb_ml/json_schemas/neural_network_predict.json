@@ -1,0 +1,97 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/neural_network_predict",
+    "name": "biobb_ml PredictNeuralNetwork",
+    "title": "Makes predictions from an input dataset and a given classification model.",
+    "description": "Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given classification model trained with TensorFlow Keras Sequential and TensorFlow Keras LSTM",
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "tensorflow",
+            "version": ">2.1.0",
+            "license": "MIT"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_model_path",
+        "output_results_path"
+    ],
+    "properties": {
+        "input_model_path": {
+            "type": "string",
+            "description": "Path to the input model",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5",
+            "enum": [
+                ".*\\.h5$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.h5$",
+                    "description": "Path to the input model",
+                    "edam": "format_3590"
+                }
+            ]
+        },
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the dataset to predict",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the dataset to predict",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "output_results_path": {
+            "type": "string",
+            "description": "Path to the output results file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the output results file",
+                    "edam": "format_3752"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "predictions": {
+                    "type": "array",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "List of dictionaries with all values you want to predict targets. It will be taken into account only in case **input_dataset_path** is not provided. Format: [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] for datasets with headers and [[ 1.0, 2.0 ], [ 4.0, 2.7 ]] for datasets without headers."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

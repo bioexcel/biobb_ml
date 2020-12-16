@@ -3,6 +3,7 @@ from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 import itertools
 import csv
+import re
 import numpy as np
 import pandas as pd
 import seaborn as sns

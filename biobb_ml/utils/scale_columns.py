@@ -11,19 +11,43 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.utils.common import *
 
 class ScaleColumns():
-    """Scales columns from a given dataset
+    """
+    | biobb_ml ScaleColumns
+    | Scales columns from a given dataset.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <>`_. Accepted formats: csv.
-        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <>`_. Accepted formats: csv.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_scale.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_scale.csv>`_. Accepted formats: csv (edam:format_3752).
         properties (dic):
-            * **columns** (*list*) - (None)  List of columns to drop from input dataset.
+            * **targets** (*dict*) - ({}) Independent variables or columns from your dataset you want to scale. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.utils.scale_columns import scale_columns
+            prop = { 
+                'targets': {
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }
+            }
+            scale_columns(input_dataset_path='/path/to/myDataset.csv', 
+                            output_dataset_path='/path/to/newDataset.csv', 
+                            properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: In house
+            * license: Apache-2.0
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_dataset_path, 
-                 output_dataset_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path,
+                    properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -33,7 +57,7 @@ class ScaleColumns():
         }
 
         # Properties specific for BB
-        self.columns = properties.get('columns', [])
+        self.targets = properties.get('targets', {})
         self.properties = properties
 
         # Properties common in all BB
@@ -73,20 +97,27 @@ class ScaleColumns():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        if all(isinstance(n, str) for n in self.columns):
+        if 'columns' in self.targets:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
             header = 0
         else:
+            labels = None
+            skiprows = None
             header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        fu.log('Scaling [%s] columns from dataset' % ', '.join(self.columns), out_log, self.global_log)
-        df_scaled = (data[self.columns])
+        targets = getTargetsList(self.targets, 'scale', out_log, self.__class__.__name__)
+
+        fu.log('Scaling [%s] columns from dataset' % getIndependentVarsList(self.targets), out_log, self.global_log)
+        if not self.targets: df_scaled = data
+        else: df_scaled = (data[targets])
 
         scaler = MinMaxScaler()
 
         df_scaled = pd.DataFrame(scaler.fit_transform(df_scaled))
 
-        data[self.columns] = df_scaled
+        data[targets] = df_scaled
 
         hdr = False
         if header == 0: hdr = True
