@@ -22,7 +22,7 @@ from biobb_ml.neural_networks.common import *
 class ClassificationNeuralNetwork():
     """
     | biobb_ml ClassificationNeuralNetwork
-    | Wrapper of the TensorFlow Keras Sequential method. 
+    | Wrapper of the TensorFlow Keras Sequential method for classification. 
     | Trains and tests a given dataset and save the complete model for a Neural Network Classification. Visit the `Sequential documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ in the TensorFlow Keras official website for further information. 
 
     Args:

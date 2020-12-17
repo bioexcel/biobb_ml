@@ -15,8 +15,8 @@ from biobb_ml.neural_networks.common import *
 class PredictNeuralNetwork():
     """
     | biobb_ml PredictNeuralNetwork
-    | Makes predictions from an input dataset and a given classification model.
-    | Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given classification model trained with `TensorFlow Keras Sequential <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ and `TensorFlow Keras LSTM <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_
+    | Makes predictions from an input dataset and a given model.
+    | Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given model trained with `TensorFlow Keras Sequential <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ and `TensorFlow Keras LSTM <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_
 
     Args:
         input_model_path (str): Path to the input model. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/input_model_predict.h5>`_. Accepted formats: h5 (edam:format_3590).

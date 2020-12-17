@@ -22,7 +22,7 @@ from biobb_ml.neural_networks.common import *
 class RegressionNeuralNetwork():
     """
     | biobb_ml RegressionNeuralNetwork
-    | Wrapper of the TensorFlow Keras Sequential method.
+    | Wrapper of the TensorFlow Keras Sequential method for regression.
     | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `Sequential documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ in the TensorFlow Keras official website for further information. 
 
     Args:

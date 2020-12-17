@@ -20,7 +20,7 @@ from biobb_ml.neural_networks.common import *
 class RecurrentNeuralNetwork():
     """
     | biobb_ml RecurrentNeuralNetwork
-    | Wrapper of the TensorFlow Keras LSTM method. 
+    | Wrapper of the TensorFlow Keras LSTM method using Recurrent Neural Networks. 
     | Trains and tests a given dataset and save the complete model for a Recurrent Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information. 
 
     Args:
