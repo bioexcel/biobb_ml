@@ -50,7 +50,7 @@ class PredictNeuralNetwork():
 
     Info:
         * wrapped_software:
-            * name: tensorflow
+            * name: TensorFlow
             * version: >2.1.0
             * license: MIT
         * ontology:

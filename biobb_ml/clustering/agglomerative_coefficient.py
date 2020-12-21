@@ -14,7 +14,7 @@ from biobb_ml.clustering.common import *
 class AgglomerativeCoefficient():
     """
     | biobb_ml AgglomerativeCoefficient
-    | Wrapper of the scikit-learn AgglomerativeCoefficient method. 
+    | Wrapper of the scikit-learn AgglomerativeClustering method. 
     | Clusters a given dataset and calculates best K coefficient. Visit the `AgglomerativeClustering documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>`_ in the sklearn official website for further information. 
 
     Args:
@@ -55,7 +55,7 @@ class AgglomerativeCoefficient():
 
     Info:
         * wrapped_software:
-            * name: scikit-learn
+            * name: scikit-learn AgglomerativeClustering
             * version: >=0.23.1
             * license: BSD 3-Clause
         * ontology:

@@ -21,6 +21,14 @@ utils.dendrogram module
     :undoc-members:
     :show-inheritance:
 
+utils.drop_columns module
+-----------------------------
+
+.. automodule:: utils.drop_columns
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 utils.dummy_variables module
 -----------------------------
 
@@ -41,6 +49,14 @@ utils.pairwise_comparison module
 ---------------------------------
 
 .. automodule:: utils.pairwise_comparison
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+utils.scale_columns module
+---------------------------------
+
+.. automodule:: utils.scale_columns
     :members:
     :undoc-members:
     :show-inheritance:

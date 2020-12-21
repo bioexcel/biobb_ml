@@ -56,7 +56,7 @@ class PLS_Regression():
 
     Info:
         * wrapped_software:
-            * name: scikit-learn
+            * name: scikit-learn PLSRegression
             * version: >=0.23.1
             * license: BSD 3-Clause
         * ontology:

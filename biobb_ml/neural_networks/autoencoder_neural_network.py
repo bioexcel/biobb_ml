@@ -57,7 +57,7 @@ class AutoencoderNeuralNetwork():
 
     Info:
         * wrapped_software:
-            * name: tensorflow
+            * name: TensorFlow Keras LSTM
             * version: >2.1.0
             * license: MIT
         * ontology:

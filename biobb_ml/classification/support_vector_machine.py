@@ -61,7 +61,7 @@ class SupportVectorMachine():
 
     Info:
         * wrapped_software:
-            * name: scikit-learn
+            * name: scikit-learn SupportVectorMachine
             * version: >=0.23.1
             * license: BSD 3-Clause
         * ontology:

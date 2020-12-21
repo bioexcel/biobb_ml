@@ -83,7 +83,7 @@ class RegressionNeuralNetwork():
 
     Info:
         * wrapped_software:
-            * name: tensorflow
+            * name: TensorFlow Keras Sequential
             * version: >2.1.0
             * license: MIT
         * ontology:

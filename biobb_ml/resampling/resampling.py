@@ -68,7 +68,7 @@ class Resampling():
 
     Info:
         * wrapped_software:
-            * name: imbalanced-learn.under_sampling
+            * name: imbalanced-learn combine
             * version: >0.7.0
             * license: MIT
         * ontology:

@@ -2,12 +2,12 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/agglomerative_coefficient",
     "name": "biobb_ml AgglomerativeCoefficient",
-    "title": "Wrapper of the scikit-learn AgglomerativeCoefficient method.",
+    "title": "Wrapper of the scikit-learn AgglomerativeClustering method.",
     "description": "Clusters a given dataset and calculates best K coefficient. Visit the AgglomerativeClustering documentation page in the sklearn official website for further information.",
     "type": "object",
     "info": {
         "wrapped_software": {
-            "name": "scikit-learn",
+            "name": "scikit-learn AgglomerativeClustering",
             "version": ">=0.23.1",
             "license": "BSD 3-Clause"
         },
