@@ -196,7 +196,7 @@ class PredictNeuralNetwork():
 
 def neural_network_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.neural_network_predict.PredictNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.neural_network_predict.PredictNeuralNetwork.launch>` method."""
 
     return PredictNeuralNetwork(input_model_path=input_model_path,  
                    output_results_path=output_results_path, 

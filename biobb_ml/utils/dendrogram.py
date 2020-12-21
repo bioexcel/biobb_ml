@@ -119,7 +119,7 @@ class Dendrogram():
 
 def dendrogram(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Dendrogram <utils.dendrogram.Dendrogram>` class and
-    execute the :meth:`launch() <utils.dendrogram.Dendrogram.launch> method."""
+    execute the :meth:`launch() <utils.dendrogram.Dendrogram.launch>` method."""
 
     return Dendrogram(input_dataset_path=input_dataset_path, 
                    output_plot_path=output_plot_path,

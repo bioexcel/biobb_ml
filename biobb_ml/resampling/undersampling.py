@@ -289,7 +289,7 @@ class Undersampling():
 
 def undersampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Undersampling <resampling.undersampling.Undersampling>` class and
-    execute the :meth:`launch() <resampling.undersampling.Undersampling.launch> method."""
+    execute the :meth:`launch() <resampling.undersampling.Undersampling.launch>` method."""
 
     return Undersampling(input_dataset_path=input_dataset_path,
                    output_dataset_path=output_dataset_path,

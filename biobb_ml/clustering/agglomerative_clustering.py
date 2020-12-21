@@ -178,7 +178,7 @@ class AgglClustering():
 
 def agglomerative_clustering(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`AgglClustering <clustering.agglomerative_clustering.AgglClustering>` class and
-    execute the :meth:`launch() <clustering.agglomerative_clustering.AgglClustering.launch> method."""
+    execute the :meth:`launch() <clustering.agglomerative_clustering.AgglClustering.launch>` method."""
 
     return AgglClustering(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

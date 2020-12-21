@@ -170,7 +170,7 @@ class AgglomerativeCoefficient():
 
 def agglomerative_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`AgglomerativeCoefficient <clustering.agglomerative_coefficient.AgglomerativeCoefficient>` class and
-    execute the :meth:`launch() <clustering.agglomerative_coefficient.AgglomerativeCoefficient.launch> method."""
+    execute the :meth:`launch() <clustering.agglomerative_coefficient.AgglomerativeCoefficient.launch>` method."""
 
     return AgglomerativeCoefficient(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

@@ -76,7 +76,7 @@ class DummyVariables():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the DummyVariables module."""
+        """Execute the :class:`DummyVariables <utils.dummy_variables.DummyVariables>` utils.dummy_variables.DummyVariables object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -118,7 +118,16 @@ class DummyVariables():
 
         return 0
 
+def dummy_variables(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`DummyVariables <utils.dummy_variables.DummyVariables>` class and
+    execute the :meth:`launch() <utils.dummy_variables.DummyVariables.launch>` method."""
+
+    return DummyVariables(input_dataset_path=input_dataset_path, 
+                           output_dataset_path=output_dataset_path,
+                           properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Maps dummy variables from a given dataset.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

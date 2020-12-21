@@ -268,7 +268,7 @@ class Resampling():
 
 def resampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Resampling <resampling.resampling.Resampling>` class and
-    execute the :meth:`launch() <resampling.resampling.Resampling.launch> method."""
+    execute the :meth:`launch() <resampling.resampling.Resampling.launch>` method."""
 
     return Resampling(input_dataset_path=input_dataset_path,
                    output_dataset_path=output_dataset_path,

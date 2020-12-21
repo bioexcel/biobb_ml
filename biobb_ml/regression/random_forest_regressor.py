@@ -257,7 +257,7 @@ class RandomForestRegressor():
 
 def random_forest_regressor(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RandomForestRegressor <regression.random_forest_regressor.RandomForestRegressor>` class and
-    execute the :meth:`launch() <regression.random_forest_regressor.RandomForestRegressor.launch> method."""
+    execute the :meth:`launch() <regression.random_forest_regressor.RandomForestRegressor.launch>` method."""
 
     return RandomForestRegressor(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

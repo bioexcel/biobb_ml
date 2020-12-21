@@ -266,7 +266,7 @@ class DecisionTree():
 
 def decision_tree(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`DecisionTree <classification.decision_tree.DecisionTree>` class and
-    execute the :meth:`launch() <classification.decision_tree.DecisionTree.launch> method."""
+    execute the :meth:`launch() <classification.decision_tree.DecisionTree.launch>` method."""
 
     return DecisionTree(input_dataset_path=input_dataset_path, 
                    output_model_path=output_model_path, 

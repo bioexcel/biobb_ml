@@ -268,7 +268,7 @@ class PLSComponents():
 
 def pls_components(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PLSComponents <dimensionality_reduction.pls_components.PLSComponents>` class and
-    execute the :meth:`launch() <dimensionality_reduction.pls_components.PLSComponents.launch> method."""
+    execute the :meth:`launch() <dimensionality_reduction.pls_components.PLSComponents.launch>` method."""
 
     return PLSComponents(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

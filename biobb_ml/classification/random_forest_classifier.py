@@ -264,7 +264,7 @@ class RandomForestClassifier():
 
 def random_forest_classifier(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RandomForestClassifier <classification.random_forest_classifier.RandomForestClassifier>` class and
-    execute the :meth:`launch() <classification.random_forest_classifier.RandomForestClassifier.launch> method."""
+    execute the :meth:`launch() <classification.random_forest_classifier.RandomForestClassifier.launch>` method."""
 
     return RandomForestClassifier(input_dataset_path=input_dataset_path, 
                    output_model_path=output_model_path, 

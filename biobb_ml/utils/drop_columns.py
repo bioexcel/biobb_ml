@@ -118,12 +118,12 @@ class DropColumns():
 
         return 0
 
-def drop_columns(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
+def drop_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`DropColumns <utils.drop_columns.DropColumns>` class and
-    execute the :meth:`launch() <utils.drop_columns.DropColumns.launch> method."""
+    execute the :meth:`launch() <utils.drop_columns.DropColumns.launch>` method."""
 
     return DropColumns(input_dataset_path=input_dataset_path, 
-                   output_plot_path=output_plot_path,
+                   output_dataset_path=output_dataset_path,
                    properties=properties).launch()
 
 def main():

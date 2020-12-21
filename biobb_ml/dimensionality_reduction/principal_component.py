@@ -191,7 +191,7 @@ class PrincipalComponentAnalysis():
 
 def pincipal_component(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis>` class and
-    execute the :meth:`launch() <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis.launch> method."""
+    execute the :meth:`launch() <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis.launch>` method."""
 
     return PrincipalComponentAnalysis(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

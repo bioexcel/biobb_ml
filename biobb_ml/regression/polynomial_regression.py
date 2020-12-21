@@ -253,7 +253,7 @@ class PolynomialRegression():
 
 def polynomial_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PolynomialRegression <regression.polynomial_regression.PolynomialRegression>` class and
-    execute the :meth:`launch() <regression.polynomial_regression.PolynomialRegression.launch> method."""
+    execute the :meth:`launch() <regression.polynomial_regression.PolynomialRegression.launch>` method."""
 
     return PolynomialRegression(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

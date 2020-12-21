@@ -183,7 +183,7 @@ class PLS_Regression():
 
 def pls_regression(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PLS_Regression <dimensionality_reduction.pls_regression.PLS_Regression>` class and
-    execute the :meth:`launch() <dimensionality_reduction.pls_regression.PLS_Regression.launch> method."""
+    execute the :meth:`launch() <dimensionality_reduction.pls_regression.PLS_Regression.launch>` method."""
 
     return PLS_Regression(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

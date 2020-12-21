@@ -269,7 +269,7 @@ class LogisticRegression():
 
 def logistic_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`LogisticRegression <classification.logistic_regression.LogisticRegression>` class and
-    execute the :meth:`launch() <classification.logistic_regression.LogisticRegression.launch> method."""
+    execute the :meth:`launch() <classification.logistic_regression.LogisticRegression.launch>` method."""
 
     return LogisticRegression(input_dataset_path=input_dataset_path, 
                    output_model_path=output_model_path, 

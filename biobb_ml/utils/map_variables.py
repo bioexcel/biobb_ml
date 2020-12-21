@@ -77,7 +77,7 @@ class MapVariables():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the MapVariables module."""
+        """Execute the :class:`MapVariables <utils.map_variables.MapVariables>` utils.map_variables.MapVariables object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -122,7 +122,16 @@ class MapVariables():
 
         return 0
 
+def map_variables(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`MapVariables <utils.map_variables.MapVariables>` class and
+    execute the :meth:`launch() <utils.map_variables.MapVariables.launch>` method."""
+
+    return MapVariables(input_dataset_path=input_dataset_path, 
+                           output_dataset_path=output_dataset_path,
+                           properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Maps the values of a given dataset.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

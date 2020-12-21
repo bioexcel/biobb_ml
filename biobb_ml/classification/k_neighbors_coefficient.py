@@ -224,7 +224,7 @@ class KNeighborsCoefficient():
 
 def k_neighbors_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`KNeighborsCoefficient <classification.k_neighbors_coefficient.KNeighborsCoefficient>` class and
-    execute the :meth:`launch() <classification.k_neighbors_coefficient.KNeighborsCoefficient.launch> method."""
+    execute the :meth:`launch() <classification.k_neighbors_coefficient.KNeighborsCoefficient.launch>` method."""
 
     return KNeighborsCoefficient(input_dataset_path=input_dataset_path, 
                    output_results_path=output_results_path, 

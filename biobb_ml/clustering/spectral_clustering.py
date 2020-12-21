@@ -177,7 +177,7 @@ class SpecClustering():
 
 def spectral_clustering(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`SpecClustering <clustering.spectral_clustering.SpecClustering>` class and
-    execute the :meth:`launch() <clustering.spectral_clustering.SpecClustering.launch> method."""
+    execute the :meth:`launch() <clustering.spectral_clustering.SpecClustering.launch>` method."""
 
     return SpecClustering(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

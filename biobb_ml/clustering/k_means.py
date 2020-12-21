@@ -189,7 +189,7 @@ class KMeansClustering():
 
 def kmeans(input_dataset_path: str, output_results_path: str, output_model_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`KMeansClustering <clustering.kmeans.KMeansClustering>` class and
-    execute the :meth:`launch() <clustering.kmeans.KMeansClustering.launch> method."""
+    execute the :meth:`launch() <clustering.kmeans.KMeansClustering.launch>` method."""
 
     return KMeansClustering(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

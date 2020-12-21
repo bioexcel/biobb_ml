@@ -187,7 +187,7 @@ class DBSCANClustering():
 
 def dbscan(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`DBSCANClustering <clustering.dbscan.DBSCANClustering>` class and
-    execute the :meth:`launch() <clustering.dbscan.DBSCANClustering.launch> method."""
+    execute the :meth:`launch() <clustering.dbscan.DBSCANClustering.launch>` method."""
 
     return DBSCANClustering(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

@@ -174,7 +174,7 @@ class RegressionPredict():
 
 def regression_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RegressionPredict <regression.regression_predict.RegressionPredict>` class and
-    execute the :meth:`launch() <regression.regression_predict.RegressionPredict.launch> method."""
+    execute the :meth:`launch() <regression.regression_predict.RegressionPredict.launch>` method."""
 
     return RegressionPredict(input_model_path=input_model_path, 
                     output_results_path=output_results_path, 

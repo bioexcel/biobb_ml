@@ -160,7 +160,7 @@ class SpectralCoefficient():
 
 def spectral_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`SpectralCoefficient <clustering.spectral_coefficient.SpectralCoefficient>` class and
-    execute the :meth:`launch() <clustering.spectral_coefficient.SpectralCoefficient.launch> method."""
+    execute the :meth:`launch() <clustering.spectral_coefficient.SpectralCoefficient.launch>` method."""
 
     return SpectralCoefficient(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

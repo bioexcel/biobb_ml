@@ -164,7 +164,7 @@ class ClusteringPredict():
 
 def clustering_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`ClusteringPredict <clustering.clustering_predict.ClusteringPredict>` class and
-    execute the :meth:`launch() <clustering.clustering_predict.ClusteringPredict.launch> method."""
+    execute the :meth:`launch() <clustering.clustering_predict.ClusteringPredict.launch>` method."""
 
     return ClusteringPredict(input_model_path=input_model_path, 
                     output_results_path=output_results_path, 

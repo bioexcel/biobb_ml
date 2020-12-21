@@ -360,7 +360,7 @@ class ClassificationNeuralNetwork():
 
 def classification_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.classification_neural_network.AutoencoderNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.classification_neural_network.AutoencoderNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.classification_neural_network.AutoencoderNeuralNetwork.launch>` method."""
 
     return AutoencoderNeuralNetwork(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

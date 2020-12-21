@@ -340,7 +340,7 @@ class RegressionNeuralNetwork():
 
 def regression_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RegressionNeuralNetwork <neural_networks.regression_neural_network.RegressionNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.regression_neural_network.RegressionNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.regression_neural_network.RegressionNeuralNetwork.launch>` method."""
 
     return RegressionNeuralNetwork(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

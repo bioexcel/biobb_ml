@@ -178,7 +178,7 @@ class ClassificationPredict():
 
 def classification_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`ClassificationPredict <classification.classification_predict.ClassificationPredict>` class and
-    execute the :meth:`launch() <classification.classification_predict.ClassificationPredict.launch> method."""
+    execute the :meth:`launch() <classification.classification_predict.ClassificationPredict.launch>` method."""
 
     return ClassificationPredict(input_model_path=input_model_path, 
                     output_results_path=output_results_path, 

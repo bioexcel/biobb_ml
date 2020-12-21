@@ -264,7 +264,7 @@ class LinearRegression():
 
 def linear_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`LinearRegression <regression.linear_regression.LinearRegression>` class and
-    execute the :meth:`launch() <regression.linear_regression.LinearRegression.launch> method."""
+    execute the :meth:`launch() <regression.linear_regression.LinearRegression.launch>` method."""
 
     return LinearRegression(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

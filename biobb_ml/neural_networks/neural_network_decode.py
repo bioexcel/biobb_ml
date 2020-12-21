@@ -152,7 +152,7 @@ class DecodingNeuralNetwork():
 
 def neural_network_decode(input_decode_path: str, input_model_path: str, output_decode_path: str, output_predict_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`DecodingNeuralNetwork <neural_networks.neural_network_decode.DecodingNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.neural_network_decode.DecodingNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.neural_network_decode.DecodingNeuralNetwork.launch>` method."""
 
     return DecodingNeuralNetwork(input_decode_path=input_decode_path,  
                    input_model_path=input_model_path, 

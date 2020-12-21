@@ -78,8 +78,7 @@ class PairwiseComparison():
 
     @launchlogger
     def launch(self) -> int:
-        """Execute the :class:`PairwiseComparison <utils.pairwise_comparison.PairwiseComparison>` class and
-        execute the :meth:`launch() <utils.pairwise_comparison.PairwiseComparison.launch> method."""
+        """Execute the :class:`PairwiseComparison <utils.pairwise_comparison.PairwiseComparison>` utils.pairwise_comparison.PairwiseComparison object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -129,7 +128,7 @@ class PairwiseComparison():
 
 def pairwise_comparison(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`PairwiseComparison <utils.pairwise_comparison.PairwiseComparison>` class and
-    execute the :meth:`launch() <utils.pairwise_comparison.PairwiseComparison.launch> method."""
+    execute the :meth:`launch() <utils.pairwise_comparison.PairwiseComparison.launch>` method."""
 
     return PairwiseComparison(input_dataset_path=input_dataset_path, 
                    output_plot_path=output_plot_path,

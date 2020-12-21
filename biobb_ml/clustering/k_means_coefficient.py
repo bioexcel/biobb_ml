@@ -182,7 +182,7 @@ class KMeansCoefficient():
 
 def kmeans_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`KMeansCoefficient <clustering.kmeans_coefficient.KMeansCoefficient>` class and
-    execute the :meth:`launch() <clustering.kmeans_coefficient.KMeansCoefficient.launch> method."""
+    execute the :meth:`launch() <clustering.kmeans_coefficient.KMeansCoefficient.launch>` method."""
 
     return KMeansCoefficient(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 

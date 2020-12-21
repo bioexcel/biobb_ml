@@ -77,7 +77,7 @@ class ScaleColumns():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the ScaleColumns module."""
+        """Execute the :class:`ScaleColumns <utils.scale_columns.ScaleColumns>` utils.scale_columns.ScaleColumns object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -126,7 +126,16 @@ class ScaleColumns():
 
         return 0
 
+def scale_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`ScaleColumns <utils.scale_columns.ScaleColumns>` class and
+    execute the :meth:`launch() <utils.scale_columns.ScaleColumns.launch>` method."""
+
+    return ScaleColumns(input_dataset_path=input_dataset_path, 
+                   output_dataset_path=output_dataset_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Scales columns from a given dataset", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

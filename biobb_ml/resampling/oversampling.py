@@ -269,7 +269,7 @@ class Oversampling():
 
 def oversampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`Oversampling <resampling.oversampling.Oversampling>` class and
-    execute the :meth:`launch() <resampling.oversampling.Oversampling.launch> method."""
+    execute the :meth:`launch() <resampling.oversampling.Oversampling.launch>` method."""
 
     return Oversampling(input_dataset_path=input_dataset_path,
                    output_dataset_path=output_dataset_path,

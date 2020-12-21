@@ -279,7 +279,7 @@ class RecurrentNeuralNetwork():
 
 def recurrent_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`RecurrentNeuralNetwork <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork.launch>` method."""
 
     return RecurrentNeuralNetwork(input_dataset_path=input_dataset_path,  
                    output_model_path=output_model_path, 

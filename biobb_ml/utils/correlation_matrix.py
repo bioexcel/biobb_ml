@@ -134,7 +134,7 @@ class CorrelationMatrix():
 
 def correlation_matrix(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`CorrelationMatrix <utils.correlation_matrix.CorrelationMatrix>` class and
-    execute the :meth:`launch() <utils.correlation_matrix.CorrelationMatrix.launch> method."""
+    execute the :meth:`launch() <utils.correlation_matrix.CorrelationMatrix.launch>` method."""
 
     return CorrelationMatrix(input_dataset_path=input_dataset_path, 
                    output_plot_path=output_plot_path,

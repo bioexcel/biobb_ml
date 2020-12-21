@@ -268,7 +268,7 @@ class AutoencoderNeuralNetwork():
 
 def autoencoder_neural_network(input_decode_path: str, output_model_path: str, input_predict_path: str = None, output_test_decode_path: str = None, output_test_predict_path: str = None, properties: dict = None, **kwargs) -> None:
     """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork>` class and
-    execute the :meth:`launch() <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork.launch> method."""
+    execute the :meth:`launch() <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork.launch>` method."""
 
     return AutoencoderNeuralNetwork(input_decode_path=input_decode_path,  
                     output_model_path=output_model_path, 
