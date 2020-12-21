@@ -143,14 +143,6 @@ class Undersampling():
         sampling_strategy = getSamplingStrategy(self.sampling_strategy, out_log, self.__class__.__name__)
 
         # load dataset
-        #fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        #if 'column' in self.target:
-        #    header = 0
-        #else:
-        #    header = None
-        #data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = header, sep="\s+|;|:|,|\t", engine="python")
-
-        # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
         if 'column' in self.target:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
