@@ -4,8 +4,8 @@
 import argparse
 import io
 import warnings
+from scipy.signal import savgol_filter
 from sys import stdout
-#from scipy.signal import savgol_filter
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import mean_squared_error, r2_score
@@ -17,26 +17,57 @@ from biobb_ml.dimensionality_reduction.common import *
 
 
 class PLSComponents():
-    """Calculates best components number for a Partial Least Square (PLS) Regression.
-    Wrapper of the sklearn.cross_decomposition.PLSRegression module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>`_. 
+    """
+    | biobb_ml PLSComponents
+    | Wrapper of the scikit-learn PLSRegression method. 
+    | Calculates best components number for a Partial Least Square (PLS) Regression. Visit the `PLSRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_components.csv>`_. Accepted formats: csv.
-        output_results_path (str): Table with R2 and MSE for calibration and cross-validation data for the best number of components. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_results_pls_components.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the Mean Square Error plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_plot_pls_components.png>`_. Accepted formats: png.
-        properties (dic):
-            * **features** (*list*) - (None) Features or columns from your dataset you want to use for fitting.
-            * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **optimise** (*boolean*) - (False) Whether or not optimise the process of MSE calculation. Beware, if True selected, the process can take a long time depending on the max_components value.
-            * **max_components** (*int*) - (10) Maximum number of components to use by default for PLS queries.
-            * **cv** (*int*) - (10) Specify the number of folds in the cross-validation splitting strategy. Value must be betwwen 2 and number of samples in the dataset.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_components.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_results_path (str): Table with R2 and MSE for calibration and cross-validation data for the best number of components. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_results_pls_components.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Path to the Mean Square Error plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/dimensionality_reduction/ref_output_plot_pls_components.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
+            * **features** (*dict*) - ({}) Features or columns from your dataset you want to use for fitting. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **optimise** (*boolean*) - (False) Whether or not optimise the process of MSE calculation. Beware, if True selected, the process can take a long time depending on the **max_components** value.
+            * **max_components** (*int*) - (10) [1~1000|1] Maximum number of components to use by default for PLS queries.
+            * **cv** (*int*) - (10) [1~10000|1] Specify the number of folds in the cross-validation splitting strategy. Value must be between 2 and number of samples in the dataset.
+            * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.dimensionality_reduction.pls_components import pls_components
+            prop = { 
+                'features': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'max_components': 10, 
+                'cv': 10 
+            }
+            pls_components(input_dataset_path='/path/to/myDataset.csv', 
+                            output_results_path='/path/to/newTable.csv', 
+                            output_plot_path='/path/to/newPlot.png', 
+                            properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >=0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+            
     """
 
-    def __init__(self, input_dataset_path,
-                 output_results_path, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path, 
+                output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -51,6 +82,7 @@ class PLSComponents():
         self.optimise = properties.get('optimise', False)
         self.max_components = properties.get('max_components', 10)
         self.cv = properties.get('cv', 10)
+        self.scale = properties.get('scale', False)
         self.properties = properties
 
         # Properties common in all BB
@@ -66,14 +98,15 @@ class PLSComponents():
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_plot_path"]:
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     def warn(*args, **kwargs):
         pass
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PLSComponents module."""
+        """Execute the :class:`PLSComponents <dimensionality_reduction.pls_components.PLSComponents>` dimensionality_reduction.pls_components.PLSComponents object."""
 
         # trick for disable warnings in interations
         warnings.warn = self.warn
@@ -96,23 +129,34 @@ class PLSComponents():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        if 'columns' in self.features:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
+        else:
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        # get targets
-        y = data[self.target]
-        # get features
-        features = data.filter(self.features)
+        # declare inputs, targets and weights
+        # the inputs are all the features
+        features = getIndependentVars(self.features, data, out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
+        # target
+        y = getTarget(self.target, data, out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
 
-        # get rid of baseline and linear variations calculating second derivative
-        # fu.log('Performing second derivative on the data', out_log, self.global_log)
-        # self.window_length = getWindowLength(17, features.shape[1])
-        # X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
-        X = features
-
-        # run PLS from 1 to max_components
-        fu.log('Calculating MSE for each %d components' % self.max_components, out_log, self.global_log)
+        if self.scale:
+            fu.log('Scaling selected', out_log, self.global_log)
 
         if self.optimise:
+
+            # get rid of baseline and linear variations calculating second derivative
+            fu.log('Performing second derivative on the data', out_log, self.global_log)
+            self.window_length = getWindowLength(17, features.shape[1])
+            X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
+
+            # run PLS from 1 to max_components
+            fu.log('Calculating MSE for each %d components' % self.max_components, out_log, self.global_log)
 
             mse = []
             # Define MSE array to be populated
@@ -122,9 +166,9 @@ class PLSComponents():
             for i in range(self.max_components):
                 
                 # Regression with specified number of components, using full spectrum
-                pls1 = PLSRegression(n_components = i+1)
+                pls1 = PLSRegression(n_components = i+1, scale = self.scale)
                 pls1.fit(X, y)
-                
+    
                 # Indices of sort spectra according to ascending absolute value of PLS coefficients
                 sorted_ind = np.argsort(np.abs(pls1.coef_[:,0]))
                 # Sort spectra accordingly 
@@ -155,10 +199,15 @@ class PLSComponents():
 
         else:
 
+            # run PLS from 1 to max_components
+            fu.log('Calculating MSE for each %d components' % self.max_components, out_log, self.global_log)
+
+            X = features
+
             mse = []
             stdout.write("\r0% completed")
             for i in np.arange(1, self.max_components + 1):
-                pls = PLSRegression(n_components = i)
+                pls = PLSRegression(n_components = i, scale = self.scale)
                 # Cross-validation
                 y_cv = cross_val_predict(pls, X, y, cv = self.cv)
                 mse.append(mean_squared_error(y, y_cv))
@@ -217,8 +266,18 @@ class PLSComponents():
 
         return 0
 
+def pls_components(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`PLSComponents <dimensionality_reduction.pls_components.PLSComponents>` class and
+    execute the :meth:`launch() <dimensionality_reduction.pls_components.PLSComponents.launch>` method."""
+
+    return PLSComponents(input_dataset_path=input_dataset_path,  
+                   output_results_path=output_results_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Calculates best components number for a Partial Least Square (PLS) Regression.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper of the scikit-learn PLSRegression method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

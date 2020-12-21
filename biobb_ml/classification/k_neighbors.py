@@ -15,28 +15,62 @@ from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
 class KNeighborsTrain():
-    """Trains and tests a given dataset and saves the model and scaler for a k-nearest neighbors classification.
-    Wrapper of the sklearn.neighbors.KNeighborsClassifier module
-    Visit the `sklearn official website <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_. 
+    """
+    | biobb_ml KNeighborsTrain
+    | Wrapper of the scikit-learn KNeighborsClassifier method. 
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `KNeighborsClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_k_neighbors.pkl>`_. Accepted formats: pkl.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors.png>`_. Accepted formats: png.
-        properties (dic):
-            * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
-            * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean, manhattan, chebyshev, minkowski, wminkowski, seuclidean, mahalanobi.
-            * **n_neighbors** (*int*) - (6) Number of neighbors to use by default for kneighbors queries.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_model_k_neighbors.pkl>`_. Accepted formats: pkl (edam:format_3653).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Path to the statistics plot. If target is binary it shows confusion matrix, distributions of the predicted probabilities of both classes and ROC curve. If target is non-binary it shows confusion matrix. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
+            * **independent_vars** (*dict*) - ({}) Independent variables you want to train from your dataset. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **metric** (*string*) - ("minkowski") The distance metric to use for the tree. Values: euclidean (Computes the Euclidean distance between two 1-D arrays), manhattan (Compute the Manhattan distance), chebyshev (Compute the Chebyshev distance), minkowski (Compute the Minkowski distance between two 1-D arrays), wminkowski (Compute the weighted Minkowski distance between two 1-D arrays), seuclidean (Return the standardized Euclidean distance between two 1-D arrays), mahalanobi (Compute the Mahalanobis distance between two 1-D arrays).
+            * **n_neighbors** (*int*) - (6) [1~100|1] Number of neighbors to use by default for kneighbors queries.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
-            * **test_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **random_state_train_test** (*int*) - (5) [1~1000|1] Controls the shuffling applied to the data before applying the split.
+            * **test_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
+            * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.classification.k_neighbors import k_neighbors
+            prop = { 
+                'independent_vars': { 
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }, 
+                'target': { 
+                    'column': 'target' 
+                }, 
+                'n_neighbors': 6, 
+                'test_size': 0.2 
+            }
+            k_neighbors(input_dataset_path='/path/to/myDataset.csv', 
+                        output_model_path='/path/to/newModel.pkl', 
+                        output_test_table_path='/path/to/newTable.csv', 
+                        output_plot_path='/path/to/newPlot.png', 
+                        properties=prop)
+    
+    Info:
+        * wrapped_software:
+            * name: scikit-learn
+            * version: >=0.23.1
+            * license: BSD 3-Clause
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_dataset_path,
-                 output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_model_path, 
+                output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -46,12 +80,15 @@ class KNeighborsTrain():
         }
 
         # Properties specific for BB
-        self.independent_vars = properties.get('independent_vars', [])
-        self.target = properties.get('target', '')
+        self.independent_vars = properties.get('independent_vars', {})
+        self.target = properties.get('target', {})
+        self.weight = properties.get('weight', {})
         self.metric = properties.get('metric', 'minkowski')
         self.n_neighbors = properties.get('n_neighbors', 6)
         self.normalize_cm =  properties.get('normalize_cm', False)
+        self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
+        self.scale = properties.get('scale', False)
         self.properties = properties
 
         # Properties common in all BB
@@ -67,12 +104,14 @@ class KNeighborsTrain():
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
         self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_test_table_path"]:
+            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_plot_path"]:
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the KNeighborsTrain module."""
+        """Execute the :class:`KNeighborsTrain <classification.k_neighbors.KNeighborsTrain>` classification.k_neighbors.KNeighborsTrain object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -92,26 +131,53 @@ class KNeighborsTrain():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        if 'columns' in self.independent_vars:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
+        else:
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        # declare inputs and targets
-        targets = data[self.target]
+        # declare inputs, targets and weights
         # the inputs are all the independent variables
-        inputs = data.filter(self.independent_vars)
+        X = getIndependentVars(self.independent_vars, data, out_log, self.__class__.__name__)
+        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), out_log, self.global_log)
+        # target
+        y = getTarget(self.target, data, out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
+        # weights
+        if self.weight:
+            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
+            fu.log('Weight column provided', out_log, self.global_log)
 
         # train / test split
         fu.log('Creating train and test sets', out_log, self.global_log)
-        x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=self.test_size, random_state=4)
+        arrays_sets = (X, y)
+        # if user provide weights
+        if self.weight:
+            arrays_sets = arrays_sets + (w,)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
 
         # scale dataset
-        fu.log('Scaling dataset', out_log, self.global_log)
-        scaler = StandardScaler()
-        X_train = scaler.fit_transform(x_train)
+        if self.scale: 
+            fu.log('Scaling dataset', out_log, self.global_log)
+            scaler = StandardScaler()
+            X_train = scaler.fit_transform(X_train)
 
         # classification
         fu.log('Training dataset applying k neighbors classification', out_log, self.global_log)
         model = KNeighborsClassifier(n_neighbors = self.n_neighbors)
-        model.fit(X_train,y_train)
+
+        arrays_fit = (X_train, y_train)
+        # if user provide weights
+        if self.weight:
+            arrays_fit = arrays_fit + (w_train,)
+
+        model.fit(*arrays_fit)       
+
         y_hat_train = model.predict(X_train)
         # classification report
         cr_train = classification_report(y_train, y_hat_train)
@@ -133,7 +199,8 @@ class KNeighborsTrain():
 
         # testing
         # predict data from x_test
-        X_test = scaler.transform(x_test)
+        if self.scale:
+            X_test = scaler.transform(X_test)
         y_hat_test = model.predict(X_test)
         test_table = pd.DataFrame()
         y_hat_prob = model.predict_proba(X_test)
@@ -168,7 +235,7 @@ class KNeighborsTrain():
 
         # plot 
         if self.io_dict["out"]["output_plot_path"]: 
-            vs = targets.unique().tolist()
+            vs = y.unique().tolist()
             vs.sort()
             if len(vs) > 2:
                 plot = plotMultipleCM(cnf_matrix_train, cnf_matrix, self.normalize_cm, vs)
@@ -179,23 +246,35 @@ class KNeighborsTrain():
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # save model, scaler and parameters
-        tv = targets.unique().tolist()
+        tv = y.unique().tolist()
         tv.sort()
         variables = {
             'target': self.target,
             'independent_vars': self.independent_vars,
+            'scale': self.scale,
             'target_values': tv
         }
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
-            joblib.dump(scaler, f)
+            if self.scale: joblib.dump(scaler, f)
             joblib.dump(variables, f)
 
         return 0
 
+def k_neighbors(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`KNeighborsTrain <classification.k_neighbors.KNeighborsTrain>` class and
+    execute the :meth:`launch() <classification.k_neighbors.KNeighborsTrain.launch>` method."""
+
+    return KNeighborsTrain(input_dataset_path=input_dataset_path, 
+                   output_model_path=output_model_path,
+                   output_test_table_path=output_test_table_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and saves the model and scaler for a k-nearest neighbors classification.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper of the scikit-learn KNeighborsClassifier method. ", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block

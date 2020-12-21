@@ -1,15 +1,23 @@
 {
-    "properties": {
-        "independent_vars": [
-            "duration",
-            "interest_rate",
-            "march",
-            "credit",
-            "previous"
+  "properties": {
+    "independent_vars": {
+      "range": [
+        [
+          0,
+          2
         ],
-        "target": "y",
-        "kernel": "rbf",
-        "normalize_cm": false,
-        "test_size": 0.2
-    }
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    "target": {
+      "index": 6
+    },
+    "kernel": "rbf",
+    "normalize_cm": false,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

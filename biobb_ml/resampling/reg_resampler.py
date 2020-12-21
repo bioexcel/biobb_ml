@@ -38,11 +38,13 @@ class resampler:
                     self.X[str(i)] = X.iloc[:, i]
             #self.X["target"] = X[:,target]
             self.X["target"] = X.iloc[:,target]
+            # if no header, get new target position
+            target_pos = self.X.columns.get_loc('target')
             target = "target"
         else:
+            target_pos = None
             self.X = X.copy()
             
-
 
         # Use qcut if balanced binning is required
         if balanced_binning:
@@ -50,6 +52,11 @@ class resampler:
         else:
             self.Y_classes = self.pd.cut(self.X[target], bins=self.bins)
         
+        y_cl = self.Y_classes.copy().unique()
+        ranges = []
+        for r in y_cl:
+            ranges.append([r.left, r.right])
+
         # Pandas outputs ranges after binning. Convert ranges to classes
         le = self.LabelEncoder()
         self.Y_classes = le.fit_transform(self.Y_classes)
@@ -62,12 +69,16 @@ class resampler:
         for i in range(len(classes_count)):
               if classes_count[i][1] < min_n_samples:
                     self.Y_classes[self.np.where(self.Y_classes == classes_count[i][0])[0]] = classes_count[i-1][0]
+                    l = ranges[classes_count[i-1][0]][0]
+                    ranges.pop(classes_count[i-1][0])
+                    ranges[classes_count[i-1][0]][0] = l
                     if verbose > 0:
                         print("INFO: Class " + str(classes_count[i][0]) + " has been merged into Class " + str(classes_count[i-1][0]) + " due to low number of samples")
                     classes_count[i][0] = classes_count[i-1][0]
+                    
         if verbose > 0:
             print()
-        
+
         # Perform label-encoding once again
         # Avoids class skipping after merging
         le = self.LabelEncoder()
@@ -89,7 +100,7 @@ class resampler:
             self.target = tmp
         else:
             self.target = target
-        return self.Y_classes 
+        return ranges, self.Y_classes, target_pos
 
 
     

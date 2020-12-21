@@ -1,13 +1,18 @@
 {
-    "properties": {
-        "independent_vars": [
-            "mean area",
-            "mean compactness"
-        ],
-        "target": "benign",
-        "solver": "liblinear",
-        "c_parameter": 0.01,
-        "normalize_cm": false,
-        "test_size": 0.2
-    }
+  "properties": {
+    "independent_vars": {
+      "columns": [
+        "mean area",
+        "mean compactness"
+      ]
+    },
+    "target": {
+      "column": "benign"
+    },
+    "solver": "liblinear",
+    "c_parameter": 0.01,
+    "normalize_cm": false,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

@@ -12,9 +12,12 @@ linear_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_linear_regression.png
   properties:
-    independent_vars: ['size', 'year', 'view']
-    target: 'price'
+    independent_vars: 
+      columns: ['size', 'year', 'view']
+    target: 
+      column: 'price'
     test_size: 0.2
+    scale: true
 
 polynomial_regression:
   paths:
@@ -26,10 +29,13 @@ polynomial_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_polynomial_regression.png
   properties:
-    independent_vars: ['LSTAT','RM']
-    target: 'MEDV'
+    independent_vars: 
+      columns: ['LSTAT', 'RM', 'ZN', 'AGE']
+    target: 
+      column: 'MEDV'
     degree: 2
     test_size: 0.2
+    scale: true
 
 random_forest_regressor:
   paths:
@@ -42,12 +48,13 @@ random_forest_regressor:
     ref_output_plot_path: file:test_reference_dir/regression/ref_output_plot_random_forest_regressor.png
   properties:
     independent_vars: 
-      columns: [LSTAT,RM]
+      range: [[0,5], [7,12]]
     target: 
-      column: MEDV
+      index: 13
     n_estimators: 10
     max_depth: 5
     test_size: 0.2
+    scale: true
 
 regression_predict:
   paths:
@@ -56,8 +63,8 @@ regression_predict:
     ref_output_results_path: file:test_reference_dir/regression/ref_output_regression_predict.csv
   properties:
     predictions: [ 
-      { 'LSTAT': 4.98, 'RM': 6.575 }, 
-      { 'LSTAT': 9.14, 'RM': 6.421 }
+      { 'LSTAT': 4.98, 'ZN': 18.0, 'RM': 6.575, 'AGE': 65.2 }, 
+      { 'LSTAT': 9.14, 'ZN': 0.0, 'RM': 6.421, 'AGE': 78.9 }
     ]
 
 # CLASSIFICATION
@@ -72,12 +79,15 @@ decision_tree:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_decision_tree.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
-    criterion: 'entropy'
+    independent_vars: 
+      columns: [interest_rate, credit, march, previous, duration]
+    target: 
+      column: y
+    criterion: entropy
     max_depth: 4
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 k_neighbors_coefficient:
   paths:
@@ -87,11 +97,14 @@ k_neighbors_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_k_neighbors_coefficient.png
   properties:
-    independent_vars: ['region', 'tenure','age', 'marital', 'address', 'income', 'ed', 'employ','retire', 'gender', 'reside']
-    target: 'custcat'
-    metric: 'minkowski'
+    independent_vars: 
+      columns: [region, tenure, age, marital, address, income, ed, employ, retire, gender, reside]
+    target: 
+      column: custcat
+    metric: minkowski
     max_neighbors: 15
     test_size: 0.2
+    scale: true
 
 k_neighbors:
   paths:
@@ -103,12 +116,15 @@ k_neighbors:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_k_neighbors.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
-    metric: 'minkowski'
+    independent_vars: 
+      columns: [interest_rate, credit, march, previous, duration]
+    target: 
+      column: y
+    metric: minkowski
     n_neighbors: 5
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 logistic_regression:
   paths:
@@ -120,12 +136,15 @@ logistic_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_logistic_regression.png
   properties:
-    independent_vars: ['mean area', 'mean compactness']
-    target: 'benign'
-    solver: 'liblinear'
+    independent_vars: 
+      columns: [mean area, mean compactness]
+    target: 
+      column: benign
+    solver: liblinear
     c_parameter: 0.01
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 random_forest_classifier:
   paths:
@@ -137,12 +156,15 @@ random_forest_classifier:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_random_forest_classifier.png
   properties:
-    independent_vars: ['Age', 'Sex', 'BP', 'Cholesterol', 'Na_to_K']
-    target: 'Drug'
+    independent_vars: 
+      indexes: [0,1,2,3,4]
+    target: 
+      index: 5
     n_estimators: 100
     bootstrap: true
     normalize_cm: false
     test_size: 0.2
+    scale: true
 
 support_vector_machine:
   paths:
@@ -154,23 +176,23 @@ support_vector_machine:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/classification/ref_output_plot_support_vector_machine.png
   properties:
-    independent_vars: ['duration', 'interest_rate', 'march', 'credit', 'previous']
-    target: 'y'
+    independent_vars: 
+      range: [[0, 2], [4,5]]
+    target: 
+      index: 6
     kernel: 'rbf'
     normalize_cm: false                              
     test_size: 0.2
+    scale: true
 
 classification_predict:
   paths:
     input_model_path: file:test_data_dir/classification/model_classification_predict.pkl
+    input_dataset_path: file:test_data_dir/classification/input_classification_predict.csv
     output_results_path: output_results.csv
     ref_output_results_path: file:test_reference_dir/classification/ref_output_classification_predict.csv
   properties:
-    predictions: [ 
-      { 'duration': 117.000, 'interest_rate': 1.334, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 },
-      { 'duration': 274.000, 'interest_rate': 0.767, 'march': 0.000, 'credit': 0.000, 'previous': 1.000 }, 
-      { 'duration': 167.000, 'interest_rate': 4.858, 'march': 1.000, 'credit': 0.000, 'previous': 0.000 }, 
-    ]
+    remove_tmp: false
 
 # CLUSTERING
 
@@ -182,9 +204,10 @@ agglomerative_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_agglomerative_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
-    scale: true
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 agglomerative_clustering:
   paths:
@@ -194,7 +217,8 @@ agglomerative_clustering:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_agglomerative_clustering.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     linkage: average
     plots: [
@@ -219,6 +243,7 @@ agglomerative_clustering:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 dbscan:
   paths:
@@ -228,7 +253,8 @@ dbscan:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_dbscan.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     eps: 1.4
     min_samples: 3
     plots: [
@@ -253,6 +279,7 @@ dbscan:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 k_means_coefficient:
   paths:
@@ -262,8 +289,10 @@ k_means_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_k_means_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 k_means:
   paths:
@@ -275,7 +304,8 @@ k_means:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_k_means.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     plots: [
       { 
@@ -299,6 +329,7 @@ k_means:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 spectral_coefficient:
   paths:
@@ -308,8 +339,10 @@ spectral_coefficient:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_spectral_coefficient.png
   properties:
-    predictors: ['sepal_length', 'sepal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width']
     max_clusters: 10
+    scale: true
 
 spectral_clustering:
   paths:
@@ -319,7 +352,8 @@ spectral_clustering:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/clustering/ref_output_plot_spectral_clustering.png
   properties:
-    predictors: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    predictors: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
     clusters: 3
     affinity: 'nearest_neighbors'
     plots: [
@@ -344,6 +378,7 @@ spectral_clustering:
         'features': ['sepal_length', 'petal_width']
       }
     ]
+    scale: true
 
 clustering_predict:
   paths:
@@ -365,13 +400,26 @@ correlation_matrix:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_correlation_matrix.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    features: 
+      columns: [sepal_length, sepal_width, petal_length, petal_width]
 
 dendrogram:
   paths:
     input_dataset_path: file:test_data_dir/utils/dataset_dendrogram.csv
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_dendrogram.png
+  properties:
+    features: 
+      columns: [Satisfaction,Loyalty]
+
+drop_columns:
+  paths:
+    input_dataset_path: file:test_data_dir/utils/dataset_drop.csv
+    output_dataset_path: output_dataset.csv
+    ref_output_dataset_path: file:test_reference_dir/utils/ref_output_drop.csv
+  properties:
+    targets:
+      columns: [WEIGHT, SCORE]
 
 dummy_variables:
   paths:
@@ -379,7 +427,8 @@ dummy_variables:
     output_dataset_path: output_dataset.csv
     ref_output_dataset_path: file:test_reference_dir/utils/ref_output_dataset_dummy_variables.csv
   properties:
-    columns: ['view']
+    targets:
+      columns: [view]
 
 map_variables:
   paths:
@@ -387,7 +436,8 @@ map_variables:
     output_dataset_path: output_dataset.csv
     ref_output_dataset_path: file:test_reference_dir/utils/ref_output_dataset_map_variables.csv
   properties:
-    columns: ['target']
+    targets:
+      columns: [target]
 
 pairwise_comparison:
   paths:
@@ -395,7 +445,17 @@ pairwise_comparison:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/utils/ref_output_plot_pairwise_comparison.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    features: 
+      indexes: [0,1,2,3]
+
+scale_columns:
+  paths:
+    input_dataset_path: file:test_data_dir/utils/dataset_scale.csv
+    output_dataset_path: output_dataset.csv
+    ref_output_dataset_path: file:test_reference_dir/utils/ref_output_scale.csv
+  properties:
+    targets:
+      columns: [VALUE]
 
 # NEURAL NETWORKS
 
@@ -425,8 +485,10 @@ classification_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_classification.png
   properties:
-    features: ['mean radius','mean texture','mean perimeter','mean area','mean smoothness','mean compactness','mean concavity','mean concave points','mean symmetry','mean fractal dimension','radius error','texture error','perimeter error','area error','smoothness error','compactness error','concavity error','concave points error','symmetry error','fractal dimension error','worst radius','worst texture','worst perimeter','worst area','worst smoothness','worst compactness','worst concavity','worst concave points','worst symmetry','worst fractal dimension']
-    target: 'benign'
+    features: 
+      columns: ['mean radius','mean texture','mean perimeter','mean area','mean smoothness','mean compactness','mean concavity','mean concave points','mean symmetry','mean fractal dimension','radius error','texture error','perimeter error','area error','smoothness error','compactness error','concavity error','concave points error','symmetry error','fractal dimension error','worst radius','worst texture','worst perimeter','worst area','worst smoothness','worst compactness','worst concavity','worst concave points','worst symmetry','worst fractal dimension']
+    target: 
+      column: 'benign'
     validation_size: .2
     test_size: .1
     hidden_layers: [
@@ -438,6 +500,7 @@ classification_neural_network:
     learning_rate: .02
     batch_size: 100
     max_epochs: 100
+    scale: true
 
 recurrent_neural_network:
   paths:
@@ -449,7 +512,8 @@ recurrent_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_recurrent.png
   properties:
-    target: 'Sales'
+    target: 
+      index: 1
     window_size: 5
     validation_size: .2
     test_size: 12
@@ -473,10 +537,12 @@ regression_neural_network:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/neural_networks/ref_output_plot_regression.png
   properties:
-    features: ['CRIM','ZN','INDUS','CHAS','NOX','RM','AGE','DIS','RAD','TAX','PTRATIO','B','LSTAT']
-    target: 'MEDV'
+    features: 
+      columns: ['ZN','RM','AGE','LSTAT']
+    target: 
+      column: 'MEDV'
     validation_size: .2
-    test_size: .33
+    test_size: .2
     hidden_layers: [
       { 'size': 10, 'activation': 'relu' },
       { 'size': 8, 'activation': 'relu' },
@@ -494,6 +560,8 @@ neural_network_decode:
     ref_output_decode_path: file:test_reference_dir/neural_networks/ref_output_decode_decoder.csv
     output_predict_path: output_predict.csv
     ref_output_predict_path: file:test_reference_dir/neural_networks/ref_output_predict_decoder.csv
+  properties:
+    remove_tmp: false
 
 neural_network_predict:
   paths:
@@ -502,39 +570,10 @@ neural_network_predict:
     ref_output_results_path: file:test_reference_dir/neural_networks/ref_output_predict.csv
   properties:
     predictions: [
-    { 
-      'mean radius': 17.99,
-      'mean texture': 10.38,
-      'mean perimeter': 122.8,
-      'mean area': 1001,
-      'mean smoothness': 0.1184,
-      'mean compactness': 0.2776,
-      'mean concavity': 0.3001,
-      'mean concave points': 0.1471,
-      'mean symmetry': 0.2419,
-      'mean fractal dimension': 0.07871,
-      'radius error': 1.095,
-      'texture error': 0.9053,
-      'perimeter error': 8.589,
-      'area error': 153.4,
-      'smoothness error': 0.006399,
-      'compactness error': 0.04904,
-      'concavity error': 0.05373,
-      'concave points error': 0.01587,
-      'symmetry error': 0.03003,
-      'fractal dimension error': 0.006193,
-      'worst radius': 25.38,
-      'worst texture': 17.33,
-      'worst perimeter': 184.6,
-      'worst area': 2019,
-      'worst smoothness': 0.1622,
-      'worst compactness': 0.6656,
-      'worst concavity': 0.7119,
-      'worst concave points': 0.2654,
-      'worst symmetry': 0.4601,
-      'worst fractal dimension': 0.1189
-    }
-  ]
+      { 'ZN': 18.0,'RM': 6.575,'AGE': 65.2,'LSTAT': 4.98 },
+      { 'ZN': 0.0,'RM': 6.421,'AGE': 78.9,'LSTAT': 9.14 },
+      { 'ZN': 0.0,'RM': 7.185,'AGE': 61.1,'LSTAT': 4.03 }
+    ]
 
 # DIMENSIONALITY REDUCTION
 
@@ -546,11 +585,14 @@ pls_components:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_pls_components.png
   properties:
-    features: ['mean radius', 'mean texture', 'mean perimeter', 'mean area', 'mean smoothness', 'mean compactness', 'mean concavity', 'mean concave points', 'mean symmetry', 'mean fractal dimension', 'radius error', 'texture error', 'perimeter error', 'area error', 'smoothness error', 'compactness error', 'concavity error', 'concave points error', 'symmetry error', 'fractal dimension error', 'worst radius', 'worst texture', 'worst perimeter', 'worst area', 'worst smoothness', 'worst compactness', 'worst concavity', 'worst concave points', 'worst symmetry', 'worst fractal dimension']
-    target: 'benign'
-    optimise: False
+    features: 
+      range: [[0,29]]
+    target: 
+      index: 30
+    optimise: false
     max_components: 30
     cv: 10
+    scale: true
 
 pls_regression:
   paths:
@@ -560,10 +602,13 @@ pls_regression:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_pls_regression.png
   properties:
-    features: ['mean radius', 'mean texture', 'mean perimeter', 'mean area', 'mean smoothness', 'mean compactness', 'mean concavity', 'mean concave points', 'mean symmetry', 'mean fractal dimension', 'radius error', 'texture error', 'perimeter error', 'area error', 'smoothness error', 'compactness error', 'concavity error', 'concave points error', 'symmetry error', 'fractal dimension error', 'worst radius', 'worst texture', 'worst perimeter', 'worst area', 'worst smoothness', 'worst compactness', 'worst concavity', 'worst concave points', 'worst symmetry', 'worst fractal dimension']
-    target: 'benign'
+    features: 
+      range: [[0,29]]
+    target: 
+      index: 30
     n_components: 12
     cv: 10
+    scale: true
 
 principal_component:
   paths:
@@ -573,6 +618,59 @@ principal_component:
     output_plot_path: output_plot.png
     ref_output_plot_path: file:test_reference_dir/dimensionality_reduction/ref_output_plot_principal_component.png
   properties:
-    features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
-    target: 'target'
-    n_components: 2
+    features: 
+      columns: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    target: 
+      column:
+        'target'
+    n_components: 
+      value: 2
+    scale: true
+
+# RESAMPLING
+
+oversampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_oversampling.csv
+  properties:
+    method: random
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    sampling_strategy: 
+      target: minority
+
+resampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_resampling.csv
+  properties:
+    method: smotenn
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    sampling_strategy_over: 
+      dict: { 4: 1000, 5: 1000, 6: 1000, 7: 1000 }
+    sampling_strategy_under: 
+      list: [0,1]
+
+undersampling:
+  paths:
+    input_dataset_path: file:test_data_dir/resampling/dataset_resampling.csv
+    output_dataset_path: output_results.csv
+    ref_output_dataset_path: file:test_reference_dir/resampling/ref_output_undersampling.csv
+  properties:
+    method: enn
+    type: regression
+    target: 
+      column: VALUE
+    evaluate: true
+    n_bins: 10
+    n_neighbors: 3

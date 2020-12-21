@@ -13,19 +13,43 @@ from biobb_ml.utils.common import *
 
 
 class CorrelationMatrix():
-    """Generates a correlation matrix from a given dataset.
+    """
+    | biobb_ml CorrelationMatrix
+    | Generates a correlation matrix from a given dataset.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_correlation_matrix.csv>`_. Accepted formats: csv.
-        output_plot_path (str): Path to the correlation matrix plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_plot_correlation_matrix.png>`_. Accepted formats: png.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_correlation_matrix.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str): Path to the correlation matrix plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_plot_correlation_matrix.png>`_. Accepted formats: png (edam:format_3603).
         properties (dic):
-            * **features** (*list*) - (None) List with all features to compare.
+            * **features** (*dict*) - ({}) Independent variables or columns from your dataset you want to compare. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.utils.correlation_matrix import correlation_matrix
+            prop = { 
+                'features': {
+                    'columns': [ 'column1', 'column2', 'column3' ] 
+                }
+            }
+            correlation_matrix(input_dataset_path='/path/to/myDataset.csv', 
+                            output_plot_path='/path/to/newPlot.png', 
+                            properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: In house
+            * license: Apache-2.0
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_dataset_path,
-                 output_plot_path, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_plot_path, 
+                properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -35,7 +59,7 @@ class CorrelationMatrix():
         }
 
         # Properties specific for BB
-        self.features = properties.get('features', [])
+        self.features = properties.get('features', {})
         self.properties = properties
 
         # Properties common in all BB
@@ -54,7 +78,7 @@ class CorrelationMatrix():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the CorrelationMatrix module."""
+        """Execute the :class:`CorrelationMatrix <utils.correlation_matrix.CorrelationMatrix>` utils.correlation_matrix.CorrelationMatrix object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -74,9 +98,15 @@ class CorrelationMatrix():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        if 'columns' in self.features:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
+        else:
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        if self.features: data = data.filter(self.features)
+        if self.features: data = getIndependentVars(self.features, data, out_log, self.__class__.__name__)
 
         fu.log('Parsing dataset', out_log, self.global_log)
         if data.shape[1] < 10: 
@@ -102,7 +132,16 @@ class CorrelationMatrix():
 
         return 0
 
+def correlation_matrix(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`CorrelationMatrix <utils.correlation_matrix.CorrelationMatrix>` class and
+    execute the :meth:`launch() <utils.correlation_matrix.CorrelationMatrix.launch>` method."""
+
+    return CorrelationMatrix(input_dataset_path=input_dataset_path, 
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Generates a correlation matrix from a given dataset", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 

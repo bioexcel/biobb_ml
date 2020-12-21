@@ -1,11 +1,16 @@
 {
-    "properties": {
-        "independent_vars": [
-            "size",
-            "year",
-            "view"
-        ],
-        "target": "price",
-        "test_size": 0.2
-    }
+  "properties": {
+    "independent_vars": {
+      "columns": [
+        "size",
+        "year",
+        "view"
+      ]
+    },
+    "target": {
+      "column": "price"
+    },
+    "test_size": 0.2,
+    "scale": true
+  }
 }

@@ -1,11 +1,18 @@
 {
-    "properties": {
-        "independent_vars": [
-            "LSTAT",
-            "RM"
-        ],
-        "target": "MEDV",
-        "degree": 2,
-        "test_size": 0.2
-    }
+  "properties": {
+    "independent_vars": {
+      "columns": [
+        "LSTAT",
+        "RM",
+        "ZN",
+        "AGE"
+      ]
+    },
+    "target": {
+      "column": "MEDV"
+    },
+    "degree": 2,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

@@ -1,21 +1,26 @@
 {
-    "properties": {
-        "independent_vars": [
-            "region",
-            "tenure",
-            "age",
-            "marital",
-            "address",
-            "income",
-            "ed",
-            "employ",
-            "retire",
-            "gender",
-            "reside"
-        ],
-        "target": "custcat",
-        "metric": "minkowski",
-        "max_neighbors": 15,
-        "test_size": 0.2
-    }
+  "properties": {
+    "independent_vars": {
+      "columns": [
+        "region",
+        "tenure",
+        "age",
+        "marital",
+        "address",
+        "income",
+        "ed",
+        "employ",
+        "retire",
+        "gender",
+        "reside"
+      ]
+    },
+    "target": {
+      "column": "custcat"
+    },
+    "metric": "minkowski",
+    "max_neighbors": 15,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

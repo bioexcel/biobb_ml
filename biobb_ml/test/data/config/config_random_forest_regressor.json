@@ -1,12 +1,23 @@
 {
-    "properties": {
-        "independent_vars": [
-            "LSTAT",
-            "RM"
+  "properties": {
+    "independent_vars": {
+      "range": [
+        [
+          0,
+          5
         ],
-        "target": "MEDV",
-        "n_estimators": 10,
-        "max_depth": 5,
-        "test_size": 0.2
-    }
+        [
+          7,
+          12
+        ]
+      ]
+    },
+    "target": {
+      "index": 13
+    },
+    "n_estimators": 10,
+    "max_depth": 5,
+    "test_size": 0.2,
+    "scale": true
+  }
 }

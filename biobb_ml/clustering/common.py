@@ -3,6 +3,8 @@ from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import itertools
+import csv
+import re
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -10,10 +12,14 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import KMeans
 from sklearn.cluster import SpectralClustering
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN
 from sklearn.metrics import silhouette_score
 from random import sample
 from math import isnan
 from biobb_common.tools import file_utils as fu
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 sns.set()
 
 # CHECK PARAMETERS
@@ -179,16 +185,16 @@ def getGap(method, data, nrefs=3, maxClusters=15):
 
     return (gaps.argmax() + 1, resultsdf)  # Plus 1 because index of 0 means 1 cluster is optimal, index 2 = 3 clusters are optimal
 
-def getSilhouetthe(method, X, max_clusters, affinity, linkage):
+def getSilhouetthe(method, X, max_clusters, affinity=None, linkage=None, random_state=None):
     # Run clustering with different k and check the metrics
     silhouette_list = []
 
     k_list = list(range(2,max_clusters + 1))
     for p in k_list:
 
-        if method == 'kmeans': clusterer = KMeans(p)
+        if method == 'kmeans': clusterer = KMeans(n_clusters=p, random_state=random_state)
         elif method == 'agglomerative': clusterer = AgglomerativeClustering(n_clusters=p, affinity=affinity, linkage=linkage)
-        elif method == 'spectral': clusterer = SpectralClustering(n_clusters=p, affinity = "nearest_neighbors")
+        elif method == 'spectral': clusterer = SpectralClustering(n_clusters=p, affinity = "nearest_neighbors", random_state=random_state)
 
         clusterer.fit(X)
         # The higher (up to 1) the better
@@ -312,3 +318,60 @@ def plotAgglomerativeTrain(max_clusters, sil, best_s):
     plt.tight_layout()
 
     return plt
+
+def getIndependentVars(independent_vars, data, out_log, classname):
+    if 'indexes' in independent_vars:
+        return data.iloc[:, independent_vars['indexes']]
+    elif 'range' in independent_vars:
+        ranges_list = []
+        for rng in independent_vars['range']:
+            for x in range (rng[0], (rng[1] + 1)):
+                ranges_list.append(x)
+        return data.iloc[:, ranges_list]
+    elif 'columns' in independent_vars:
+        return data.loc[:, independent_vars['columns']]
+    else:
+        fu.log(classname + ': Incorrect independent_vars format', out_log)
+        raise SystemExit(classname + ': Incorrect independent_vars format')
+
+def getIndependentVarsList(independent_vars):
+    if 'indexes' in independent_vars:
+        return ', '.join(str(x) for x in independent_vars['indexes'])
+    elif 'range' in independent_vars:
+        return ', '.join([str(y) for r in independent_vars['range'] for y in range(r[0], r[1] + 1)])
+    elif 'columns' in independent_vars:
+        return ', '.join(independent_vars['columns'])
+
+def getTarget(target, data, out_log, classname):
+    if 'index' in target:
+        return data.iloc[:, target['index']]
+    elif 'column' in target:
+        return data[target['column']]
+    else:
+        fu.log(classname + ': Incorrect target format', out_log)
+        raise SystemExit(classname + ': Incorrect target format')
+
+def getTargetValue(target):
+    if 'index' in target:
+        return str(target['index'])
+    elif 'column' in target:
+        return target['column']
+
+def getWeight(weight, data, out_log, classname):
+    if 'index' in weight:
+        return data.iloc[:, weight['index']]
+    elif 'column' in weight:
+        return data[weight['column']]
+    else:
+        fu.log(classname + ': Incorrect weight format', out_log)
+        raise SystemExit(classname + ': Incorrect weight format')
+
+def getHeader(file):
+    with open(file, newline='') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+    
+    if(len(header) == 1):
+        return list(re.sub('\s+|;|:|,|\t', ',', header[0]).split(","))
+    else:
+        return header

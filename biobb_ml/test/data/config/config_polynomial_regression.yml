@@ -1,0 +1,12 @@
+properties:
+  degree: 2
+  independent_vars:
+    columns:
+    - LSTAT
+    - RM
+    - ZN
+    - AGE
+  scale: true
+  target:
+    column: MEDV
+  test_size: 0.2

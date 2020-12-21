@@ -1,8 +1,20 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/pairwise_comparison",
+    "name": "biobb_ml PairwiseComparison",
     "title": "Generates a pairwise comparison from a given dataset.",
+    "description": null,
     "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "In house",
+            "license": "Apache-2.0"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
     "required": [
         "input_dataset_path",
         "output_plot_path"
@@ -15,6 +27,13 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_pairwise_comparison.csv",
             "enum": [
                 ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
             ]
         },
         "output_plot_path": {
@@ -24,25 +43,35 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_plot_pairwise_comparison.png",
             "enum": [
                 ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the pairwise comparison plot",
+                    "edam": "format_3603"
+                }
             ]
         },
         "properties": {
             "type": "object",
             "properties": {
                 "features": {
-                    "type": "list",
-                    "default": null,
-                    "description": "List with all features to compare."
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to compare. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { \"columns\": [\"column1\", \"column2\"] } or { \"indexes\": [0, 2, 3, 10, 11, 17] } or { \"range\": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked."
                 },
                 "remove_tmp": {
                     "type": "boolean",
                     "default": true,
-                    "description": "[WF property] Remove temporal files."
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",
                     "default": false,
-                    "description": "[WF property] Do not execute if output files exist."
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
                 }
             }
         }

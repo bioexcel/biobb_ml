@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "method": "random",
+    "type": "regression",
+    "target": {
+      "column": "VALUE"
+    },
+    "evaluate": true,
+    "n_bins": 10,
+    "sampling_strategy": {
+      "target": "minority"
+    }
+  }
+}

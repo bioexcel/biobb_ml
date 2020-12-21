@@ -1,0 +1,5 @@
+properties:
+  batch_size: 32
+  learning_rate: 0.01
+  max_epochs: 300
+  optimizer: Adam

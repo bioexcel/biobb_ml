@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "targets": {
+      "columns": [
+        "WEIGHT",
+        "SCORE"
+      ]
+    }
+  }
+}

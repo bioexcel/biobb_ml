@@ -5,12 +5,11 @@ import argparse
 import h5py
 import json
 from tensorflow.python.keras.saving import hdf5_format
-from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
-# from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -19,32 +18,75 @@ from biobb_ml.neural_networks.common import *
 
 
 class RecurrentNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for a Recurrent Neural Network.
-    Wrapper of the tf.keras.layers.LSTM model
-    Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_. 
+    """
+    | biobb_ml RecurrentNeuralNetwork
+    | Wrapper of the TensorFlow Keras LSTM method using Recurrent Neural Networks. 
+    | Trains and tests a given dataset and save the complete model for a Recurrent Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_recurrent.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_recurrent.h5>`_. Accepted formats: h5.
-        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_recurrent.csv>`_. Accepted formats: csv.
-        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_recurrent.png>`_. Accepted formats: png.
-        properties (dic):
-            * **target** (*string*) - (None) Dependent variable or column from your dataset you want to predict.
-            * **validation_size** (*float*) - (0.2) Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
-            * **window_size** (*int*) - (5) Number of steps for each window of training model.
-            * **test_size** (*int*) - (0.1) Represents the number of samples of the dataset to include in the test split.
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_recurrent.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_recurrent.h5>`_. Accepted formats: h5 (edam:format_3590).
+        output_test_table_path (str) (Optional): Path to the test table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_recurrent.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_plot_path (str) (Optional): Loss, accuracy and MSE plots. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_recurrent.png>`_. Accepted formats: png (edam:format_3603).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
+            * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **validation_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
+            * **window_size** (*int*) - (5) [0~100|1] Number of steps for each window of training model.
+            * **test_size** (*int*) - (5) [0~100000|1] Represents the number of samples of the dataset to include in the test split.
             * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
-            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
-            * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
-            * **batch_size** (*int*) - (100) Number of samples per gradient update.
-            * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta (Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate), Adagrad (Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates), Adam (Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments), Adamax (It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings), Ftrl (Optimizer that implements the FTRL algorithm), Nadam (Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum), RMSprop (Optimizer that implements the RMSprop algorithm), SGD (Gradient descent -with momentum- optimizer).
+            * **learning_rate** (*float*) - (0.02) [0~100|0.01] Determines the step size at each iteration while moving toward a minimum of a loss function
+            * **batch_size** (*int*) - (100) [0~1000|1] Number of samples per gradient update.
+            * **max_epochs** (*int*) - (100) [0~1000|1] Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
             * **normalize_cm** (*bool*) - (False) Whether or not to normalize the confusion matrix.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.neural_networks.recurrent_neural_network import recurrent_neural_network
+            prop = { 
+                'target': { 
+                    'column': 'target' 
+                },
+                'window_size': 5,
+                'validation_size': 0.2,
+                'test_size': 0.2,
+                'hidden_layers': [
+                    { 
+                        'size': 10, 
+                        'activation': 'relu' 
+                    },
+                    { 
+                        'size': 8, 
+                        'activation': 'relu' 
+                    }
+                ],
+                'optimizer': 'Adam',
+                'learning_rate': 0.01,
+                'batch_size': 32,
+                'max_epochs': 150
+            }
+            recurrent_neural_network(input_dataset_path='/path/to/myDataset.csv', 
+                                        output_model_path='/path/to/newModel.h5', 
+                                        output_test_table_path='/path/to/newTable.csv', 
+                                        output_plot_path='/path/to/newPlot.png',
+                                        properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: tensorflow
+            * version: >2.1.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+            
     """
 
-    def __init__(self, input_dataset_path,
-                 output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_model_path, 
+                output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -83,6 +125,8 @@ class RecurrentNeuralNetwork():
         self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, input_shape):
+        """ Builds Neural network according to hidden_layers property """
+
         # create model
         model = Sequential([])
 
@@ -103,7 +147,7 @@ class RecurrentNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the RecurrentNeuralNetwork module."""
+        """Execute the :class:`RecurrentNeuralNetwork <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork>` neural_networks.recurrent_neural_network.RecurrentNeuralNetwork object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -123,10 +167,16 @@ class RecurrentNeuralNetwork():
 
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"])
+        if 'column' in self.target:
+            labels = getHeader(self.io_dict["in"]["input_dataset_path"])
+            skiprows = 1
+        else:
+            labels = None
+            skiprows = None
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # get target column
-        target = data[self.target].to_numpy()
+        target = data[getTargetValue(self.target)].to_numpy()
 
         # split into samples
         X, y = split_sequence(target, self.window_size)
@@ -158,13 +208,13 @@ class RecurrentNeuralNetwork():
         fu.log('Training model', out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
-        #early_stopping = EarlyStopping(patience=2)
+        early_stopping = EarlyStopping(patience=2)
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 
                        batch_size=self.batch_size, 
                        epochs=self.max_epochs, 
-                       #callbacks=[early_stopping],
+                       callbacks=[early_stopping],
                        validation_split=self.validation_size,
                        verbose = 1)
 
@@ -227,16 +277,27 @@ class RecurrentNeuralNetwork():
 
         return 0
 
+def recurrent_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`RecurrentNeuralNetwork <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork>` class and
+    execute the :meth:`launch() <neural_networks.recurrent_neural_network.RecurrentNeuralNetwork.launch>` method."""
+
+    return RecurrentNeuralNetwork(input_dataset_path=input_dataset_path,  
+                   output_model_path=output_model_path, 
+                   output_test_table_path=output_test_table_path,
+                   output_plot_path=output_plot_path,
+                   properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and save the complete model for a Recurrent Neural Network.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper of the TensorFlow Keras LSTM method.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: h5.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.')
+    parser.add_argument('--output_plot_path', required=False, help='Loss, accuracy and MSE plots. Accepted formats: png.') 
 
     args = parser.parse_args()
     args.config = args.config or "{}"

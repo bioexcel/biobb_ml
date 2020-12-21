@@ -1,8 +1,21 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/regression_predict",
-    "title": "Makes predictions from a given model.",
+    "name": "biobb_ml RegressionPredict",
+    "title": "Makes predictions from an input dataset and a given regression model.",
+    "description": "Makes predictions from an input dataset (provided either as a file or as a dictionary property) and a given regression model trained with LinearRegression, RandomForestRegressor methods.",
     "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "scikit-learn",
+            "version": ">=0.23.1",
+            "license": "BSD 3-Clause"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
     "required": [
         "input_model_path",
         "output_results_path"
@@ -15,6 +28,29 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/model_regression_predict.pkl",
             "enum": [
                 ".*\\.pkl$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pkl$",
+                    "description": "Path to the input model",
+                    "edam": "format_3653"
+                }
+            ]
+        },
+        "input_dataset_path": {
+            "type": "string",
+            "description": "Path to the dataset to predict",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/input_classification_predict.csv",
+            "enum": [
+                ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the dataset to predict",
+                    "edam": "format_3752"
+                }
             ]
         },
         "output_results_path": {
@@ -24,25 +60,35 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_regression_predict.csv",
             "enum": [
                 ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the output results file",
+                    "edam": "format_3752"
+                }
             ]
         },
         "properties": {
             "type": "object",
             "properties": {
                 "predictions": {
-                    "type": "list",
+                    "type": "array",
                     "default": null,
-                    "description": "List of dictionaries with all values you want to predict targets."
+                    "wf_prop": false,
+                    "description": "List of dictionaries with all values you want to predict targets. It will be taken into account only in case **input_dataset_path** is not provided. Format: [{ 'var1': 1.0, 'var2': 2.0 }, { 'var1': 4.0, 'var2': 2.7 }] for datasets with headers and [[ 1.0, 2.0 ], [ 4.0, 2.7 ]] for datasets without headers."
                 },
                 "remove_tmp": {
                     "type": "boolean",
                     "default": true,
-                    "description": "[WF property] Remove temporal files."
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",
                     "default": false,
-                    "description": "[WF property] Do not execute if output files exist."
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
                 }
             }
         }

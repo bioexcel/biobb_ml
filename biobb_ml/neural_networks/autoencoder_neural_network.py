@@ -19,27 +19,55 @@ from biobb_ml.neural_networks.common import *
 
 
 class AutoencoderNeuralNetwork():
-    """Trains and tests a given dataset and save the complete model for an Autoencoder Neural Network.
-    Wrapper of the tf.keras.layers.LSTM model
-    Visit the `TensorFlow official website <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_. 
+    """
+    | biobb_ml AutoencoderNeuralNetwork
+    | Wrapper of the TensorFlow Keras LSTM method for encoding. 
+    | Fits and tests a given dataset and save the compiled model for an Autoencoder Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information. 
 
     Args:
-        input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv.
-        input_predict_path (str) (Optional): Path to the input predict dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_predict.csv>`_. Accepted formats: csv.
-        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_autoencoder.h5>`_. Accepted formats: h5.
-        output_test_decode_path (str) (Optional): Path to the test decode table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_decode_autoencoder.csv>`_. Accepted formats: csv.
-        output_test_predict_path (str) (Optional): Path to the test predict table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_predict_autoencoder.csv>`_. Accepted formats: csv.
-        properties (dic):
-            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta, Adagrad, Adam, Adamax, Ftrl, Nadam, RMSprop, SGD.
-            * **learning_rate** (*float*) - (0.02) Determines the step size at each iteration while moving toward a minimum of a loss function
-            * **batch_size** (*int*) - (100) Number of samples per gradient update.
-            * **max_epochs** (*int*) - (100) Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
+        input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv (edam:format_3752).
+        input_predict_path (str) (Optional): Path to the input predict dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_predict.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_model_path (str): Path to the output model file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_autoencoder.h5>`_. Accepted formats: h5 (edam:format_3590).
+        output_test_decode_path (str) (Optional): Path to the test decode table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_decode_autoencoder.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_test_predict_path (str) (Optional): Path to the test predict table file. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_predict_autoencoder.csv>`_. Accepted formats: csv (edam:format_3752).
+        properties (dic - Python dictionary object containing the tool parameters, not input/output files):
+            * **optimizer** (*string*) - ("Adam") Name of optimizer instance. Values: Adadelta (Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate), Adagrad (Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates), Adam (Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments), Adamax (It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings), Ftrl (Optimizer that implements the FTRL algorithm), Nadam (Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum), RMSprop (Optimizer that implements the RMSprop algorithm), SGD (Gradient descent -with momentum- optimizer).
+            * **learning_rate** (*float*) - (0.02) [0~100|0.01] Determines the step size at each iteration while moving toward a minimum of a loss function
+            * **batch_size** (*int*) - (100) [0~1000|1] Number of samples per gradient update.
+            * **max_epochs** (*int*) - (100) [0~1000|1] Number of epochs to train the model. As the early stopping is enabled, this is a maximum.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_ml.neural_networks.autoencoder_neural_network import autoencoder_neural_network
+            prop = { 
+                'optimizer': 'Adam', 
+                'learning_rate': 0.01, 
+                'batch_size': 32,
+                'max_epochs': 300
+            }
+            autoencoder_neural_network(input_decode_path='/path/to/myDecodeDataset.csv', 
+                                        output_model_path='/path/to/newModel.h5', 
+                                        input_predict_path='/path/to/myPredictDataset.csv', 
+                                        output_test_decode_path='/path/to/newDecodeDataset.csv', 
+                                        output_test_predict_path='/path/to/newPredictDataset.csv', 
+                                        properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: tensorflow
+            * version: >2.1.0
+            * license: MIT
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_decode_path, input_predict_path,
-                 output_model_path, output_test_decode_path=None, output_test_predict_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_decode_path, output_model_path, 
+                input_predict_path=None, output_test_decode_path=None, output_test_predict_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -67,12 +95,16 @@ class AutoencoderNeuralNetwork():
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_decode_path"] = check_input_path(self.io_dict["in"]["input_decode_path"], "input_decode_path", False, out_log, self.__class__.__name__)
-        self.io_dict["in"]["input_predict_path"] = check_input_path(self.io_dict["in"]["input_predict_path"], "input_predict_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["in"]["input_predict_path"]:
+            self.io_dict["in"]["input_predict_path"] = check_input_path(self.io_dict["in"]["input_predict_path"], "input_predict_path", True, out_log, self.__class__.__name__)
         self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_test_decode_path"] = check_output_path(self.io_dict["out"]["output_test_decode_path"],"output_test_decode_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_test_predict_path"] = check_output_path(self.io_dict["out"]["output_test_predict_path"],"output_test_predict_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_test_decode_path"]:
+            self.io_dict["out"]["output_test_decode_path"] = check_output_path(self.io_dict["out"]["output_test_decode_path"],"output_test_decode_path", True, out_log, self.__class__.__name__)
+        if self.io_dict["out"]["output_test_predict_path"]:
+            self.io_dict["out"]["output_test_predict_path"] = check_output_path(self.io_dict["out"]["output_test_predict_path"],"output_test_predict_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, n_in, n_out = None):
+        """ Builds Neural network """
 
         # outputs list
         outputs = []
@@ -102,7 +134,7 @@ class AutoencoderNeuralNetwork():
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the AutoencoderNeuralNetwork module."""
+        """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork>` neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -186,8 +218,12 @@ class AutoencoderNeuralNetwork():
         yhat = model.predict(seq_in, verbose=1)
 
         decoding_table = pd.DataFrame()
-        decoding_table['reconstructed'] = np.squeeze(np.asarray(yhat[0][0]))
-        decoding_table['original'] = data_dec
+        if(self.io_dict["in"]["input_predict_path"]): 
+            decoding_table['reconstructed'] = np.squeeze(np.asarray(yhat[0][0]))
+            decoding_table['original'] = data_dec
+        else:
+            decoding_table['reconstructed'] = np.squeeze(np.asarray(yhat[0]))
+            decoding_table['original'] = np.squeeze(np.asarray(data_dec))
         decoding_table['residual'] = decoding_table['original'] - decoding_table['reconstructed']
         decoding_table['difference %'] = np.absolute(decoding_table['residual']/decoding_table['original']*100)
         pd.set_option('display.float_format', lambda x: '%.5f' % x)
@@ -230,15 +266,27 @@ class AutoencoderNeuralNetwork():
 
         return 0
 
+def autoencoder_neural_network(input_decode_path: str, output_model_path: str, input_predict_path: str = None, output_test_decode_path: str = None, output_test_predict_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork>` class and
+    execute the :meth:`launch() <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork.launch>` method."""
+
+    return AutoencoderNeuralNetwork(input_decode_path=input_decode_path,  
+                    output_model_path=output_model_path, 
+                    input_predict_path=input_predict_path, 
+                    output_test_decode_path=output_test_decode_path,
+                    output_test_predict_path=output_test_predict_path,
+                    properties=properties).launch()
+
 def main():
-    parser = argparse.ArgumentParser(description="Trains and tests a given dataset and save the complete model for an Autoencoder Neural Network.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper of the TensorFlow Keras LSTM method for encoding.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('--config', required=False, help='Configuration file')
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_decode_path', required=True, help='Path to the input decode dataset. Accepted formats: csv.')
     parser.add_argument('--input_predict_path', required=False, help='Path to the input predict dataset. Accepted formats: csv.')
-    required_args.add_argument('--output_model_path', required=True, help='Path to the output results file. Accepted formats: csv.')
+    required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: h5.')
     parser.add_argument('--output_test_decode_path', required=False, help='Path to the test decode table file. Accepted formats: csv.')
     parser.add_argument('--output_test_predict_path', required=False, help='Path to the test predict table file. Accepted formats: csv.')
 
@@ -248,11 +296,11 @@ def main():
 
     # Specific call of each building block
     AutoencoderNeuralNetwork(input_decode_path=args.input_decode_path,
-                   input_predict_path=args.input_predict_path,
-                   output_model_path=args.output_model_path, 
-                   output_test_decode_path=args.output_test_decode_path, 
-                   output_test_predict_path=args.output_test_predict_path, 
-                   properties=properties).launch()
+                    output_model_path=args.output_model_path, 
+                    input_predict_path=args.input_predict_path, 
+                    output_test_decode_path=args.output_test_decode_path, 
+                    output_test_predict_path=args.output_test_predict_path, 
+                    properties=properties).launch()
 
 if __name__ == '__main__':
     main()

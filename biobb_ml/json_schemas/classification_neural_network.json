@@ -1,8 +1,21 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_ml/json_schemas/1.0/classification_neural_network",
-    "title": "Trains and tests a given dataset and save the complete model for a Neural Network Classification.",
+    "name": "biobb_ml ClassificationNeuralNetwork",
+    "title": "Wrapper of the TensorFlow Keras Sequential method.",
+    "description": "Trains and tests a given dataset and save the complete model for a Neural Network Classification. Visit the Sequential documentation page in the TensorFlow Keras official website for further information.",
     "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "tensorflow",
+            "version": ">2.1.0",
+            "license": "MIT"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
     "required": [
         "input_dataset_path",
         "output_model_path"
@@ -15,6 +28,13 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_classification.csv",
             "enum": [
                 ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
+                }
             ]
         },
         "output_model_path": {
@@ -24,6 +44,13 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_model_classification.h5",
             "enum": [
                 ".*\\.h5$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.h5$",
+                    "description": "Path to the output model file",
+                    "edam": "format_3590"
+                }
             ]
         },
         "output_test_table_path": {
@@ -33,6 +60,13 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_test_classification.csv",
             "enum": [
                 ".*\\.csv$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.csv$",
+                    "description": "Path to the test table file",
+                    "edam": "format_3752"
+                }
             ]
         },
         "output_plot_path": {
@@ -42,51 +76,95 @@
             "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/neural_networks/ref_output_plot_classification.png",
             "enum": [
                 ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Loss, accuracy and MSE plots",
+                    "edam": "format_3603"
+                }
             ]
         },
         "properties": {
             "type": "object",
             "properties": {
                 "features": {
-                    "type": "list",
-                    "default": null,
-                    "description": "Independent variables or columns from your dataset you want to train."
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Independent variables or columns from your dataset you want to train. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { \"columns\": [\"column1\", \"column2\"] } or { \"indexes\": [0, 2, 3, 10, 11, 17] } or { \"range\": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked."
                 },
                 "target": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Dependent variable or column from your dataset you want to predict."
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
+                },
+                "weight": {
+                    "type": "object",
+                    "default": {},
+                    "wf_prop": false,
+                    "description": "Weight variable from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
                 },
                 "validation_size": {
-                    "type": "float",
+                    "type": "number",
                     "default": 0.2,
-                    "description": "Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0."
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
                 },
                 "test_size": {
-                    "type": "float",
+                    "type": "number",
                     "default": 0.1,
-                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0."
+                    "wf_prop": false,
+                    "description": "Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05
                 },
                 "hidden_layers": {
-                    "type": "list",
+                    "type": "array",
                     "default": null,
-                    "description": " List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ]."
+                    "wf_prop": false,
+                    "description": "List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ]."
                 },
                 "output_layer_activation": {
                     "type": "string",
                     "default": "softmax",
-                    "description": "Activation function to use in the output layer.",
+                    "wf_prop": false,
+                    "description": "Activation function to use in the output layer. ",
                     "enum": [
                         "sigmoid",
                         "tanh",
                         "relu",
                         "softmax"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "sigmoid",
+                            "description": "Sigmoid activation function: sigmoid[x] = 1 / [1 + exp[-x]]"
+                        },
+                        {
+                            "name": "tanh",
+                            "description": "Hyperbolic tangent activation function"
+                        },
+                        {
+                            "name": "relu",
+                            "description": "Applies the rectified linear unit activation function"
+                        },
+                        {
+                            "name": "softmax",
+                            "description": "Softmax converts a real vector to a vector of categorical probabilities"
+                        }
                     ]
                 },
                 "optimizer": {
                     "type": "string",
                     "default": "Adam",
-                    "description": "Name of optimizer instance.",
+                    "wf_prop": false,
+                    "description": "Name of optimizer instance. ",
                     "enum": [
                         "Adadelta",
                         "Adagrad",
@@ -96,37 +174,101 @@
                         "Nadam",
                         "RMSprop",
                         "SGD"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "Adadelta",
+                            "description": "Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate"
+                        },
+                        {
+                            "name": "Adagrad",
+                            "description": "Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates"
+                        },
+                        {
+                            "name": "Adam",
+                            "description": "Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments"
+                        },
+                        {
+                            "name": "Adamax",
+                            "description": "It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings"
+                        },
+                        {
+                            "name": "Ftrl",
+                            "description": "Optimizer that implements the FTRL algorithm"
+                        },
+                        {
+                            "name": "Nadam",
+                            "description": "Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum"
+                        },
+                        {
+                            "name": "RMSprop",
+                            "description": "Optimizer that implements the RMSprop algorithm"
+                        },
+                        {
+                            "name": "SGD",
+                            "description": "Gradient descent -with momentum- optimizer"
+                        }
                     ]
                 },
                 "learning_rate": {
-                    "type": "float",
+                    "type": "number",
                     "default": 0.02,
-                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function"
+                    "wf_prop": false,
+                    "description": "Determines the step size at each iteration while moving toward a minimum of a loss function",
+                    "min": 0.0,
+                    "max": 100.0,
+                    "step": 0.01
                 },
                 "batch_size": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 100,
-                    "description": "Number of samples per gradient update."
+                    "wf_prop": false,
+                    "description": "Number of samples per gradient update.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "max_epochs": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 100,
-                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum."
+                    "wf_prop": false,
+                    "description": "Number of epochs to train the model. As the early stopping is enabled, this is a maximum.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "normalize_cm": {
                     "type": "boolean",
                     "default": false,
+                    "wf_prop": false,
                     "description": "Whether or not to normalize the confusion matrix."
+                },
+                "random_state": {
+                    "type": "integer",
+                    "default": 5,
+                    "wf_prop": false,
+                    "description": "Controls the shuffling applied to the data before applying the split. .",
+                    "min": 1,
+                    "max": 1000,
+                    "step": 1
+                },
+                "scale": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Whether or not to scale the input dataset."
                 },
                 "remove_tmp": {
                     "type": "boolean",
                     "default": true,
-                    "description": "[WF property] Remove temporal files."
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",
                     "default": false,
-                    "description": "[WF property] Do not execute if output files exist."
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
                 }
             }
         }
