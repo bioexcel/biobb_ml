@@ -215,7 +215,11 @@ def getSamplingStrategy(sampling_strategy, out_log, classname):
 			return sampling_strategy['ratio']
 	if 'dict' in sampling_strategy:
 		if isinstance(sampling_strategy['dict'], dict):
-			return sampling_strategy['dict']
+			# trick for ensure the keys are integers
+			samp_str = {}
+			for key, item in sampling_strategy['dict'].items():
+				samp_str[int(key)] = item
+			return samp_str
 	if 'list' in sampling_strategy:
 		if isinstance(sampling_strategy['list'], list):
 			return sampling_strategy['list']

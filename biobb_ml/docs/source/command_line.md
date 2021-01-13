@@ -197,7 +197,7 @@ support_vector_machine --config config_support_vector_machine.json --input_datas
 ```
 
 ## Neural_network_predict
-Makes predictions from an input dataset and a given classification model.
+Makes predictions from an input dataset and a given model.
 ### Get help
 Command:
 ```python
@@ -714,7 +714,7 @@ logistic_regression --config config_logistic_regression.json --input_dataset_pat
 ```
 
 ## Recurrent_neural_network
-Wrapper of the TensorFlow Keras LSTM method.
+Wrapper of the TensorFlow Keras LSTM method using Recurrent Neural Networks.
 ### Get help
 Command:
 ```python
@@ -855,7 +855,7 @@ Config input / output arguments for this building block:
 * **input_dataset_path** (*string*): Path to the input dataset. File type: input. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_linear_regression.csv). Accepted formats: CSV
 * **output_model_path** (*string*): Path to the output model file. File type: output. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_model_linear_regression.pkl). Accepted formats: PKL
 * **output_test_table_path** (*string*): Path to the test table file. File type: output. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_test_linear_regression.csv). Accepted formats: CSV
-* **output_plot_path** (*string*): Residual plot checks the error between actual values and predicted values. Sample file. File type: output. [Sample file](None). Accepted formats: PNG
+* **output_plot_path** (*string*): Residual plot checks the error between actual values and predicted values. File type: output. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_linear_regression.png). Accepted formats: PNG
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
 
@@ -885,7 +885,7 @@ properties:
 ```
 #### Command line
 ```python
-linear_regression --config config_linear_regression.yml --input_dataset_path dataset_linear_regression.csv --output_model_path ref_output_model_linear_regression.pkl --output_test_table_path ref_output_test_linear_regression.csv --output_plot_path output.png
+linear_regression --config config_linear_regression.yml --input_dataset_path dataset_linear_regression.csv --output_model_path ref_output_model_linear_regression.pkl --output_test_table_path ref_output_test_linear_regression.csv --output_plot_path ref_output_plot_linear_regression.png
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_ml/blob/master/biobb_ml/test/data/config/config_linear_regression.json)
@@ -909,7 +909,7 @@ linear_regression --config config_linear_regression.yml --input_dataset_path dat
 ```
 #### Command line
 ```python
-linear_regression --config config_linear_regression.json --input_dataset_path dataset_linear_regression.csv --output_model_path ref_output_model_linear_regression.pkl --output_test_table_path ref_output_test_linear_regression.csv --output_plot_path output.png
+linear_regression --config config_linear_regression.json --input_dataset_path dataset_linear_regression.csv --output_model_path ref_output_model_linear_regression.pkl --output_test_table_path ref_output_test_linear_regression.csv --output_plot_path ref_output_plot_linear_regression.png
 ```
 
 ## Random_forest_classifier
@@ -1177,7 +1177,7 @@ pls_regression --config config_pls_regression.json --input_dataset_path dataset_
 ```
 
 ## Regression_neural_network
-Wrapper of the TensorFlow Keras Sequential method.
+Wrapper of the TensorFlow Keras Sequential method for regression.
 ### Get help
 Command:
 ```python
@@ -1952,7 +1952,7 @@ clustering_predict --config config_clustering_predict.json --input_model_path mo
 ```
 
 ## Agglomerative_coefficient
-Wrapper of the scikit-learn AgglomerativeCoefficient method.
+Wrapper of the scikit-learn AgglomerativeClustering method.
 ### Get help
 Command:
 ```python
@@ -2281,7 +2281,7 @@ k_neighbors_coefficient --config config_k_neighbors_coefficient.json --input_dat
 ```
 
 ## Classification_neural_network
-Wrapper of the TensorFlow Keras Sequential method.
+Wrapper of the TensorFlow Keras Sequential method for classification.
 ### Get help
 Command:
 ```python

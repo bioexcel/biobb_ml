@@ -23,7 +23,6 @@ class Resampling():
     | Wrapper of the imblearn.combine methods.
     | Combine over- and under-sampling methods to remove samples and supplement the dataset. If regression is specified as type, the data will be resampled to classes in order to apply the resampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `SMOTETomek <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTETomek.html>`_, `SMOTEENN <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.combine.SMOTEENN.html>`_.
     
-
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/resampling/dataset_resampling.csv>`_. Accepted formats: csv (edam:format_3752).
         output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/resampling/ref_output_resampling.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -56,7 +55,7 @@ class Resampling():
                 'evaluate': true, 
                 'n_bins': 10,
                 'sampling_strategy_over': { 
-                    'dict': { 4: 1000, 5: 1000, 6: 1000, 7: 1000 }
+                    'dict': { '4': 1000, '5': 1000, '6': 1000, '7': 1000 }
                 },
                 'sampling_strategy_under': { 
                     'list': [0,1]

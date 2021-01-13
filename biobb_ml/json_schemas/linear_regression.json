@@ -71,16 +71,16 @@
         },
         "output_plot_path": {
             "type": "string",
-            "description": "Residual plot checks the error between actual values and predicted values. Sample file",
+            "description": "Residual plot checks the error between actual values and predicted values",
             "filetype": "output",
-            "sample": null,
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_plot_linear_regression.png",
             "enum": [
                 ".*\\.png$"
             ],
             "file_formats": [
                 {
                     "extension": ".*\\.png$",
-                    "description": "Residual plot checks the error between actual values and predicted values. Sample file",
+                    "description": "Residual plot checks the error between actual values and predicted values",
                     "edam": "format_3603"
                 }
             ]
