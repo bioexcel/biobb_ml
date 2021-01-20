@@ -35,7 +35,7 @@ class KMeansClustering():
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_ml.clustering.kmeans import kmeans
+            from biobb_ml.clustering.k_means import k_means
             prop = { 
                 'predictors': { 
                     'columns': [ 'column1', 'column2', 'column3' ] 
@@ -48,7 +48,7 @@ class KMeansClustering():
                     } 
                 ] 
             }
-            kmeans(input_dataset_path='/path/to/myDataset.csv', 
+            k_means(input_dataset_path='/path/to/myDataset.csv', 
                     output_results_path='/path/to/newTable.csv', 
                     output_model_path='/path/to/newModel.pkl', 
                     output_plot_path='/path/to/newPlot.png', 
@@ -102,7 +102,7 @@ class KMeansClustering():
 
     @launchlogger
     def launch(self) -> int:
-        """Execute the :class:`KMeansClustering <clustering.kmeans.KMeansClustering>` clustering.kmeans.KMeansClustering object."""
+        """Execute the :class:`KMeansClustering <clustering.k_means.KMeansClustering>` clustering.k_means.KMeansClustering object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -187,15 +187,15 @@ class KMeansClustering():
 
         return 0
 
-def kmeans(input_dataset_path: str, output_results_path: str, output_model_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
-    """Execute the :class:`KMeansClustering <clustering.kmeans.KMeansClustering>` class and
-    execute the :meth:`launch() <clustering.kmeans.KMeansClustering.launch>` method."""
+def k_means(input_dataset_path: str, output_results_path: str, output_model_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
+    """Execute the :class:`KMeansClustering <clustering.k_means.KMeansClustering>` class and
+    execute the :meth:`launch() <clustering.k_means.KMeansClustering.launch>` method."""
 
     return KMeansClustering(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 
                    output_model_path=output_model_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -214,11 +214,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    KMeansClustering(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   output_model_path=args.output_model_path, 
-                   output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+    k_means(input_dataset_path=args.input_dataset_path,
+           output_results_path=args.output_results_path, 
+           output_model_path=args.output_model_path, 
+           output_plot_path=args.output_plot_path, 
+           properties=properties)
 
 if __name__ == '__main__':
     main()

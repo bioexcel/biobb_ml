@@ -150,7 +150,7 @@ class DecodingNeuralNetwork():
 
         return 0
 
-def neural_network_decode(input_decode_path: str, input_model_path: str, output_decode_path: str, output_predict_path: str = None, properties: dict = None, **kwargs) -> None:
+def neural_network_decode(input_decode_path: str, input_model_path: str, output_decode_path: str, output_predict_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`DecodingNeuralNetwork <neural_networks.neural_network_decode.DecodingNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.neural_network_decode.DecodingNeuralNetwork.launch>` method."""
 
@@ -158,7 +158,7 @@ def neural_network_decode(input_decode_path: str, input_model_path: str, output_
                    input_model_path=input_model_path, 
                    output_decode_path=output_decode_path,
                    output_predict_path=output_predict_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -177,11 +177,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    DecodingNeuralNetwork(input_decode_path=args.input_decode_path,
-                   input_model_path=args.input_model_path,
-                   output_decode_path=args.output_decode_path, 
-                   output_predict_path=args.output_predict_path, 
-                   properties=properties).launch()
+    neural_network_decode(input_decode_path=args.input_decode_path,
+                           input_model_path=args.input_model_path,
+                           output_decode_path=args.output_decode_path, 
+                           output_predict_path=args.output_predict_path, 
+                           properties=properties)
 
 if __name__ == '__main__':
     main()

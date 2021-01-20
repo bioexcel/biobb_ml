@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.dimensionality_reduction.pls_components import PLSComponents
+from biobb_ml.dimensionality_reduction.pls_components import pls_components
 
 
 class TestPLSComponents():
@@ -11,7 +11,7 @@ class TestPLSComponents():
         pass
 
     def test_pls_components(self):
-        PLSComponents(properties=self.properties, **self.paths).launch()
+        pls_components(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_results_path'])
         assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])
         assert fx.not_empty(self.paths['output_plot_path'])

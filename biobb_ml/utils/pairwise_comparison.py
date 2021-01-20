@@ -126,13 +126,13 @@ class PairwiseComparison():
 
         return 0
 
-def pairwise_comparison(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> None:
+def pairwise_comparison(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PairwiseComparison <utils.pairwise_comparison.PairwiseComparison>` class and
     execute the :meth:`launch() <utils.pairwise_comparison.PairwiseComparison.launch>` method."""
 
     return PairwiseComparison(input_dataset_path=input_dataset_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -149,9 +149,9 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PairwiseComparison(input_dataset_path=args.input_dataset_path,
-                   output_plot_path=args.output_plot_path,
-                   properties=properties).launch()
+    pairwise_comparison(input_dataset_path=args.input_dataset_path,
+                       output_plot_path=args.output_plot_path,
+                       properties=properties)
 
 if __name__ == '__main__':
     main()

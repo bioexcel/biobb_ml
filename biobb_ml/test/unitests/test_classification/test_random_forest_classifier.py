@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.classification.random_forest_classifier import RandomForestClassifier
+from biobb_ml.classification.random_forest_classifier import random_forest_classifier
 
 
 class TestRandomForestClassifier():
@@ -11,7 +11,7 @@ class TestRandomForestClassifier():
         pass
 
     def test_random_forest_classifier(self):
-        RandomForestClassifier(properties=self.properties, **self.paths).launch()
+        random_forest_classifier(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_model_path'])
         assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

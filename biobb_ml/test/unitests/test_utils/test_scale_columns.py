@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.utils.scale_columns import ScaleColumns
+from biobb_ml.utils.scale_columns import scale_columns
 
 
 class TestScaleColumns():
@@ -11,6 +11,6 @@ class TestScaleColumns():
         pass
 
     def test_scale_columns(self):
-        ScaleColumns(properties=self.properties, **self.paths).launch()
+        scale_columns(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_dataset_path'])
         assert fx.equal(self.paths['output_dataset_path'], self.paths['ref_output_dataset_path'])

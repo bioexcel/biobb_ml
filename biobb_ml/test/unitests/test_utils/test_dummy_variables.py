@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.utils.dummy_variables import DummyVariables
+from biobb_ml.utils.dummy_variables import dummy_variables
 
 
 class TestDummyVariables():
@@ -11,6 +11,6 @@ class TestDummyVariables():
         pass
 
     def test_dummy_variables(self):
-        DummyVariables(properties=self.properties, **self.paths).launch()
+        dummy_variables(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_dataset_path'])
         assert fx.equal(self.paths['output_dataset_path'], self.paths['ref_output_dataset_path'])

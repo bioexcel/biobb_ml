@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.clustering.spectral_clustering import SpecClustering
+from biobb_ml.clustering.spectral_clustering import spectral_clustering
 
 
 class TestSpecClustering():
@@ -11,7 +11,7 @@ class TestSpecClustering():
         pass
 
     def test_spectral_clustering(self):
-        SpecClustering(properties=self.properties, **self.paths).launch()
+        spectral_clustering(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_results_path'])
         #assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])
         assert fx.not_empty(self.paths['output_plot_path'])

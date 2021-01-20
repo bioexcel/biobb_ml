@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.regression.linear_regression import LinearRegression
+from biobb_ml.regression.linear_regression import linear_regression
 
 
 class TestLinearRegression():
@@ -11,7 +11,7 @@ class TestLinearRegression():
         pass
 
     def test_linear_regression(self):
-        LinearRegression(properties=self.properties, **self.paths).launch()
+        linear_regression(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_model_path'])
         assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

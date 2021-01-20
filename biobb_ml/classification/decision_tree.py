@@ -264,7 +264,7 @@ class DecisionTree():
 
         return 0
 
-def decision_tree(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+def decision_tree(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`DecisionTree <classification.decision_tree.DecisionTree>` class and
     execute the :meth:`launch() <classification.decision_tree.DecisionTree.launch>` method."""
 
@@ -272,7 +272,7 @@ def decision_tree(input_dataset_path: str, output_model_path: str, output_test_t
                    output_model_path=output_model_path, 
                    output_test_table_path=output_test_table_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -291,11 +291,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    DecisionTree(input_dataset_path=args.input_dataset_path,
+    decision_tree(input_dataset_path=args.input_dataset_path,
                    output_model_path=args.output_model_path, 
                    output_test_table_path=args.output_test_table_path, 
                    output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+                   properties=properties)
 
 if __name__ == '__main__':
     main()

@@ -162,14 +162,14 @@ class ClusteringPredict():
 
         return 0
 
-def clustering_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
+def clustering_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`ClusteringPredict <clustering.clustering_predict.ClusteringPredict>` class and
     execute the :meth:`launch() <clustering.clustering_predict.ClusteringPredict.launch>` method."""
 
     return ClusteringPredict(input_model_path=input_model_path, 
                     output_results_path=output_results_path, 
                     input_dataset_path=input_dataset_path,  
-                    properties=properties).launch()
+                    properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -187,10 +187,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ClusteringPredict(input_model_path=args.input_model_path, 
+    clustering_predict(input_model_path=args.input_model_path, 
                     output_results_path=args.output_results_path, 
                     input_dataset_path=args.input_dataset_path,
-                    properties=properties).launch()
+                    properties=properties)
 
 if __name__ == '__main__':
     main()

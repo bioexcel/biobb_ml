@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.dimensionality_reduction.pls_regression import PLS_Regression
+from biobb_ml.dimensionality_reduction.pls_regression import pls_regression
 
 
 class TestPLS_Regression():
@@ -11,7 +11,7 @@ class TestPLS_Regression():
         pass
 
     def test_pls_regression(self):
-        PLS_Regression(properties=self.properties, **self.paths).launch()
+        pls_regression(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_results_path'])
         assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])
         assert fx.not_empty(self.paths['output_plot_path'])

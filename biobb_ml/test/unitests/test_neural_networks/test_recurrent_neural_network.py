@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.neural_networks.recurrent_neural_network import RecurrentNeuralNetwork
+from biobb_ml.neural_networks.recurrent_neural_network import recurrent_neural_network
 
 
 class TestRecurrentNeuralNetwork():
@@ -11,7 +11,7 @@ class TestRecurrentNeuralNetwork():
         pass
 
     def test_recurrent_neural_network(self):
-        RecurrentNeuralNetwork(properties=self.properties, **self.paths).launch()
+        recurrent_neural_network(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_model_path'])
         #assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

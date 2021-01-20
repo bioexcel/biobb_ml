@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.regression.random_forest_regressor import RandomForestRegressor
+from biobb_ml.regression.random_forest_regressor import random_forest_regressor
 
 
 class TestRandomForestRegressor():
@@ -11,7 +11,7 @@ class TestRandomForestRegressor():
         pass
 
     def test_random_forest_regressor(self):
-        RandomForestRegressor(properties=self.properties, **self.paths).launch()
+        random_forest_regressor(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_model_path'])
         assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

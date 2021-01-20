@@ -265,13 +265,13 @@ class Resampling():
 
         return 0
 
-def resampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+def resampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Resampling <resampling.resampling.Resampling>` class and
     execute the :meth:`launch() <resampling.resampling.Resampling.launch>` method."""
 
     return Resampling(input_dataset_path=input_dataset_path,
                    output_dataset_path=output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -288,9 +288,9 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    Resampling(input_dataset_path=args.input_dataset_path,
+    resampling(input_dataset_path=args.input_dataset_path,
                    output_dataset_path=args.output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties)
 
 if __name__ == '__main__':
     main()

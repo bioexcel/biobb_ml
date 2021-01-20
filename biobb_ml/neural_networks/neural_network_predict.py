@@ -194,14 +194,14 @@ class PredictNeuralNetwork():
 
         return 0
 
-def neural_network_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> None:
+def neural_network_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.neural_network_predict.PredictNeuralNetwork.launch>` method."""
 
     return PredictNeuralNetwork(input_model_path=input_model_path,  
                    output_results_path=output_results_path, 
                    input_dataset_path=input_dataset_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -219,10 +219,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PredictNeuralNetwork(input_model_path=args.input_model_path,
-                   output_results_path=args.output_results_path, 
-                   input_dataset_path=args.input_dataset_path,
-                   properties=properties).launch()
+    neural_network_predict(input_model_path=args.input_model_path,
+                           output_results_path=args.output_results_path, 
+                           input_dataset_path=args.input_dataset_path,
+                           properties=properties)
 
 if __name__ == '__main__':
     main()

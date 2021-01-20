@@ -260,7 +260,7 @@ class SupportVectorMachine():
 
         return 0
 
-def support_vector_machine(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+def support_vector_machine(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`SupportVectorMachine <classification.support_vector_machine.SupportVectorMachine>` class and
     execute the :meth:`launch() <classification.support_vector_machine.SupportVectorMachine.launch>` method."""
 
@@ -268,7 +268,7 @@ def support_vector_machine(input_dataset_path: str, output_model_path: str, outp
                    output_model_path=output_model_path, 
                    output_test_table_path=output_test_table_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -287,11 +287,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    SupportVectorMachine(input_dataset_path=args.input_dataset_path,
-                   output_model_path=args.output_model_path, 
-                   output_test_table_path=args.output_test_table_path, 
-                   output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+    support_vector_machine(input_dataset_path=args.input_dataset_path,
+                           output_model_path=args.output_model_path, 
+                           output_test_table_path=args.output_test_table_path, 
+                           output_plot_path=args.output_plot_path, 
+                           properties=properties)
 
 if __name__ == '__main__':
     main()

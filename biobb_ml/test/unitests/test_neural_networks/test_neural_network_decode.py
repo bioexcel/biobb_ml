@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.neural_networks.neural_network_decode import DecodingNeuralNetwork
+from biobb_ml.neural_networks.neural_network_decode import neural_network_decode
 
 
 class TestDecodingNeuralNetwork():
@@ -11,7 +11,7 @@ class TestDecodingNeuralNetwork():
         pass
 
     def test_neural_network_decode(self):
-        DecodingNeuralNetwork(properties=self.properties, **self.paths).launch()
+        neural_network_decode(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_decode_path'])
         assert fx.equal(self.paths['output_decode_path'], self.paths['ref_output_decode_path'])
         assert fx.not_empty(self.paths['output_predict_path'])

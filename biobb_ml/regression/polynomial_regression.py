@@ -251,7 +251,7 @@ class PolynomialRegression():
 
         return 0
 
-def polynomial_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
+def polynomial_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PolynomialRegression <regression.polynomial_regression.PolynomialRegression>` class and
     execute the :meth:`launch() <regression.polynomial_regression.PolynomialRegression.launch>` method."""
 
@@ -259,7 +259,7 @@ def polynomial_regression(input_dataset_path: str, output_model_path: str, outpu
                    output_model_path=output_model_path, 
                    output_test_table_path=output_test_table_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -278,11 +278,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PolynomialRegression(input_dataset_path=args.input_dataset_path,
-                   output_model_path=args.output_model_path, 
-                   output_test_table_path=args.output_test_table_path, 
-                   output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+    polynomial_regression(input_dataset_path=args.input_dataset_path,
+                           output_model_path=args.output_model_path, 
+                           output_test_table_path=args.output_test_table_path, 
+                           output_plot_path=args.output_plot_path, 
+                           properties=properties)
 
 if __name__ == '__main__':
     main()

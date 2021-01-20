@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.utils.pairwise_comparison import PairwiseComparison
+from biobb_ml.utils.pairwise_comparison import pairwise_comparison
 
 
 class TestPairwiseComparison():
@@ -11,6 +11,6 @@ class TestPairwiseComparison():
         pass
 
     def test_pairwise_comparison(self):
-        PairwiseComparison(properties=self.properties, **self.paths).launch()
+        pairwise_comparison(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_plot_path'])
         assert fx.equal(self.paths['output_plot_path'], self.paths['ref_output_plot_path'])

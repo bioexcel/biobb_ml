@@ -32,14 +32,14 @@ class KMeansCoefficient():
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_ml.clustering.kmeans_coefficient import kmeans_coefficient
+            from biobb_ml.clustering.k_means_coefficient import k_means_coefficient
             prop = { 
                 'predictors': { 
                     'columns': [ 'column1', 'column2', 'column3' ] 
                 }, 
                 'max_clusters': 3 
             }
-            kmeans_coefficient(input_dataset_path='/path/to/myDataset.csv', 
+            k_means_coefficient(input_dataset_path='/path/to/myDataset.csv', 
                                 output_results_path='/path/to/newTable.csv', 
                                 output_plot_path='/path/to/newPlot.png', 
                                 properties=prop)
@@ -90,7 +90,7 @@ class KMeansCoefficient():
 
     @launchlogger
     def launch(self) -> int:
-        """Execute the :class:`KMeansCoefficient <clustering.kmeans_coefficient.KMeansCoefficient>` clustering.kmeans_coefficient.KMeansCoefficient object."""
+        """Execute the :class:`KMeansCoefficient <clustering.k_means_coefficient.KMeansCoefficient>` clustering.k_means_coefficient.KMeansCoefficient object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -180,14 +180,14 @@ class KMeansCoefficient():
 
         return 0
 
-def kmeans_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
-    """Execute the :class:`KMeansCoefficient <clustering.kmeans_coefficient.KMeansCoefficient>` class and
-    execute the :meth:`launch() <clustering.kmeans_coefficient.KMeansCoefficient.launch>` method."""
+def k_means_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
+    """Execute the :class:`KMeansCoefficient <clustering.k_means_coefficient.KMeansCoefficient>` class and
+    execute the :meth:`launch() <clustering.k_means_coefficient.KMeansCoefficient.launch>` method."""
 
     return KMeansCoefficient(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -205,10 +205,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    KMeansCoefficient(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+    k_means_coefficient(input_dataset_path=args.input_dataset_path,
+                       output_results_path=args.output_results_path, 
+                       output_plot_path=args.output_plot_path, 
+                       properties=properties)
 
 if __name__ == '__main__':
     main()

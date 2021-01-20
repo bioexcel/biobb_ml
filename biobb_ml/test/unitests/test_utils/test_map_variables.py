@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.utils.map_variables import MapVariables
+from biobb_ml.utils.map_variables import map_variables
 
 
 class TestMapVariables():
@@ -11,6 +11,6 @@ class TestMapVariables():
         pass
 
     def test_map_variables(self):
-        MapVariables(properties=self.properties, **self.paths).launch()
+        map_variables(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_dataset_path'])
         assert fx.equal(self.paths['output_dataset_path'], self.paths['ref_output_dataset_path'])

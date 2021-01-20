@@ -279,13 +279,13 @@ class Undersampling():
 
         return 0
 
-def undersampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+def undersampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Undersampling <resampling.undersampling.Undersampling>` class and
     execute the :meth:`launch() <resampling.undersampling.Undersampling.launch>` method."""
 
     return Undersampling(input_dataset_path=input_dataset_path,
                    output_dataset_path=output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -302,9 +302,9 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    Undersampling(input_dataset_path=args.input_dataset_path,
+    undersampling(input_dataset_path=args.input_dataset_path,
                    output_dataset_path=args.output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties)
 
 if __name__ == '__main__':
     main()

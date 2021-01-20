@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.resampling.undersampling import Undersampling
+from biobb_ml.resampling.undersampling import undersampling
 
 
 class TestUndersampling():
@@ -11,6 +11,6 @@ class TestUndersampling():
         pass
 
     def test_undersampling(self):
-        Undersampling(properties=self.properties, **self.paths).launch()
+        undersampling(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_dataset_path'])
         assert fx.equal(self.paths['output_dataset_path'], self.paths['ref_output_dataset_path'])

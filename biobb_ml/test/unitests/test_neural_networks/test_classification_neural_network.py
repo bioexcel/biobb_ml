@@ -1,5 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_ml.neural_networks.classification_neural_network import ClassificationNeuralNetwork
+from biobb_ml.neural_networks.classification_neural_network import classification_neural_network
 
 
 class TestClassificationNeuralNetwork():
@@ -11,7 +11,7 @@ class TestClassificationNeuralNetwork():
         pass
 
     def test_classification_neural_network(self):
-        ClassificationNeuralNetwork(properties=self.properties, **self.paths).launch()
+        classification_neural_network(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_model_path'])
         #assert fx.equal(self.paths['output_model_path'], self.paths['ref_output_model_path'])
         assert fx.not_empty(self.paths['output_test_table_path'])

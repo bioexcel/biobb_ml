@@ -126,13 +126,13 @@ class ScaleColumns():
 
         return 0
 
-def scale_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> None:
+def scale_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`ScaleColumns <utils.scale_columns.ScaleColumns>` class and
     execute the :meth:`launch() <utils.scale_columns.ScaleColumns.launch>` method."""
 
     return ScaleColumns(input_dataset_path=input_dataset_path, 
                    output_dataset_path=output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -149,9 +149,9 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    ScaleColumns(input_dataset_path=args.input_dataset_path,
+    scale_columns(input_dataset_path=args.input_dataset_path,
                    output_dataset_path=args.output_dataset_path,
-                   properties=properties).launch()
+                   properties=properties)
 
 if __name__ == '__main__':
     main()

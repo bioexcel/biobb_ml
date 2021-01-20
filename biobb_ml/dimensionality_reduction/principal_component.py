@@ -34,7 +34,7 @@ class PrincipalComponentAnalysis():
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_ml.dimensionality_reduction.pincipal_component import pincipal_component
+            from biobb_ml.dimensionality_reduction.principal_component import principal_component
             prop = { 
                 'features': { 
                     'columns': [ 'column1', 'column2', 'column3' ] 
@@ -46,7 +46,7 @@ class PrincipalComponentAnalysis():
                     'int': 2 
                 } 
             }
-            pincipal_component(input_dataset_path='/path/to/myDataset.csv', 
+            principal_component(input_dataset_path='/path/to/myDataset.csv', 
                                 output_results_path='/path/to/newTable.csv', 
                                 output_plot_path='/path/to/newPlot.png', 
                                 properties=prop)
@@ -98,7 +98,7 @@ class PrincipalComponentAnalysis():
 
     @launchlogger
     def launch(self) -> int:
-        """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis>` dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis object."""
+        """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.principal_component.PrincipalComponentAnalysis>` dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis object."""
 
         # Get local loggers from launchlogger decorator
         out_log = getattr(self, 'out_log', None)
@@ -189,14 +189,14 @@ class PrincipalComponentAnalysis():
 
         return 0
 
-def pincipal_component(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> None:
-    """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis>` class and
-    execute the :meth:`launch() <dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis.launch>` method."""
+def principal_component(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
+    """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.principal_component.PrincipalComponentAnalysis>` class and
+    execute the :meth:`launch() <dimensionality_reduction.principal_component.PrincipalComponentAnalysis.launch>` method."""
 
     return PrincipalComponentAnalysis(input_dataset_path=input_dataset_path,  
                    output_results_path=output_results_path, 
                    output_plot_path=output_plot_path,
-                   properties=properties).launch()
+                   properties=properties, **kwargs).launch()
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -214,10 +214,10 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    PrincipalComponentAnalysis(input_dataset_path=args.input_dataset_path,
+    principal_component(input_dataset_path=args.input_dataset_path,
                    output_results_path=args.output_results_path, 
                    output_plot_path=args.output_plot_path, 
-                   properties=properties).launch()
+                   properties=properties)
 
 if __name__ == '__main__':
     main()
