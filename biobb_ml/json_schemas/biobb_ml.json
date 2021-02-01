@@ -5,7 +5,7 @@
     "readthedocs": "https://biobb-ml.readthedocs.io/en/latest/",
     "conda": "https://anaconda.org/bioconda/biobb_ml",
     "docker": "https://quay.io/biocontainers/biobb_ml:3.5.0--py_1",
-    "singularity": "https://singularity-hub.org/collections/4574",
+    "singularity": "",
     "version": "3.5.0",
     "tools" : [
         {
