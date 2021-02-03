@@ -17,8 +17,8 @@ class MapVariables():
     | Maps the values of a given dataset according to input correspondence, substituting each value in a series with another value, which may be derived from a function, a dictionary, or another series.
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_map_variables.csv>`_. Accepted formats: csv csv (edam:format_3752).
-        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_map_variables.csv>`_. Accepted formats: csv csv (edam:format_3752).
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/utils/dataset_map_variables.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_dataset_path (str): Path to the output dataset. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/utils/ref_output_dataset_map_variables.csv>`_. Accepted formats: csv (edam:format_3752).
         properties (dic):
             * **targets** (*dict*) - ({}) Independent variables or columns from your dataset you want to drop. If None given, all the columns will be taken. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

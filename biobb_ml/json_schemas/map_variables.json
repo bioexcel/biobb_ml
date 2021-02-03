@@ -31,7 +31,8 @@
             "file_formats": [
                 {
                     "extension": ".*\\.csv$",
-                    "description": "Path to the input dataset"
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
                 }
             ]
         },
@@ -46,7 +47,8 @@
             "file_formats": [
                 {
                     "extension": ".*\\.csv$",
-                    "description": "Path to the output dataset"
+                    "description": "Path to the output dataset",
+                    "edam": "format_3752"
                 }
             ]
         },

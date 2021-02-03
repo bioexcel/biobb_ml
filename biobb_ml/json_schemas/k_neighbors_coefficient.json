@@ -32,7 +32,8 @@
             "file_formats": [
                 {
                     "extension": ".*\\.csv$",
-                    "description": "Path to the input dataset"
+                    "description": "Path to the input dataset",
+                    "edam": "format_3752"
                 }
             ]
         },
@@ -47,7 +48,8 @@
             "file_formats": [
                 {
                     "extension": ".*\\.csv$",
-                    "description": "Path to the accuracy values list"
+                    "description": "Path to the accuracy values list",
+                    "edam": "format_3752"
                 }
             ]
         },

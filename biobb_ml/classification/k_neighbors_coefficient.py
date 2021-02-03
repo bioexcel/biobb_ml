@@ -21,8 +21,8 @@ class KNeighborsCoefficient():
     | Trains and tests a given dataset and calculates the best K coefficient. Visit the `KNeighborsClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_ in the sklearn official website for further information. 
 
     Args:
-        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv csv (edam:format_3752).
-        output_results_path (str): Path to the accuracy values list. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv>`_. Accepted formats: csv csv (edam:format_3752).
+        input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv (edam:format_3752).
+        output_results_path (str): Path to the accuracy values list. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_test_k_neighbors_coefficient.csv>`_. Accepted formats: csv (edam:format_3752).
         output_plot_path (str) (Optional): Path to the accuracy plot. File type: output. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/classification/ref_output_plot_k_neighbors_coefficient.png>`_. Accepted formats: png (edam:format_3603).
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **independent_vars** (*list*) - (None) Independent variables or columns from your dataset you want to train.
