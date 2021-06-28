@@ -1,5 +1,12 @@
 # Biobb Machine Learning changelog
 
+## What's new in version [3.6.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.6.0)?
+In version 3.6.0 the dependency biobb_common has been updated to 3.6.0 version. 
+
+### New features
+
+* Update to biobb_common 3.6.0 (general)
+
 ## What's new in version [3.5.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.5.0)?
 In version 3.5.0 the dependency biobb_common has been updated to 3.5.1 version. Also, there has been implemented the new version of docstrings, therefore the JSON Schemas have been modified. There has been implemented some new utils as well the new Resampling package. Finally, the method for inserting new datasets to the tools has been improved
 
