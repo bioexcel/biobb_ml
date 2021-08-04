@@ -33,7 +33,7 @@ class ClassificationNeuralNetwork():
         properties (dic - Python dictionary object containing the tool parameters, not input/output files):
             * **features** (*dict*) - ({}) Independent variables or columns from your dataset you want to train. You can specify either a list of columns names from your input dataset, a list of columns indexes or a range of columns indexes. Formats: { "columns": ["column1", "column2"] } or { "indexes": [0, 2, 3, 10, 11, 17] } or { "range": [[0, 20], [50, 102]] }. In case of mulitple formats, the first one will be picked.
             * **target** (*dict*) - ({}) Dependent variable you want to predict from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
-            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of mulitple formats, the first one will be picked.
+            * **weight** (*dict*) - ({}) Weight variable from your dataset. You can specify either a column name or a column index. Formats: { "column": "column3" } or { "index": 21 }. In case of multiple formats, the first one will be picked.
             * **validation_size** (*float*) - (0.2) [0~1|0.05] Represents the proportion of the dataset to include in the validation split. It should be between 0.0 and 1.0.
             * **test_size** (*float*) - (0.1) [0~1|0.05] Represents the proportion of the dataset to include in the test split. It should be between 0.0 and 1.0.
             * **hidden_layers** (*list*) - (None)  List of dictionaries with hidden layers values. Format: [ { 'size': 50, 'activation': 'relu' } ].
@@ -249,10 +249,13 @@ class ClassificationNeuralNetwork():
             sample_weight = w_train
             class_weight = []
         else:
-            fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
+            # TODO: class_weight not working since TF 2.4.1 update
+            #fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
+            fu.log('No weight provided', out_log, self.global_log)
             sample_weight = None
-            class_weight = compute_class_weight('balanced', np.unique(y_train), y_train)
+            class_weight = []#compute_class_weight('balanced', np.unique(y_train), y_train)
 
+        print(class_weight)
         # fit the model
         mf = model.fit(X_train, 
                        y_train, 

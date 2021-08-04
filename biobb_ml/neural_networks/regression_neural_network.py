@@ -245,9 +245,10 @@ class RegressionNeuralNetwork():
             sample_weight = w_train
             class_weight = []
         else:
-            fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
+            # TODO: class_weight not working since TF 2.4.1 update
+            #fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
             sample_weight = None
-            class_weight = compute_class_weight('balanced', np.unique(y_train), y_train)
+            class_weight = []#compute_class_weight('balanced', np.unique(y_train), y_train)
 
         # fit the model
         mf = model.fit(X_train, 

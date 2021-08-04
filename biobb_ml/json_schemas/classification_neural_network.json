@@ -104,7 +104,7 @@
                     "type": "object",
                     "default": {},
                     "wf_prop": false,
-                    "description": "Weight variable from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of mulitple formats, the first one will be picked."
+                    "description": "Weight variable from your dataset. You can specify either a column name or a column index. Formats: { \"column\": \"column3\" } or { \"index\": 21 }. In case of multiple formats, the first one will be picked."
                 },
                 "validation_size": {
                     "type": "number",

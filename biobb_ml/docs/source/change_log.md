@@ -1,5 +1,12 @@
 # Biobb Machine Learning changelog
 
+## What's new in version [3.6.1](https://github.com/bioexcel/biobb_ml/releases/tag/v3.6.1)?
+In version 3.6.1 TensorFlow has been updated to 2.4.0 version. 
+
+### New features
+
+* Update to TensorFlow 2.4.0
+
 ## What's new in version [3.6.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.6.0)?
 In version 3.6.0 the dependency biobb_common has been updated to 3.6.0 version. 
 
