@@ -14,7 +14,7 @@ resampling.undersampling module
     :show-inheritance:
 
 resampling.oversampling module
--------------------------
+-------------------------------
 
 .. automodule:: resampling.oversampling
     :members:
