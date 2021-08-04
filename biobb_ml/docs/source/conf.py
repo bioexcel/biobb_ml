@@ -20,7 +20,7 @@ from pathlib import Path
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, str(Path('../../').resolve()))
 
-autodoc_mock_imports = ["tensorflow"]
+#autodoc_mock_imports = ["tensorflow"]
 
 
 # -- General configuration ------------------------------------------------
