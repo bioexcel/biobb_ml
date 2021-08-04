@@ -8,7 +8,7 @@ Submodules
 classification.decision_tree module
 ------------------------------------
 
-.. automodule:: classification.decision_tree
+.. automodule:: biobb_ml.classification.decision_tree
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ classification.decision_tree module
 classification.k_neighbors_coefficient module
 ----------------------------------------------
 
-.. automodule:: classification.k_neighbors_coefficient
+.. automodule:: biobb_ml.classification.k_neighbors_coefficient
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ classification.k_neighbors_coefficient module
 classification.k_neighbors module
 ----------------------------------
 
-.. automodule:: classification.k_neighbors
+.. automodule:: biobb_ml.classification.k_neighbors
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ classification.k_neighbors module
 classification.logistic_regression module
 ------------------------------------------
 
-.. automodule:: classification.logistic_regression
+.. automodule:: biobb_ml.classification.logistic_regression
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ classification.logistic_regression module
 classification.random_forest_classifier module
 -----------------------------------------------
 
-.. automodule:: classification.random_forest_classifier
+.. automodule:: biobb_ml.classification.random_forest_classifier
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,7 +48,7 @@ classification.random_forest_classifier module
 classification.support_vector_machine module
 ---------------------------------------------
 
-.. automodule:: classification.support_vector_machine
+.. automodule:: biobb_ml.classification.support_vector_machine
     :members:
     :undoc-members:
     :show-inheritance:
@@ -56,7 +56,7 @@ classification.support_vector_machine module
 classification.classification_predict module
 ---------------------------------------------
 
-.. automodule:: classification.classification_predict
+.. automodule:: biobb_ml.classification.classification_predict
     :members:
     :undoc-members:
     :show-inheritance:
