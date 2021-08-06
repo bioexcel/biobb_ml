@@ -41,7 +41,7 @@
             "type": "string",
             "description": "Path to the dataset to predict",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/input_classification_predict.csv",
+            "sample": "https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/input_regression_predict.csv",
             "enum": [
                 ".*\\.csv$"
             ],

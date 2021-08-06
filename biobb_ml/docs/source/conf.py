@@ -21,7 +21,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path('../../').resolve()))
 autodoc_mock_imports = ["tensorflow"]
 
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.

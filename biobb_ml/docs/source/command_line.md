@@ -315,7 +315,7 @@ Syntax: input_argument (datatype) : Definition
 
 Config input / output arguments for this building block:
 * **input_model_path** (*string*): Path to the input model. File type: input. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/model_regression_predict.pkl). Accepted formats: PKL
-* **input_dataset_path** (*string*): Path to the dataset to predict. File type: input. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/input_classification_predict.csv). Accepted formats: CSV
+* **input_dataset_path** (*string*): Path to the dataset to predict. File type: input. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/input_regression_predict.csv). Accepted formats: CSV
 * **output_results_path** (*string*): Path to the output results file. File type: output. [Sample file](https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/reference/regression/ref_output_regression_predict.csv). Accepted formats: CSV
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
@@ -341,7 +341,7 @@ properties:
 ```
 #### Command line
 ```python
-regression_predict --config config_regression_predict.yml --input_model_path model_regression_predict.pkl --input_dataset_path input_classification_predict.csv --output_results_path ref_output_regression_predict.csv
+regression_predict --config config_regression_predict.yml --input_model_path model_regression_predict.pkl --input_dataset_path input_regression_predict.csv --output_results_path ref_output_regression_predict.csv
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_ml/blob/master/biobb_ml/test/data/config/config_regression_predict.json)
@@ -367,7 +367,7 @@ regression_predict --config config_regression_predict.yml --input_model_path mod
 ```
 #### Command line
 ```python
-regression_predict --config config_regression_predict.json --input_model_path model_regression_predict.pkl --input_dataset_path input_classification_predict.csv --output_results_path ref_output_regression_predict.csv
+regression_predict --config config_regression_predict.json --input_model_path model_regression_predict.pkl --input_dataset_path input_regression_predict.csv --output_results_path ref_output_regression_predict.csv
 ```
 
 ## K_means
