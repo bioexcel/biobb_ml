@@ -3,6 +3,7 @@
 """Module containing the RandomForestRegressor class and the command line interface."""
 import argparse
 import joblib
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
@@ -10,11 +11,10 @@ from sklearn import ensemble
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.regression.common import *
 
 
-class RandomForestRegressor():
+class RandomForestRegressor(BiobbObject):
     """
     | biobb_ml RandomForestRegressor
     | Wrapper of the scikit-learn RandomForestRegressor method.
@@ -62,7 +62,7 @@ class RandomForestRegressor():
     Info:
         * wrapped_software:
             * name: scikit-learn RandomForestRegressor
-            * version: >0.23.1
+            * version: >0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -73,6 +73,9 @@ class RandomForestRegressor():
     def __init__(self, input_dataset_path, output_model_path, 
                 output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
+
+        # Call parent class constructor
+        super().__init__(properties)
 
         # Input/Output files
         self.io_dict = { 
@@ -92,14 +95,8 @@ class RandomForestRegressor():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -114,24 +111,15 @@ class RandomForestRegressor():
     def launch(self) -> int:
         """Execute the :class:`RandomForestRegressor <regression.random_forest_regressor.RandomForestRegressor>` regression.random_forest_regressor.RandomForestRegressor object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.independent_vars:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -142,18 +130,18 @@ class RandomForestRegressor():
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
-        X = getIndependentVars(self.independent_vars, data, out_log, self.__class__.__name__)
-        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), out_log, self.global_log)
+        X = getIndependentVars(self.independent_vars, data, self.out_log, self.__class__.__name__)
+        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), self.out_log, self.global_log)
         # target
-        y = getTarget(self.target, data, out_log, self.__class__.__name__)
-        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
+        y = getTarget(self.target, data, self.out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), self.out_log, self.global_log)
         # weights
         if self.weight:
-            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
-            fu.log('Weight column provided', out_log, self.global_log)
+            w = getWeight(self.weight, data, self.out_log, self.__class__.__name__)
+            fu.log('Weight column provided', self.out_log, self.global_log)
 
         # train / test split
-        fu.log('Creating train and test sets', out_log, self.global_log)
+        fu.log('Creating train and test sets', self.out_log, self.global_log)
         arrays_sets = (X, y)
         # if user provide weights
         if self.weight:
@@ -165,12 +153,12 @@ class RandomForestRegressor():
 
         # scale dataset
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
 
         # regression
-        fu.log('Training dataset applying random forest regressor', out_log, self.global_log)
+        fu.log('Training dataset applying random forest regressor', self.out_log, self.global_log)
         model = ensemble.RandomForestRegressor(max_depth = self.max_depth, n_estimators = self.n_estimators, random_state = self.random_state_method)
         arrays_fit = (X_train, y_train)
         # if user provide weights
@@ -193,8 +181,7 @@ class RandomForestRegressor():
         r2_table["feature"] = ['R2','RMSE', 'RSS']
         r2_table['coefficient'] = [score, rmse, rss]
 
-        fu.log('Calculating scores and coefficients for TRAINING dataset\n\nSCORES\n\n%s\n' % r2_table, out_log, self.global_log)
-
+        fu.log('Calculating scores and coefficients for TRAINING dataset\n\nSCORES\n\n%s\n' % r2_table, self.out_log, self.global_log)
 
         # testing
         # predict data from x_test
@@ -212,7 +199,7 @@ class RandomForestRegressor():
         # sort by difference in %
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
-        fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+        fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, self.out_log, self.global_log)
 
         # scores and coefficients test
         score_test_inputs = (y_test, y_hat_test)
@@ -227,15 +214,15 @@ class RandomForestRegressor():
         r2_table_test["feature"] = ['R2','RMSE', 'RSS']
         r2_table_test['coefficient'] = [r2_test, rmse_test, rss_test]
 
-        fu.log('Calculating scores and coefficients for TESTING dataset\n\nSCORES\n\n%s\n' % r2_table_test, out_log, self.global_log)
+        fu.log('Calculating scores and coefficients for TESTING dataset\n\nSCORES\n\n%s\n' % r2_table_test, self.out_log, self.global_log)
 
         if(self.io_dict["out"]["output_test_table_path"]): 
-            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
+            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
-            fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             y_hat_test = y_hat_test.flatten()
             y_hat_train = y_hat_train.flatten()
             plot = plotResults(y_train, y_hat_train, y_test, y_hat_test)
@@ -247,7 +234,7 @@ class RandomForestRegressor():
             'independent_vars': self.independent_vars,
             'scale': self.scale
         }
-        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
             if self.scale: joblib.dump(scaler, f)

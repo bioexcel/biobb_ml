@@ -3,14 +3,14 @@
 """Module containing the MapVariables class and the command line interface."""
 import argparse
 import pandas as pd
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.utils.common import *
 
 
-class MapVariables():
+class MapVariables(BiobbObject):
     """ 
     | biobb_ml MapVariables
     | Maps the values of a given dataset.
@@ -51,6 +51,9 @@ class MapVariables():
                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
@@ -61,14 +64,8 @@ class MapVariables():
         self.targets = properties.get('targets', {})
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -79,24 +76,15 @@ class MapVariables():
     def launch(self) -> int:
         """Execute the :class:`MapVariables <utils.map_variables.MapVariables>` utils.map_variables.MapVariables object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_dataset_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.targets:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -106,9 +94,9 @@ class MapVariables():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # map variables
-        fu.log('Mapping [%s] columns of the dataset' % getIndependentVarsList(self.targets), out_log, self.global_log)
+        fu.log('Mapping [%s] columns of the dataset' % getIndependentVarsList(self.targets), self.out_log, self.global_log)
         # if None given, map all the columns
-        cols = getTargetsList(self.targets, 'dummy', out_log, self.__class__.__name__)
+        cols = getTargetsList(self.targets, 'dummy', self.out_log, self.__class__.__name__)
         if not cols:
             cols = list(data)
         for c in cols:
@@ -117,7 +105,7 @@ class MapVariables():
             data[c] = data[c].map(dct)
 
         # save to csv
-        fu.log('Saving results to %s\n' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
+        fu.log('Saving results to %s\n' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
         data.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=True, float_format='%.3f')
 
         return 0

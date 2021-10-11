@@ -1,4 +1,4 @@
 method,coefficient,clusters
-elbow,103.790,3
-gap,-2.394,2
+elbow,103.784,3
+gap,-2.436,3
 silhouette,0.444,2

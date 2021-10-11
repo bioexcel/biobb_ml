@@ -4,8 +4,9 @@
 import argparse
 import h5py
 import json
+from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
-from sklearn.utils.class_weight import compute_class_weight
+#from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import Sequential
@@ -15,11 +16,10 @@ from tensorflow import math
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 
-class ClassificationNeuralNetwork():
+class ClassificationNeuralNetwork(BiobbObject):
     """
     | biobb_ml ClassificationNeuralNetwork
     | Wrapper of the TensorFlow Keras Sequential method for classification. 
@@ -97,6 +97,9 @@ class ClassificationNeuralNetwork():
                 output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
@@ -120,14 +123,8 @@ class ClassificationNeuralNetwork():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -161,24 +158,15 @@ class ClassificationNeuralNetwork():
     def launch(self) -> int:
         """Execute the :class:`ClassificationNeuralNetwork <neural_networks.classification_neural_network.ClassificationNeuralNetwork>` neural_networks.classification_neural_network.ClassificationNeuralNetwork object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.features:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -189,17 +177,17 @@ class ClassificationNeuralNetwork():
 
         targets_list = data[getTargetValue(self.target)].to_numpy()
 
-        X = getFeatures(self.features, data, out_log, self.__class__.__name__)
-        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
+        X = getFeatures(self.features, data, self.out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
         # target
-        y = getTarget(self.target, data, out_log, self.__class__.__name__)
-        fu.log('Target: %s' % (str(getTargetValue(self.target))), out_log, self.global_log)
+        y = getTarget(self.target, data, self.out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (str(getTargetValue(self.target))), self.out_log, self.global_log)
         # weights
         if self.weight:
-            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
+            w = getWeight(self.weight, data, self.out_log, self.__class__.__name__)
 
         # shuffle dataset
-        fu.log('Shuffling dataset', out_log, self.global_log)
+        fu.log('Shuffling dataset', self.out_log, self.global_log)
         shuffled_indices = np.arange(X.shape[0])
         np.random.shuffle(shuffled_indices)
         np_X = X.to_numpy()
@@ -208,7 +196,7 @@ class ClassificationNeuralNetwork():
         if self.weight: shuffled_w = w[shuffled_indices]
 
         # train / test split
-        fu.log('Creating train and test sets', out_log, self.global_log)
+        fu.log('Creating train and test sets', self.out_log, self.global_log)
         arrays_sets = (shuffled_X, shuffled_y)
         # if user provide weights
         if self.weight:
@@ -219,18 +207,18 @@ class ClassificationNeuralNetwork():
 
         # scale dataset
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             X_train = scale(X_train)
 
         # build model
-        fu.log('Building model', out_log, self.global_log)
+        fu.log('Building model', self.out_log, self.global_log)
         model = self.build_model((X_train.shape[1],), np.unique(y_train).size)
 
         # model summary
         stringlist = []
         model.summary(print_fn=lambda x: stringlist.append(x))
         model_summary = "\n".join(stringlist)
-        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+        fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         # get optimizer
         mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
@@ -240,7 +228,7 @@ class ClassificationNeuralNetwork():
         model.compile(optimizer = opt, loss = 'sparse_categorical_crossentropy', metrics = ['accuracy', 'mse'])
 
         # fitting
-        fu.log('Training model', out_log, self.global_log)
+        fu.log('Training model', self.out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
         early_stopping = EarlyStopping(patience=2)
@@ -250,8 +238,8 @@ class ClassificationNeuralNetwork():
             class_weight = []
         else:
             # TODO: class_weight not working since TF 2.4.1 update
-            #fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
-            fu.log('No weight provided', out_log, self.global_log)
+            #fu.log('No weight provided, class_weight will be estimated from the target data', self.out_log, self.global_log)
+            fu.log('No weight provided', self.out_log, self.global_log)
             sample_weight = None
             class_weight = []#compute_class_weight('balanced', np.unique(y_train), y_train)
 
@@ -267,13 +255,13 @@ class ClassificationNeuralNetwork():
                        validation_split=self.validation_size,
                        verbose = 1)
 
-        fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
+        fu.log('Total epochs performed: %s' % len(mf.history['loss']), self.out_log, self.global_log)
 
         train_metrics = pd.DataFrame()
         train_metrics['metric'] = ['Train loss',' Train accuracy', 'Train MSE', 'Validation loss', 'Validation accuracy', 'Validation MSE']
         train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['accuracy'][-1], mf.history['mse'][-1], mf.history['val_loss'][-1], mf.history['val_accuracy'][-1], mf.history['val_mse'][-1]]
 
-        fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
+        fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, self.out_log, self.global_log)
 
         # confusion matrix
         train_predictions = model.predict(X_train)
@@ -288,19 +276,19 @@ class ClassificationNeuralNetwork():
         else:
             cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
 
-        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), out_log, self.global_log)
+        fu.log('Calculating confusion matrix for training dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_train), self.out_log, self.global_log)
 
         # testing
         if self.scale: 
             X_test = scale(X_test)
-        fu.log('Testing model', out_log, self.global_log)
+        fu.log('Testing model', self.out_log, self.global_log)
         test_loss, test_accuracy, test_mse = model.evaluate(X_test, y_test)
 
         test_metrics = pd.DataFrame()
         test_metrics['metric'] = ['Test loss',' Test accuracy', 'Test MSE']
         test_metrics['coefficient'] = [test_loss, test_accuracy, test_mse]
 
-        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
+        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, self.out_log, self.global_log)
 
         # predict data from X_test
         test_predictions = model.predict(X_test)
@@ -311,7 +299,7 @@ class ClassificationNeuralNetwork():
         test_table['P' + np.array2string(np.unique(y_train))] = tpr
         test_table['target'] = y_test
 
-        fu.log('TEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+        fu.log('TEST DATA\n\n%s\n' % test_table, self.out_log, self.global_log)
 
         # confusion matrix
         norm_pred = []
@@ -324,11 +312,11 @@ class ClassificationNeuralNetwork():
         else:
             cm_type = 'CONFUSION MATRIX, WITHOUT NORMALIZATION'
 
-        fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_test), out_log, self.global_log)
+        fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix_test), self.out_log, self.global_log)
 
         # save test data
         if(self.io_dict["out"]["output_test_table_path"]): 
-            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
+            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # create test plot
@@ -337,10 +325,10 @@ class ClassificationNeuralNetwork():
             vs.sort()
             if len(vs) > 2:
                 plot = plotResultsClassMultCM(mf.history, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
-                fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+                fu.log('Saving confusion matrix plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             else:
                 plot = plotResultsClassBinCM(mf.history, train_predictions, test_predictions, y_train, y_test, cnf_matrix_train, cnf_matrix_test, self.normalize_cm, vs)
-                fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+                fu.log('Saving binary classifier evaluator plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         # save model and parameters
@@ -354,7 +342,7 @@ class ClassificationNeuralNetwork():
             'type': 'classification'
         }
         variables = json.dumps(vars_obj)
-        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
             hdf5_format.save_model_to_hdf5(model, f)
             f.attrs['variables'] = variables

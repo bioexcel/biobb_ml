@@ -2,7 +2,7 @@
 
 """Module containing the KNeighborsCoefficient class and the command line interface."""
 import argparse
-import io
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, log_loss
@@ -10,11 +10,10 @@ from sklearn.neighbors import KNeighborsClassifier
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
 
-class KNeighborsCoefficient():
+class KNeighborsCoefficient(BiobbObject):
     """
     | biobb_ml KNeighborsCoefficient
     | Wrapper of the scikit-learn KNeighborsClassifier method. 
@@ -57,7 +56,7 @@ class KNeighborsCoefficient():
     Info:
         * wrapped_software:
             * name: scikit-learn KNeighborsClassifier
-            * version: >=0.23.1
+            * version: >=0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -68,6 +67,9 @@ class KNeighborsCoefficient():
     def __init__(self, input_dataset_path, output_results_path, 
                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
+
+        # Call parent class constructor
+        super().__init__(properties)
 
         # Input/Output files
         self.io_dict = { 
@@ -86,14 +88,8 @@ class KNeighborsCoefficient():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -106,24 +102,15 @@ class KNeighborsCoefficient():
     def launch(self) -> int:
         """Execute the :class:`KNeighborsCoefficient <classification.k_neighbors_coefficient.KNeighborsCoefficient>` classification.k_neighbors_coefficient.KNeighborsCoefficient object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.independent_vars:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -134,18 +121,18 @@ class KNeighborsCoefficient():
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
-        X = getIndependentVars(self.independent_vars, data, out_log, self.__class__.__name__)
-        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), out_log, self.global_log)
+        X = getIndependentVars(self.independent_vars, data, self.out_log, self.__class__.__name__)
+        fu.log('Independent variables: [%s]' % (getIndependentVarsList(self.independent_vars)), self.out_log, self.global_log)
         # target
-        y = getTarget(self.target, data, out_log, self.__class__.__name__)
-        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
+        y = getTarget(self.target, data, self.out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), self.out_log, self.global_log)
         # weights
         if self.weight:
-            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
-            fu.log('Weight column provided', out_log, self.global_log)
+            w = getWeight(self.weight, data, self.out_log, self.__class__.__name__)
+            fu.log('Weight column provided', self.out_log, self.global_log)
 
         # train / test split
-        fu.log('Creating train and test sets', out_log, self.global_log)
+        fu.log('Creating train and test sets', self.out_log, self.global_log)
         arrays_sets = (X, y)
         # if user provide weights
         if self.weight:
@@ -156,12 +143,12 @@ class KNeighborsCoefficient():
 
         # scale dataset
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
 
         # training and getting accuracy for each K
-        fu.log('Training dataset applying k neighbors classification from 1 to %d n_neighbors' % self.max_neighbors, out_log, self.global_log)
+        fu.log('Training dataset applying k neighbors classification from 1 to %d n_neighbors' % self.max_neighbors, self.out_log, self.global_log)
         neighbors = np.arange(1,self.max_neighbors + 1)
         train_accuracy = np.empty(len(neighbors))
         test_accuracy = np.empty(len(neighbors))
@@ -194,21 +181,21 @@ class KNeighborsCoefficient():
 
         # accuracy table
         test_table_accuracy = pd.DataFrame(data={'K': np.arange(1, self.max_neighbors + 1), 'accuracy': test_accuracy})
-        fu.log('Calculating accuracy for each K\n\nACCURACY\n\n%s\n' % test_table_accuracy.to_string(index=False), out_log, self.global_log)
+        fu.log('Calculating accuracy for each K\n\nACCURACY\n\n%s\n' % test_table_accuracy.to_string(index=False), self.out_log, self.global_log)
 
         # classification report
         cr_test = classification_report(y_test, model.predict(X_test))
         # log loss
         yhat_prob = model.predict_proba(X_test)
         l_loss = log_loss(y_test, yhat_prob)
-        fu.log('Calculating report for testing dataset and best K = %d | accuracy = %.3f\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (best_k, best_accuracy, cr_test, l_loss), out_log, self.global_log)
+        fu.log('Calculating report for testing dataset and best K = %d | accuracy = %.3f\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (best_k, best_accuracy, cr_test, l_loss), self.out_log, self.global_log)
 
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         test_table_accuracy.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         # accuracy plot
         if self.io_dict["out"]["output_plot_path"]: 
-            fu.log('Saving accuracy plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving accuracy plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plt.title('k-NN Varying number of neighbors')
             plt.fill_between(range(1, self.max_neighbors + 1), test_accuracy - std_acc, test_accuracy + std_acc, alpha = 0.10)
             plt.plot(neighbors, train_accuracy)

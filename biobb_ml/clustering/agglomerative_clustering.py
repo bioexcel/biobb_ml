@@ -2,16 +2,15 @@
 
 """Module containing the AgglClustering class and the command line interface."""
 import argparse
-import io
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.clustering.common import *
 
 
-class AgglClustering():
+class AgglClustering(BiobbObject):
     """
     | biobb_ml AgglClustering
     | Wrapper of the scikit-learn AgglomerativeClustering method. 
@@ -57,7 +56,7 @@ class AgglClustering():
     Info:
         * wrapped_software:
             * name: scikit-learn AgglomerativeClustering
-            * version: >=0.23.1
+            * version: >=0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -68,6 +67,9 @@ class AgglClustering():
     def __init__(self, input_dataset_path, output_results_path, 
                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
+
+        # Call parent class constructor
+        super().__init__(properties)
 
         # Input/Output files
         self.io_dict = { 
@@ -84,14 +86,8 @@ class AgglClustering():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -104,24 +100,15 @@ class AgglClustering():
     def launch(self) -> int:
         """Execute the :class:`AgglClustering <clustering.agglomerative_clustering.AgglClustering>` clustering.agglomerative_clustering.AgglClustering object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.predictors:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -131,16 +118,16 @@ class AgglClustering():
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # the features are the predictors
-        predictors = getIndependentVars(self.predictors, data, out_log, self.__class__.__name__)
-        fu.log('Predictors: [%s]' % (getIndependentVarsList(self.predictors)), out_log, self.global_log)
+        predictors = getIndependentVars(self.predictors, data, self.out_log, self.__class__.__name__)
+        fu.log('Predictors: [%s]' % (getIndependentVarsList(self.predictors)), self.out_log, self.global_log)
 
         # Hopkins test
         H = hopkins(predictors)
-        fu.log('Performing Hopkins test over dataset. H = %f' % H, out_log, self.global_log)
+        fu.log('Performing Hopkins test over dataset. H = %f' % H, self.out_log, self.global_log)
 
         # scale dataset
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             predictors = scaler.fit_transform(predictors)
 
@@ -154,10 +141,10 @@ class AgglClustering():
         # predict the cluster for each observation
         clusters['cluster'] = model.fit_predict(predictors)
 
-        fu.log('Calculating results\n\nCLUSTERING TABLE\n\n%s\n' % clusters, out_log, self.global_log)
+        fu.log('Calculating results\n\nCLUSTERING TABLE\n\n%s\n' % clusters, self.out_log, self.global_log)
 
         # save results
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         clusters.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         if self.io_dict["out"]["output_plot_path"] and self.plots: 
@@ -171,7 +158,7 @@ class AgglClustering():
                     break
 
             plot = plotCluster(new_plots, clusters)
-            fu.log('Saving output plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving output plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 
         return 0

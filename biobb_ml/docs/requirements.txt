@@ -1,6 +1,6 @@
 # Defining the exact version will make sure things don't break
 #biobb_common==3.6.0
-#scikit-learn==0.23.1
+#scikit-learn==0.24.2
 #pandas==1.0.5
 #seaborn==0.10.1
 #tensorflow>=2.4.0

@@ -5,6 +5,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from collections import Counter
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -13,11 +14,10 @@ from biobb_ml.resampling.reg_resampler import resampler
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.resampling.common import *
 
 
-class Resampling():
+class Resampling(BiobbObject):
     """
     | biobb_ml Resampling
     | Wrapper of the imblearn.combine methods.
@@ -80,6 +80,9 @@ class Resampling():
                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
@@ -101,14 +104,8 @@ class Resampling():
         self.random_state_evaluate = properties.get('random_state_evaluate', 5)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -119,30 +116,21 @@ class Resampling():
     def launch(self) -> int:
         """Execute the :class:`Resampling <resampling.resampling.Resampling>` resampling.resampling.Resampling object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_dataset_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # check mandatory properties
-        method, over, under = getCombinedMethod(self.method, out_log, self.__class__.__name__)
-        checkResamplingType(self.type, out_log, self.__class__.__name__)
-        sampling_strategy_over = getSamplingStrategy(self.sampling_strategy_over, out_log, self.__class__.__name__)
-        sampling_strategy_under = getSamplingStrategy(self.sampling_strategy_under, out_log, self.__class__.__name__)
+        method, over, under = getCombinedMethod(self.method, self.out_log, self.__class__.__name__)
+        checkResamplingType(self.type, self.out_log, self.__class__.__name__)
+        sampling_strategy_over = getSamplingStrategy(self.sampling_strategy_over, self.out_log, self.__class__.__name__)
+        sampling_strategy_under = getSamplingStrategy(self.sampling_strategy_under, self.out_log, self.__class__.__name__)
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'column' in self.target:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -166,41 +154,41 @@ class Resampling():
                 train_df[column] = le.fit_transform(train_df[column])
 
         # defining X
-        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, out_log, self.__class__.__name__)] 
+        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, self.out_log, self.__class__.__name__)] 
         # calling resample method
         if self.method == 'smotetomek':
             method = method(smote = over(sampling_strategy=sampling_strategy_over), tomek = under(sampling_strategy=sampling_strategy_under), random_state=self.random_state_method)
         elif self.method == 'smotenn':
             method = method(smote = over(sampling_strategy=sampling_strategy_over), enn = under(sampling_strategy=sampling_strategy_under), random_state=self.random_state_method)
 
-        fu.log('Target: %s' % (getTargetValue(self.target, out_log, self.__class__.__name__)), out_log, self.global_log)
+        fu.log('Target: %s' % (getTargetValue(self.target, self.out_log, self.__class__.__name__)), self.out_log, self.global_log)
 
         # resampling
         if self.type == 'regression':
-            fu.log('Resampling regression dataset, continuous data will be classified', out_log, self.global_log)
+            fu.log('Resampling regression dataset, continuous data will be classified', self.out_log, self.global_log)
             # call resampler class for Regression ReSampling            
             rs = resampler()
             # Create n_bins classes for the dataset
-            ranges, y, target_pos = rs.fit(train_df, target=getTargetValue(self.target, out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
+            ranges, y, target_pos = rs.fit(train_df, target=getTargetValue(self.target, self.out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
             # Get the re-sampled data
             final_X, final_y = rs.resample(method, train_df, y)
         elif self.type == 'classification':
             # get X and y
-            y = getTarget(self.target, train_df, out_log, self.__class__.__name__)
+            y = getTarget(self.target, train_df, self.out_log, self.__class__.__name__)
             # fit and resample
             final_X, final_y = method.fit_resample(X, y)
             target_pos = None
 
         # evaluate resampling
         if self.evaluate:
-            fu.log('Evaluating data before resampling with RandomForestClassifier', out_log, self.global_log)
+            fu.log('Evaluating data before resampling with RandomForestClassifier', self.out_log, self.global_log)
             cv = RepeatedStratifiedKFold(n_splits=self.evaluate_splits, n_repeats=self.evaluate_repeats, random_state=self.random_state_evaluate)
             # evaluate model
             scores = cross_val_score(RandomForestClassifier(class_weight='balanced'), X, y, scoring='accuracy', cv=cv, n_jobs=-1)
             if not np.isnan(np.mean(scores)):
-                fu.log('Mean Accuracy before resampling: %.3f' % (np.mean(scores)), out_log, self.global_log)
+                fu.log('Mean Accuracy before resampling: %.3f' % (np.mean(scores)), self.out_log, self.global_log)
             else:
-                fu.log('Unable to calculate cross validation score, NaN was returned.', out_log, self.global_log)
+                fu.log('Unable to calculate cross validation score, NaN was returned.', self.out_log, self.global_log)
         
         # log distribution before resampling
         dist = ''
@@ -209,7 +197,7 @@ class Resampling():
             rng = ''
             if ranges: rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
-        fu.log('Classes distribution before resampling:\n\n%s' % dist, out_log, self.global_log)
+        fu.log('Classes distribution before resampling:\n\n%s' % dist, self.out_log, self.global_log)
 
         # join final_X and final_y in the output dataframe
         if header is None:
@@ -231,12 +219,12 @@ class Resampling():
 
         # if no header, target is in a different column
         if target_pos: t = target_pos
-        else: t = getTargetValue(self.target, out_log, self.__class__.__name__)
+        else: t = getTargetValue(self.target, self.out_log, self.__class__.__name__)
         # log distribution after resampling
         if self.type == 'regression':
             ranges, y_out, _ = rs.fit(out_df, target=t, bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
         elif self.type == 'classification':
-            y_out = getTarget(self.target, out_df, out_log, self.__class__.__name__)
+            y_out = getTarget(self.target, out_df, self.out_log, self.__class__.__name__)
 
         dist = ''
         for k,v in Counter(y_out).items():
@@ -244,23 +232,23 @@ class Resampling():
             rng = ''
             if ranges: rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
-        fu.log('Classes distribution after resampling:\n\n%s' % dist, out_log, self.global_log)
+        fu.log('Classes distribution after resampling:\n\n%s' % dist, self.out_log, self.global_log)
 
         # evaluate resampling
         if self.evaluate:
-            fu.log('Evaluating data after resampling with RandomForestClassifier', out_log, self.global_log)
+            fu.log('Evaluating data after resampling with RandomForestClassifier', self.out_log, self.global_log)
             cv = RepeatedStratifiedKFold(n_splits=3, n_repeats=3, random_state=42)
             # evaluate model
             scores = cross_val_score(RandomForestClassifier(class_weight='balanced'), final_X, y_out, scoring='accuracy', cv=cv, n_jobs=-1)
             if not np.isnan(np.mean(scores)):
-                fu.log('Mean Accuracy after resampling a %s dataset with %s method: %.3f' % (self.type, resampling_methods[self.method]['method'], np.mean(scores)), out_log, self.global_log)
+                fu.log('Mean Accuracy after resampling a %s dataset with %s method: %.3f' % (self.type, resampling_methods[self.method]['method'], np.mean(scores)), self.out_log, self.global_log)
             else:
-                fu.log('Unable to calculate cross validation score, NaN was returned.', out_log, self.global_log)
+                fu.log('Unable to calculate cross validation score, NaN was returned.', self.out_log, self.global_log)
 
         # save output
         hdr = False
         if header == 0: hdr = True
-        fu.log('Saving resampled dataset to %s' % self.io_dict["out"]["output_dataset_path"], out_log, self.global_log)
+        fu.log('Saving resampled dataset to %s' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
         out_df.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
 
         return 0

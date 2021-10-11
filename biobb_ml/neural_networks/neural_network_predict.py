@@ -4,15 +4,15 @@
 import argparse
 import h5py
 import json
+from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
-class PredictNeuralNetwork():
+class PredictNeuralNetwork(BiobbObject):
     """
     | biobb_ml PredictNeuralNetwork
     | Makes predictions from an input dataset and a given model.
@@ -63,6 +63,9 @@ class PredictNeuralNetwork():
                 input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_model_path": input_model_path, "input_dataset_path": input_dataset_path }, 
@@ -73,14 +76,8 @@ class PredictNeuralNetwork():
         self.predictions = properties.get('predictions', [])
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -93,23 +90,14 @@ class PredictNeuralNetwork():
     def launch(self) -> int:
         """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` neural_networks.neural_network_predict.PredictNeuralNetwork object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
-
-        fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], out_log, self.global_log)
+        fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], self.out_log, self.global_log)
         with h5py.File(self.io_dict["in"]["input_model_path"], mode='r') as f:
             variables = f.attrs['variables']
             new_model = hdf5_format.load_model_from_hdf5(f)
@@ -120,11 +108,11 @@ class PredictNeuralNetwork():
         stringlist = []
         new_model.summary(print_fn=lambda x: stringlist.append(x))
         model_summary = "\n".join(stringlist)
-        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+        fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         if self.io_dict["in"]["input_dataset_path"]:
             # load dataset from input_dataset_path file
-            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
             if 'features' not in vars_obj:
                 # recurrent
                 labels = None
@@ -188,8 +176,8 @@ class PredictNeuralNetwork():
             #pd.set_option('display.float_format', lambda x: '%.2f' % x)
             new_data_table["predictions"] = predictions 
 
-        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, self.out_log, self.global_log)
+        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         return 0

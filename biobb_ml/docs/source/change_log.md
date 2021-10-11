@@ -42,7 +42,7 @@ In version 3.0.1 TensorFlow, scikit-learn and pandas have been updated and fixed
 ### New features
 
 * Update to TensorFlow 2.2.0 (neural networks module)
-* Update to scikit-learn 0.23.1 (classification, clustering, dimensionality_reduction and regression modules)
+* Update to scikit-learn 0.24.2 (classification, clustering, dimensionality_reduction and regression modules)
 * Update to pandas 1.0.5 (general)
 * New conda installer (installation)
 

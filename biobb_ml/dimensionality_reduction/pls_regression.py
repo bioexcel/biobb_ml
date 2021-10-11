@@ -2,21 +2,19 @@
 
 """Module containing the PLS_Regression class and the command line interface."""
 import argparse
-import io
 import warnings
 from sys import stdout
-#from scipy.signal import savgol_filter
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import mean_squared_error, r2_score
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.dimensionality_reduction.common import *
 
 
-class PLS_Regression():
+class PLS_Regression(BiobbObject):
     """
     | biobb_ml PLS_Regression
     | Wrapper of the scikit-learn PLSRegression method. 
@@ -57,7 +55,7 @@ class PLS_Regression():
     Info:
         * wrapped_software:
             * name: scikit-learn PLSRegression
-            * version: >=0.23.1
+            * version: >=0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -68,6 +66,9 @@ class PLS_Regression():
     def __init__(self, input_dataset_path, output_results_path, 
                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
+
+        # Call parent class constructor
+        super().__init__(properties)
 
         # Input/Output files
         self.io_dict = { 
@@ -83,14 +84,8 @@ class PLS_Regression():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -109,24 +104,15 @@ class PLS_Regression():
         # trick for disable warnings in interations
         warnings.warn = self.warn
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.features:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -137,14 +123,14 @@ class PLS_Regression():
 
         # declare inputs, targets and weights
         # the inputs are all the features
-        features = getIndependentVars(self.features, data, out_log, self.__class__.__name__)
-        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
+        features = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
         # target
-        y = getTarget(self.target, data, out_log, self.__class__.__name__)
-        fu.log('Target: %s' % (getTargetValue(self.target)), out_log, self.global_log)
+        y = getTarget(self.target, data, self.out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (getTargetValue(self.target)), self.out_log, self.global_log)
 
         # get rid of baseline and linear variations calculating second derivative
-        # fu.log('Performing second derivative on the data', out_log, self.global_log)
+        # fu.log('Performing second derivative on the data', self.out_log, self.global_log)
         # self.window_length = getWindowLength(17, features.shape[1])
         # X = savgol_filter(features, window_length = self.window_length, polyorder = 2, deriv = 2)
         X = features
@@ -167,15 +153,15 @@ class PLS_Regression():
         r2_table["feature"] = ['R2 calib','R2 CV', 'MSE calib', 'MSE CV']
         r2_table['coefficient'] = [score_c, score_cv, mse_c, mse_cv]
 
-        fu.log('Generating scores table\n\nR2 & MSE TABLE\n\n%s\n' % r2_table, out_log, self.global_log)
+        fu.log('Generating scores table\n\nR2 & MSE TABLE\n\n%s\n' % r2_table, self.out_log, self.global_log)
 
         # save results table
-        fu.log('Saving R2 & MSE table to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Saving R2 & MSE table to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         r2_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         # mse plot
         if self.io_dict["out"]["output_plot_path"]: 
-            fu.log('Saving MSE plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving MSE plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot = PLSRegPlot(y, y_c, y_cv)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
 

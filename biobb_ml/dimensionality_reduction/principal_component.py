@@ -2,17 +2,16 @@
 
 """Module containing the PrincipalComponentAnalysis class and the command line interface."""
 import argparse
-import io
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.dimensionality_reduction.common import *
 
 
-class PrincipalComponentAnalysis():
+class PrincipalComponentAnalysis(BiobbObject):
     """
     | biobb_ml PrincipalComponentAnalysis
     | Wrapper of the scikit-learn PCA method. 
@@ -54,7 +53,7 @@ class PrincipalComponentAnalysis():
     Info:
         * wrapped_software:
             * name: scikit-learn PCA
-            * version: >=0.23.1
+            * version: >=0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -65,6 +64,9 @@ class PrincipalComponentAnalysis():
     def __init__(self, input_dataset_path, output_results_path, 
                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
+
+        # Call parent class constructor
+        super().__init__(properties)
 
         # Input/Output files
         self.io_dict = { 
@@ -80,14 +82,8 @@ class PrincipalComponentAnalysis():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -100,24 +96,15 @@ class PrincipalComponentAnalysis():
     def launch(self) -> int:
         """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.principal_component.PrincipalComponentAnalysis>` dimensionality_reduction.pincipal_component.PrincipalComponentAnalysis object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.features:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -128,14 +115,14 @@ class PrincipalComponentAnalysis():
 
         # declare inputs, targets and weights
         # the inputs are all the features
-        features = getIndependentVars(self.features, data, out_log, self.__class__.__name__)
-        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
+        features = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
         # target
         y_value = getTargetValue(self.target)
-        fu.log('Target: %s' % (y_value), out_log, self.global_log)
+        fu.log('Target: %s' % (y_value), self.out_log, self.global_log)
 
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             features = scaler.fit_transform(features)
 
@@ -144,17 +131,17 @@ class PrincipalComponentAnalysis():
             n_c = None
         else:
             n_c = self.n_components['value']
-        fu.log('Fitting dataset', out_log, self.global_log)
+        fu.log('Fitting dataset', self.out_log, self.global_log)
         model = PCA(n_components = n_c, random_state = self.random_state_method)
         # fit the data
         model.fit(features)
 
         # calculate variance ratio
         v_ratio = model.explained_variance_ratio_
-        fu.log('Variance ratio for %d Principal Components: %s' % (v_ratio.shape[0], np.array2string(v_ratio, precision=3, separator=', ')), out_log, self.global_log)
+        fu.log('Variance ratio for %d Principal Components: %s' % (v_ratio.shape[0], np.array2string(v_ratio, precision=3, separator=', ')), self.out_log, self.global_log)
 
         # transform
-        fu.log('Transforming dataset', out_log, self.global_log)
+        fu.log('Transforming dataset', self.out_log, self.global_log)
         pca = model.transform(features)
         pca = pd.DataFrame(data = pca, columns = generate_columns_labels('PC', v_ratio.shape[0]))
 
@@ -167,17 +154,17 @@ class PrincipalComponentAnalysis():
 
         # output results
         pca_table = pd.concat([pca, d], axis = 1)
-        fu.log('Calculating PCA for dataset\n\n%d COMPONENT PCA TABLE\n\n%s\n' % (v_ratio.shape[0], pca_table), out_log, self.global_log)
+        fu.log('Calculating PCA for dataset\n\n%d COMPONENT PCA TABLE\n\n%s\n' % (v_ratio.shape[0], pca_table), self.out_log, self.global_log)
 
         # save results
-        fu.log('Saving data to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Saving data to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         pca_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True)
 
         # create output plot
         if(self.io_dict["out"]["output_plot_path"]): 
             if v_ratio.shape[0] > 3: 
-                fu.log('%d PC\'s found. Displaying only 1st, 2nd and 3rd PC' % v_ratio.shape[0], out_log, self.global_log)
-            fu.log('Saving PC plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+                fu.log('%d PC\'s found. Displaying only 1st, 2nd and 3rd PC' % v_ratio.shape[0], self.out_log, self.global_log)
+            fu.log('Saving PC plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             targets = np.unique(d)
             if v_ratio.shape[0] == 2:
                 PCA2CPlot(pca_table, targets, target_plot)

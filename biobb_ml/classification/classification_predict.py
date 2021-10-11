@@ -2,9 +2,9 @@
 
 """Module containing the ClassificationPredict class and the command line interface."""
 import argparse
-import numpy as np
 import pandas as pd
 import joblib
+from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn import linear_model
 from sklearn.neighbors import KNeighborsClassifier
@@ -14,10 +14,9 @@ from sklearn import svm
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.classification.common import *
 
-class ClassificationPredict():
+class ClassificationPredict(BiobbObject):
     """
     | biobb_ml ClassificationPredict
     | Makes predictions from an input dataset and a given classification model.
@@ -56,7 +55,7 @@ class ClassificationPredict():
     Info:
         * wrapped_software:
             * name: scikit-learn
-            * version: >=0.23.1
+            * version: >=0.24.2
             * license: BSD 3-Clause
         * ontology:
             * name: EDAM
@@ -68,6 +67,9 @@ class ClassificationPredict():
                 input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_model_path": input_model_path, "input_dataset_path": input_dataset_path }, 
@@ -78,14 +80,8 @@ class ClassificationPredict():
         self.predictions = properties.get('predictions', [])
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -98,23 +94,14 @@ class ClassificationPredict():
     def launch(self) -> int:
         """Execute the :class:`ClassificationPredict <classification.classification_predict.ClassificationPredict>` classification.classification_predict.ClassificationPredict object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_results_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
-
-        fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], out_log, self.global_log)
+        fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], self.out_log, self.global_log)
 
         with open(self.io_dict["in"]["input_model_path"], "rb") as f:
             while True:
@@ -135,7 +122,7 @@ class ClassificationPredict():
 
         if self.io_dict["in"]["input_dataset_path"]:
             # load dataset from input_dataset_path file
-            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+            fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
             if 'columns' in variables['independent_vars']:
                 labels = getHeader(self.io_dict["in"]["input_dataset_path"])
                 skiprows = 1
@@ -158,7 +145,7 @@ class ClassificationPredict():
                 new_data_table = pd.DataFrame(data=predictions)            
 
         if variables['scale']: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             new_data = scaler.transform(new_data_table)
         else: new_data = new_data_table
 
@@ -170,8 +157,8 @@ class ClassificationPredict():
             new_data_table[variables['target']['column'] + ' ' + clss] = tuple(map(tuple, p))
         else:
             new_data_table[len(new_data_table.columns)] = tuple(map(tuple, p))
-        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, out_log, self.global_log)
-        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], out_log, self.global_log)
+        fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, self.out_log, self.global_log)
+        fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
         new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
 
         return 0

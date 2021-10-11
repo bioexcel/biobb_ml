@@ -4,8 +4,9 @@
 import argparse
 import h5py
 import json
+from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
-from sklearn.utils.class_weight import compute_class_weight
+#from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
@@ -15,11 +16,10 @@ from tensorflow.keras.callbacks import EarlyStopping
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 
-class RegressionNeuralNetwork():
+class RegressionNeuralNetwork(BiobbObject):
     """
     | biobb_ml RegressionNeuralNetwork
     | Wrapper of the TensorFlow Keras Sequential method for regression.
@@ -96,6 +96,9 @@ class RegressionNeuralNetwork():
                  output_model_path, output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_dataset_path": input_dataset_path }, 
@@ -118,14 +121,8 @@ class RegressionNeuralNetwork():
         self.scale = properties.get('scale', False)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -159,24 +156,15 @@ class RegressionNeuralNetwork():
     def launch(self) -> int:
         """Execute the :class:`RegressionNeuralNetwork <neural_networks.regression_neural_network.RegressionNeuralNetwork>` neural_networks.regression_neural_network.RegressionNeuralNetwork object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_table_path"],self.io_dict["out"]["output_plot_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load dataset
-        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], out_log, self.global_log)
+        fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.features:
             labels = getHeader(self.io_dict["in"]["input_dataset_path"])
             skiprows = 1
@@ -185,17 +173,17 @@ class RegressionNeuralNetwork():
             skiprows = None
         data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        X = getFeatures(self.features, data, out_log, self.__class__.__name__)
-        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), out_log, self.global_log)
+        X = getFeatures(self.features, data, self.out_log, self.__class__.__name__)
+        fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
         # target
-        y = getTarget(self.target, data, out_log, self.__class__.__name__)
-        fu.log('Target: %s' % (str(getTargetValue(self.target))), out_log, self.global_log)
+        y = getTarget(self.target, data, self.out_log, self.__class__.__name__)
+        fu.log('Target: %s' % (str(getTargetValue(self.target))), self.out_log, self.global_log)
         # weights
         if self.weight:
-            w = getWeight(self.weight, data, out_log, self.__class__.__name__)
+            w = getWeight(self.weight, data, self.out_log, self.__class__.__name__)
 
         # shuffle dataset
-        fu.log('Shuffling dataset', out_log, self.global_log)
+        fu.log('Shuffling dataset', self.out_log, self.global_log)
         shuffled_indices = np.arange(X.shape[0])
         np.random.shuffle(shuffled_indices)
         np_X = X.to_numpy()
@@ -204,7 +192,7 @@ class RegressionNeuralNetwork():
         if self.weight: shuffled_w = w[shuffled_indices]
 
         # train / test split
-        fu.log('Creating train and test sets', out_log, self.global_log)
+        fu.log('Creating train and test sets', self.out_log, self.global_log)
         arrays_sets = (shuffled_X, shuffled_y)
         # if user provide weights
         if self.weight:
@@ -215,18 +203,18 @@ class RegressionNeuralNetwork():
 
         # scale dataset
         if self.scale: 
-            fu.log('Scaling dataset', out_log, self.global_log)
+            fu.log('Scaling dataset', self.out_log, self.global_log)
             X_train = scale(X_train)
 
         # build model
-        fu.log('Building model', out_log, self.global_log)
+        fu.log('Building model', self.out_log, self.global_log)
         model = self.build_model((X_train.shape[1],))
 
         # model summary
         stringlist = []
         model.summary(print_fn=lambda x: stringlist.append(x))
         model_summary = "\n".join(stringlist)
-        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+        fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         # get optimizer
         mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
@@ -236,7 +224,7 @@ class RegressionNeuralNetwork():
         model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'], sample_weight_mode='samplewise')
 
         # fitting
-        fu.log('Training model', out_log, self.global_log)
+        fu.log('Training model', self.out_log, self.global_log)
         # set an early stopping mechanism
         # set patience=2, to be a bit tolerant against random validation loss increases
         early_stopping = EarlyStopping(patience=2)
@@ -246,7 +234,7 @@ class RegressionNeuralNetwork():
             class_weight = []
         else:
             # TODO: class_weight not working since TF 2.4.1 update
-            #fu.log('No weight provided, class_weight will be estimated from the target data', out_log, self.global_log)
+            #fu.log('No weight provided, class_weight will be estimated from the target data', self.out_log, self.global_log)
             sample_weight = None
             class_weight = []#compute_class_weight('balanced', np.unique(y_train), y_train)
 
@@ -261,7 +249,7 @@ class RegressionNeuralNetwork():
                        validation_split=self.validation_size,
                        verbose = 1)
 
-        fu.log('Total epochs performed: %s' % len(mf.history['loss']), out_log, self.global_log)
+        fu.log('Total epochs performed: %s' % len(mf.history['loss']), self.out_log, self.global_log)
 
         # predict data from X_train
         train_predictions = model.predict(X_train)
@@ -276,12 +264,12 @@ class RegressionNeuralNetwork():
         train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
         train_metrics['coefficient'] = [mf.history['loss'][-1], mf.history['mae'][-1], mf.history['mse'][-1], train_score, mf.history['val_loss'][-1], mf.history['val_mae'][-1], mf.history['val_mse'][-1]]
 
-        fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
+        fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, self.out_log, self.global_log)
 
         # testing
         if self.scale: 
             X_test = scale(X_test)
-        fu.log('Testing model', out_log, self.global_log)
+        fu.log('Testing model', self.out_log, self.global_log)
         test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
 
         # predict data from X_test
@@ -298,7 +286,7 @@ class RegressionNeuralNetwork():
         test_metrics['metric'] = ['Test loss', 'Test MAE', 'Test MSE', 'Test R2']
         test_metrics['coefficient'] = [test_loss, test_mae, test_mse, score]
 
-        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, out_log, self.global_log)
+        fu.log('Testing metrics\n\nTESTING METRICS TABLE\n\n%s\n' % test_metrics, self.out_log, self.global_log)
 
         test_table = pd.DataFrame()
         test_table['prediction'] = tpr
@@ -309,16 +297,16 @@ class RegressionNeuralNetwork():
         # sort by difference in %
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
-        fu.log('TEST DATA\n\n%s\n' % test_table, out_log, self.global_log)
+        fu.log('TEST DATA\n\n%s\n' % test_table, self.out_log, self.global_log)
 
         # save test data
         if(self.io_dict["out"]["output_test_table_path"]): 
-            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], out_log, self.global_log)
+            fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
             test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
 
         # create test plot
         if(self.io_dict["out"]["output_plot_path"]): 
-            fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], out_log, self.global_log)
+            fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             test_predictions = test_predictions.flatten()
             train_predictions = model.predict(X_train).flatten()
             plot = plotResultsReg(mf.history, y_test, test_predictions, y_train, train_predictions)
@@ -332,7 +320,7 @@ class RegressionNeuralNetwork():
             'type': 'regression'
         }
         variables = json.dumps(vars_obj)
-        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
             hdf5_format.save_model_to_hdf5(model, f)
             f.attrs['variables'] = variables

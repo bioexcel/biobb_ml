@@ -4,6 +4,7 @@
 import argparse
 import h5py
 import json
+from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input
@@ -14,11 +15,10 @@ from tensorflow.keras.layers import TimeDistributed
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 from biobb_ml.neural_networks.common import *
 
 
-class AutoencoderNeuralNetwork():
+class AutoencoderNeuralNetwork(BiobbObject):
     """
     | biobb_ml AutoencoderNeuralNetwork
     | Wrapper of the TensorFlow Keras LSTM method for encoding. 
@@ -70,6 +70,9 @@ class AutoencoderNeuralNetwork():
                 input_predict_path=None, output_test_decode_path=None, output_test_predict_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = { 
             "in": { "input_decode_path": input_decode_path, "input_predict_path": input_predict_path }, 
@@ -83,14 +86,8 @@ class AutoencoderNeuralNetwork():
         self.max_epochs = properties.get('max_epochs', 100)
         self.properties = properties
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
+        # Check the properties
+        self.check_properties(properties)
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -136,24 +133,15 @@ class AutoencoderNeuralNetwork():
     def launch(self) -> int:
         """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork>` neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork object."""
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
-
         # check input/output paths and parameters
-        self.check_data_params(out_log, err_log)
+        self.check_data_params(self.out_log, self.err_log)
 
-        # Check the properties
-        fu.check_properties(self, self.properties)
-
-        if self.restart:
-            output_file_list = [self.io_dict["out"]["output_model_path"],self.io_dict["out"]["output_test_decode_path"],self.io_dict["out"]["output_test_predict_path"]]
-            if fu.check_complete_files(output_file_list):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # load decode dataset
-        fu.log('Getting decode dataset from %s' % self.io_dict["in"]["input_decode_path"], out_log, self.global_log)
+        fu.log('Getting decode dataset from %s' % self.io_dict["in"]["input_decode_path"], self.out_log, self.global_log)
         data_dec = pd.read_csv(self.io_dict["in"]["input_decode_path"])
         seq_in = np.array(data_dec)
 
@@ -164,7 +152,7 @@ class AutoencoderNeuralNetwork():
         # load predict dataset
         n_out = None
         if(self.io_dict["in"]["input_predict_path"]): 
-            fu.log('Getting predict dataset from %s' % self.io_dict["in"]["input_predict_path"], out_log, self.global_log)
+            fu.log('Getting predict dataset from %s' % self.io_dict["in"]["input_predict_path"], self.out_log, self.global_log)
             data_pred = pd.read_csv(self.io_dict["in"]["input_predict_path"])
             seq_out = np.array(data_pred)
 
@@ -173,14 +161,14 @@ class AutoencoderNeuralNetwork():
             seq_out = seq_out.reshape((1, n_out, 1))
 
         # build model
-        fu.log('Building model', out_log, self.global_log)
+        fu.log('Building model', self.out_log, self.global_log)
         model = self.build_model(n_in, n_out)
 
         # model summary
         stringlist = []
         model.summary(print_fn=lambda x: stringlist.append(x))
         model_summary = "\n".join(stringlist)
-        fu.log('Model summary:\n\n%s\n' % model_summary, out_log, self.global_log)
+        fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         # get optimizer
         mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
@@ -190,7 +178,7 @@ class AutoencoderNeuralNetwork():
         model.compile(optimizer = opt, loss = 'mse', metrics = ['mse', 'mae'])
 
         # fitting
-        fu.log('Training model', out_log, self.global_log)
+        fu.log('Training model', self.out_log, self.global_log)
         y_list = [seq_in]
         if n_out:
             y_list.append(seq_out)
@@ -211,10 +199,10 @@ class AutoencoderNeuralNetwork():
         train_metrics['metric'] = metric
         train_metrics['coefficient'] = coefficient
 
-        fu.log('Calculating metrics\n\nMETRICS TABLE\n\n%s\n' % train_metrics, out_log, self.global_log)
+        fu.log('Calculating metrics\n\nMETRICS TABLE\n\n%s\n' % train_metrics, self.out_log, self.global_log)
 
         # predicting
-        fu.log('Predicting model', out_log, self.global_log)
+        fu.log('Predicting model', self.out_log, self.global_log)
         yhat = model.predict(seq_in, verbose=1)
 
         decoding_table = pd.DataFrame()
@@ -230,11 +218,11 @@ class AutoencoderNeuralNetwork():
         # sort by difference in %
         decoding_table = decoding_table.sort_values(by=['difference %'])
         decoding_table = decoding_table.reset_index(drop=True)
-        fu.log('RECONSTRUCTION TABLE\n\n%s\n' % decoding_table, out_log, self.global_log)
+        fu.log('RECONSTRUCTION TABLE\n\n%s\n' % decoding_table, self.out_log, self.global_log)
 
         # save reconstruction data
         if(self.io_dict["out"]["output_test_decode_path"]): 
-            fu.log('Saving reconstruction data to %s' % self.io_dict["out"]["output_test_decode_path"], out_log, self.global_log)
+            fu.log('Saving reconstruction data to %s' % self.io_dict["out"]["output_test_decode_path"], self.out_log, self.global_log)
             decoding_table.to_csv(self.io_dict["out"]["output_test_decode_path"], index = False, header=True)
 
         if(self.io_dict["in"]["input_predict_path"]): 
@@ -247,11 +235,11 @@ class AutoencoderNeuralNetwork():
             # sort by difference in %
             prediction_table = prediction_table.sort_values(by=['difference %'])
             prediction_table = prediction_table.reset_index(drop=True)
-            fu.log('PREDICTION TABLE\n\n%s\n' % prediction_table, out_log, self.global_log)
+            fu.log('PREDICTION TABLE\n\n%s\n' % prediction_table, self.out_log, self.global_log)
 
             # save decoding data
             if(self.io_dict["out"]["output_test_predict_path"]): 
-                fu.log('Saving prediction data to %s' % self.io_dict["out"]["output_test_predict_path"], out_log, self.global_log)
+                fu.log('Saving prediction data to %s' % self.io_dict["out"]["output_test_predict_path"], self.out_log, self.global_log)
                 prediction_table.to_csv(self.io_dict["out"]["output_test_predict_path"], index = False, header=True)
 
         # save model and parameters
@@ -259,7 +247,7 @@ class AutoencoderNeuralNetwork():
             'type': 'autoencoder'
         }
         variables = json.dumps(vars_obj)
-        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], out_log, self.global_log)
+        fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
             hdf5_format.save_model_to_hdf5(model, f)
             f.attrs['variables'] = variables
