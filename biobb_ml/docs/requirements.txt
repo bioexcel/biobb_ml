@@ -1,9 +1,2 @@
 # Defining the exact version will make sure things don't break
-#biobb_common==3.6.0
-#scikit-learn==0.24.2
-#pandas==1.0.5
-#seaborn==0.10.1
-#tensorflow>=2.4.0
-#h5py==2.10.0
-#imbalanced-learn==0.7.0
-biobb_ml==3.6.1
+biobb_ml==3.7.0
