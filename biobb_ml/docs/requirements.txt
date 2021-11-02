@@ -1,2 +1,3 @@
 # Defining the exact version will make sure things don't break
 biobb_ml==3.7.0
+docutils==0.17.1
