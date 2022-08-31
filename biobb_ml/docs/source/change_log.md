@@ -1,7 +1,14 @@
 # Biobb Machine Learning changelog
 
+## What's new in version [3.8.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.8.0)?
+In version 3.8.0 the dependency biobb_common has been updated to 3.8.1 version.
+
+### New features
+
+* Update to biobb_common 3.8.1 (general)
+
 ## What's new in version [3.7.0](https://github.com/bioexcel/biobb_ml/releases/tag/v3.7.0)?
-In version 3.7.0 the dependency biobb_common has been updated to 3.6.0 version. Also, scikit-learn has been updated to 0.24.2 version.
+In version 3.7.0 the dependency biobb_common has been updated to 3.7.0 version. Also, scikit-learn has been updated to 0.24.2 version.
 
 ### New features
 
