@@ -3,10 +3,10 @@ from biobb_ml.classification.classification_predict import classification_predic
 
 
 class TestClassificationPredict():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'classification_predict')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

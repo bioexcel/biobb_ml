@@ -3,10 +3,10 @@ from biobb_ml.classification.support_vector_machine import support_vector_machin
 
 
 class TestSupportVectorMachine():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'support_vector_machine')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

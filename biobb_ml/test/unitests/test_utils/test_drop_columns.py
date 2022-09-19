@@ -3,10 +3,10 @@ from biobb_ml.utils.drop_columns import drop_columns
 
 
 class TestDropColumns():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'drop_columns')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

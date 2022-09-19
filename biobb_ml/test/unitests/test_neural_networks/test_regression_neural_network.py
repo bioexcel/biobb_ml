@@ -3,10 +3,10 @@ from biobb_ml.neural_networks.regression_neural_network import regression_neural
 
 
 class TestRegressionNeuralNetwork():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'regression_neural_network')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

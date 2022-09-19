@@ -3,10 +3,10 @@ from biobb_ml.utils.pairwise_comparison import pairwise_comparison
 
 
 class TestPairwiseComparison():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'pairwise_comparison')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

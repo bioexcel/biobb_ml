@@ -3,10 +3,10 @@ from biobb_ml.dimensionality_reduction.principal_component import principal_comp
 
 
 class TestPrincipalComponentAnalysis():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'principal_component')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

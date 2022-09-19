@@ -3,10 +3,10 @@ from biobb_ml.utils.map_variables import map_variables
 
 
 class TestMapVariables():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'map_variables')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.utils.dendrogram import dendrogram
 
 
 class TestDendrogram():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'dendrogram')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

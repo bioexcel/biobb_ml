@@ -3,10 +3,10 @@ from biobb_ml.clustering.spectral_coefficient import spectral_coefficient
 
 
 class TestSpectralCoefficient():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'spectral_coefficient')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.regression.random_forest_regressor import random_forest_regressor
 
 
 class TestRandomForestRegressor():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'random_forest_regressor')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

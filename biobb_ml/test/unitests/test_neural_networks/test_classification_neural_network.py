@@ -3,10 +3,10 @@ from biobb_ml.neural_networks.classification_neural_network import classificatio
 
 
 class TestClassificationNeuralNetwork():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'classification_neural_network')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

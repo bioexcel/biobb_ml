@@ -3,10 +3,10 @@ from biobb_ml.clustering.spectral_clustering import spectral_clustering
 
 
 class TestSpecClustering():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'spectral_clustering')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

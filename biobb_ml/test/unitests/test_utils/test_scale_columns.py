@@ -3,10 +3,10 @@ from biobb_ml.utils.scale_columns import scale_columns
 
 
 class TestScaleColumns():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'scale_columns')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

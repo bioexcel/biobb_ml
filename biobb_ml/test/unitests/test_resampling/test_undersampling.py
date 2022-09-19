@@ -3,10 +3,10 @@ from biobb_ml.resampling.undersampling import undersampling
 
 
 class TestUndersampling():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'undersampling')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

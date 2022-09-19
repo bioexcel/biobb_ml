@@ -3,10 +3,10 @@ from biobb_ml.clustering.dbscan import dbscan
 
 
 class TestDBSCANClustering():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'dbscan')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

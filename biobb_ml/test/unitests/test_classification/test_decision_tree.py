@@ -3,10 +3,10 @@ from biobb_ml.classification.decision_tree import decision_tree
 
 
 class TestDecisionTree():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'decision_tree')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.regression.linear_regression import linear_regression
 
 
 class TestLinearRegression():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'linear_regression')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

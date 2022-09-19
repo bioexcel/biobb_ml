@@ -3,10 +3,10 @@ from biobb_ml.clustering.agglomerative_clustering import agglomerative_clusterin
 
 
 class TestAgglClustering():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'agglomerative_clustering')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

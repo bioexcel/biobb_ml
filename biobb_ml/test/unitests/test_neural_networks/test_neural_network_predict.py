@@ -3,10 +3,10 @@ from biobb_ml.neural_networks.neural_network_predict import neural_network_predi
 
 
 class TestPredictNeuralNetwork():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'neural_network_predict')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

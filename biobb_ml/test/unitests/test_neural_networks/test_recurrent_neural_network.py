@@ -3,10 +3,10 @@ from biobb_ml.neural_networks.recurrent_neural_network import recurrent_neural_n
 
 
 class TestRecurrentNeuralNetwork():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'recurrent_neural_network')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

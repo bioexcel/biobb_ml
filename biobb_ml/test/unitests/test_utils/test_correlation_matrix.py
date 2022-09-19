@@ -3,10 +3,10 @@ from biobb_ml.utils.correlation_matrix import correlation_matrix
 
 
 class TestCorrelationMatrix():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'correlation_matrix')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

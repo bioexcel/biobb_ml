@@ -3,10 +3,10 @@ from biobb_ml.clustering.agglomerative_coefficient import agglomerative_coeffici
 
 
 class TestAgglomerativeCoefficient():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'agglomerative_coefficient')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

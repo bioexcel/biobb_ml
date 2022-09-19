@@ -3,10 +3,10 @@ from biobb_ml.classification.k_neighbors_coefficient import k_neighbors_coeffici
 
 
 class TestKNeighborsCoefficient():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'k_neighbors_coefficient')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.resampling.oversampling import oversampling
 
 
 class TestOversampling():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'oversampling')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

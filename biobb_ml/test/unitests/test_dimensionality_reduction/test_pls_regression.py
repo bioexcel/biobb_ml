@@ -3,10 +3,10 @@ from biobb_ml.dimensionality_reduction.pls_regression import pls_regression
 
 
 class TestPLS_Regression():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'pls_regression')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

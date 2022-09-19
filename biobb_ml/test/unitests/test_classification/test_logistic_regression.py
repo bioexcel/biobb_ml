@@ -3,10 +3,10 @@ from biobb_ml.classification.logistic_regression import logistic_regression
 
 
 class TestLogisticRegression():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'logistic_regression')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

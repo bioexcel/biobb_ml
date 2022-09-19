@@ -3,10 +3,10 @@ from biobb_ml.clustering.clustering_predict import clustering_predict
 
 
 class TestClusteringPredict():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'clustering_predict')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.dimensionality_reduction.pls_components import pls_components
 
 
 class TestPLSComponents():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'pls_components')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

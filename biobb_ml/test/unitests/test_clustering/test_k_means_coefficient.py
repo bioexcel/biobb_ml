@@ -3,10 +3,10 @@ from biobb_ml.clustering.k_means_coefficient import k_means_coefficient
 
 
 class TestKMeansCoefficient():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'k_means_coefficient')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

@@ -3,10 +3,10 @@ from biobb_ml.classification.k_neighbors import k_neighbors
 
 
 class TestKNeighborsTrain():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'k_neighbors')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 

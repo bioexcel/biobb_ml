@@ -3,10 +3,10 @@ from biobb_ml.utils.dummy_variables import dummy_variables
 
 
 class TestDummyVariables():
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self,'dummy_variables')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
         pass
 
