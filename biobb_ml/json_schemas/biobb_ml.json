@@ -4,7 +4,7 @@
     "github": "https://github.com/bioexcel/biobb_ml",
     "readthedocs": "https://biobb-ml.readthedocs.io/en/latest/",
     "conda": "https://anaconda.org/bioconda/biobb_ml",
-    "docker": "https://quay.io/biocontainers/biobb_ml:3.8.0--pyhdfd78af_2",
+    "docker": "https://quay.io/biocontainers/biobb_ml:3.8.0--pyhdfd78af_0",
     "singularity": "https://depot.galaxyproject.org/singularity/biobb_ml:3.8.0--pyhdfd78af_0",
     "version": "3.8.0",
     "rest": true,
