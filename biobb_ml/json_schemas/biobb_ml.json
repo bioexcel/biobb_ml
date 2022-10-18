@@ -1,6 +1,6 @@
 {
     "_id": "biobb_ml",
-    "desc": "Biobb_ml is the Biobb module collection to perform machine learning predictions",
+    "desc": "Biobb_ml is the Biobb module collection to perform machine learning predictions.",
     "github": "https://github.com/bioexcel/biobb_ml",
     "readthedocs": "https://biobb-ml.readthedocs.io/en/latest/",
     "conda": "https://anaconda.org/bioconda/biobb_ml",
