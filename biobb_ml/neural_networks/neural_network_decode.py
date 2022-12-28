@@ -54,6 +54,7 @@ class DecodingNeuralNetwork(BiobbObject):
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = { 
@@ -66,6 +67,7 @@ class DecodingNeuralNetwork(BiobbObject):
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -134,6 +136,16 @@ class DecodingNeuralNetwork(BiobbObject):
 
             fu.log('Saving prediction to %s' % self.io_dict["out"]["output_predict_path"], self.out_log, self.global_log)
             prediction_table.to_csv(self.io_dict["out"]["output_predict_path"], index = False, header=True, float_format='%.5f')
+
+        # Copy files to host
+        self.copy_to_host()
+
+        self.tmp_files.extend([
+            self.stage_io_dict.get("unique_dir")
+        ])
+        self.remove_tmp_files()
+
+        self.check_arguments(output_files_created=True, raise_exception=False)
 
         return 0
 

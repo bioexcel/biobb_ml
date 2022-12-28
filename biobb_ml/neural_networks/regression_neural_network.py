@@ -98,6 +98,7 @@ class RegressionNeuralNetwork(BiobbObject):
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = { 
@@ -123,6 +124,7 @@ class RegressionNeuralNetwork(BiobbObject):
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -171,7 +173,7 @@ class RegressionNeuralNetwork(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         X = getFeatures(self.features, data, self.out_log, self.__class__.__name__)
         fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
@@ -324,6 +326,16 @@ class RegressionNeuralNetwork(BiobbObject):
         with h5py.File(self.io_dict["out"]["output_model_path"], mode='w') as f:
             hdf5_format.save_model_to_hdf5(model, f)
             f.attrs['variables'] = variables
+
+        # Copy files to host
+        self.copy_to_host()
+
+        self.tmp_files.extend([
+            self.stage_io_dict.get("unique_dir")
+        ])
+        self.remove_tmp_files()
+
+        self.check_arguments(output_files_created=True, raise_exception=False)
 
         return 0
 

@@ -77,6 +77,7 @@ class LogisticRegression(BiobbObject):
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = { 
@@ -99,6 +100,7 @@ class LogisticRegression(BiobbObject):
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
@@ -128,7 +130,7 @@ class LogisticRegression(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -251,6 +253,16 @@ class LogisticRegression(BiobbObject):
             joblib.dump(model, f)
             if self.scale: joblib.dump(scaler, f)
             joblib.dump(variables, f)
+
+        # Copy files to host
+        self.copy_to_host()
+
+        self.tmp_files.extend([
+            self.stage_io_dict.get("unique_dir")
+        ])
+        self.remove_tmp_files()
+
+        self.check_arguments(output_files_created=True, raise_exception=False)
 
         return 0
 
