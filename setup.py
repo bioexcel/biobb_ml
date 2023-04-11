@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="biobb_ml",
-    version="3.9.0",
+    version="4.0.0",
     author="Biobb developers",
     author_email="genis.bayarri@irbbarcelona.org",
     description="Biobb_ml is the Biobb module collection to perform machine learning predictions.",
@@ -18,7 +18,7 @@ setuptools.setup(
         "Bioexcel": "https://bioexcel.eu/"
     },
     packages=setuptools.find_packages(exclude=['docs', 'test']),
-    install_requires=['biobb_common==3.9.0', 'scikit-learn ==0.24.2', 'pandas ==1.3.0', 'seaborn ==0.10.1', 'tensorflow>=2.4.2', 'h5py ==2.10.0', 'imbalanced-learn ==0.7.0'],
+    install_requires=['biobb_common==4.0.0', 'scikit-learn ==0.24.2', 'pandas ==1.3.0', 'seaborn ==0.10.1', 'tensorflow>=2.4.2', 'h5py ==2.10.0', 'imbalanced-learn ==0.7.0'],
     python_requires='>=3.7,<3.10',
     entry_points={
         "console_scripts": [
