@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: biobb_ml/resampling/oversampling.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-1"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="biobb_ml.resampling.oversampling.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               biobb_ml/resampling/oversampling.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="F405">
+               <span class="count sev-1">
+                  15
+               </span>
+               <strong>F405:</strong> 'check_input_path' may be undefined, or defined from star imports: biobb_ml.resampling.common
+               
+                  (and 9 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>'check_input_path' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l110">
+                  <tt><i>110</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_input_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l111">
+                  <tt><i>111</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getResamplingMethod' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l126">
+                  <tt><i>126</i>         <span class="n">method</span> <span class="o">=</span> <span class="n">getResamplingMethod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="s1">&#39;oversampling&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'checkResamplingType' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l127">
+                  <tt><i>127</i>         <span class="n">checkResamplingType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getSamplingStrategy' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l128">
+                  <tt><i>128</i>         <span class="n">sampling_strategy</span> <span class="o">=</span> <span class="n">getSamplingStrategy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getHeader' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l133">
+                  <tt><i>133</i>             <span class="n">labels</span> <span class="o">=</span> <span class="n">getHeader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l140">
+                  <tt><i>140</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l155">
+                  <tt><i>155</i>         <span class="n">X</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)]</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l168">
+                  <tt><i>168</i>         <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Target: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l176">
+                  <tt><i>176</i>             <span class="n">ranges</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">target_pos</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">balanced_binning</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">balanced_binning</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTarget' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l181">
+                  <tt><i>181</i>             <span class="n">y</span> <span class="o">=</span> <span class="n">getTarget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l215">
+                  <tt><i>215</i>         <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">out_df</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l226">
+                  <tt><i>226</i>         <span class="k">else</span><span class="p">:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTarget' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l231">
+                  <tt><i>231</i>             <span class="n">y_out</span> <span class="o">=</span> <span class="n">getTarget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">out_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'oversampling_methods' may be undefined, or defined from star imports: biobb_ml.resampling.common:</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l248">
+                  <tt><i>248</i>                 <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Mean Accuracy after oversampling a </span><span class="si">%s</span><span class="s1"> dataset with </span><span class="si">%s</span><span class="s1"> method: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">oversampling_methods</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_log</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="F403">
+               <span class="count sev-1">
+                  1
+               </span>
+               <strong>F403:</strong> 'from biobb_ml.resampling.common import *' used; unable to detect undefined names
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l16">
+                  <tt><i>16</i> <span class="kn">from</span> <span class="nn">biobb_ml.resampling.common</span> <span class="kn">import</span> <span class="o">*</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  18
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l48">
+                  <tt><i>48</i> <span class="sd">            prop = { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l49">
+                  <tt><i>49</i> <span class="sd">                &#39;method&#39;: &#39;random, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l50">
+                  <tt><i>50</i> <span class="sd">                &#39;type&#39;: &#39;regression, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l51">
+                  <tt><i>51</i> <span class="sd">                &#39;target&#39;: { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l52">
+                  <tt><i>52</i> <span class="sd">                    &#39;column&#39;: &#39;target&#39; </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l53">
+                  <tt><i>53</i> <span class="sd">                }, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l54">
+                  <tt><i>54</i> <span class="sd">                &#39;evaluate&#39;: true, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l56">
+                  <tt><i>56</i> <span class="sd">                &#39;sampling_strategy&#39;: { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l57">
+                  <tt><i>57</i> <span class="sd">                    &#39;target&#39;: &#39;minority&#39; </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l60">
+                  <tt><i>60</i> <span class="sd">            oversampling(input_dataset_path=&#39;/path/to/myDataset.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l61">
+                  <tt><i>61</i> <span class="sd">                        output_dataset_path=&#39;/path/to/newDataset.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l75">
+                  <tt><i>75</i>     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dataset_path</span><span class="p">,</span> <span class="n">output_dataset_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l84">
+                  <tt><i>84</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span> <span class="o">=</span> <span class="p">{</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l85">
+                  <tt><i>85</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l86">
+                  <tt><i>86</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_dataset_path&quot;</span><span class="p">:</span> <span class="n">output_dataset_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l155">
+                  <tt><i>155</i>         <span class="n">X</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)]</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l173">
+                  <tt><i>173</i>             <span class="c1"># call resampler class for Regression ReSampling            </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l221">
+                  <tt><i>221</i>                     <span class="n">out_df</span> <span class="o">=</span> <span class="n">out_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="n">column</span><span class="p">:</span> <span class="nb">int</span> <span class="p">}</span> <span class="p">)</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E701">
+               <span class="count sev-2">
+                  7
+               </span>
+               <strong>E701:</strong> multiple statements on one line (colon)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l122">
+                  <tt><i>122</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_restart</span><span class="p">():</span> <span class="k">return</span> <span class="mi">0</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l202">
+                  <tt><i>202</i>             <span class="k">if</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">rng</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="n">k</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l215">
+                  <tt><i>215</i>         <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">out_df</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l225">
+                  <tt><i>225</i>         <span class="k">if</span> <span class="n">target_pos</span><span class="p">:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">target_pos</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l226">
+                  <tt><i>226</i>         <span class="k">else</span><span class="p">:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l237">
+                  <tt><i>237</i>             <span class="k">if</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">rng</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="n">k</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l254">
+                  <tt><i>254</i>         <span class="k">if</span> <span class="n">header</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">hdr</span> <span class="o">=</span> <span class="kc">True</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E202">
+               <span class="count sev-2">
+                  5
+               </span>
+               <strong>E202:</strong> whitespace before '}'
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l85">
+                  <tt><i>85</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l86">
+                  <tt><i>86</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_dataset_path&quot;</span><span class="p">:</span> <span class="n">output_dataset_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l98">
+                  <tt><i>98</i>         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_strategy</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sampling_strategy&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span> <span class="p">})</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before ')':</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l221">
+                  <tt><i>221</i>                     <span class="n">out_df</span> <span class="o">=</span> <span class="n">out_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="n">column</span><span class="p">:</span> <span class="nb">int</span> <span class="p">}</span> <span class="p">)</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l221">
+                  <tt><i>221</i>                     <span class="n">out_df</span> <span class="o">=</span> <span class="n">out_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="n">column</span><span class="p">:</span> <span class="nb">int</span> <span class="p">}</span> <span class="p">)</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E251">
+               <span class="count sev-2">
+                  4
+               </span>
+               <strong>E251:</strong> unexpected spaces around keyword / parameter equals
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l140">
+                  <tt><i>140</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l256">
+                  <tt><i>256</i>         <span class="n">out_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E128">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>E128:</strong> continuation line under-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l76">
+                  <tt><i>76</i>                 <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l275">
+                  <tt><i>275</i>                    <span class="n">output_dataset_path</span><span class="o">=</span><span class="n">output_dataset_path</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l276">
+                  <tt><i>276</i>                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E201">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>E201:</strong> whitespace after '{'
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l85">
+                  <tt><i>85</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l86">
+                  <tt><i>86</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_dataset_path&quot;</span><span class="p">:</span> <span class="n">output_dataset_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l98">
+                  <tt><i>98</i>         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_strategy</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sampling_strategy&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span> <span class="p">})</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E231">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>E231:</strong> missing whitespace after ','
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l111">
+                  <tt><i>111</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_dataset_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l199">
+                  <tt><i>199</i>         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l234">
+                  <tt><i>234</i>         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">y_out</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E127">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E127:</strong> continuation line over-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l294">
+                  <tt><i>294</i>                    <span class="n">output_dataset_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_dataset_path</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l295">
+                  <tt><i>295</i>                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E302">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E302:</strong> expected 2 blank lines, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l270">
+                  <tt><i>270</i> <span class="k">def</span> <span class="nf">oversampling</span><span class="p">(</span><span class="n">input_dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l278">
+                  <tt><i>278</i> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E501">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E501:</strong> line too long (1263 > 999 characters)
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Line too long (1263 > 999 characters):</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l29">
+                  <tt><i>29</i> <span class="sd">            * **method** (*str*) - (None) Oversampling method. It&#39;s a mandatory property. Values: random (`RandomOverSampler &lt;https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.RandomOverSampler.html&gt;`_: Object to over-sample the minority classes by picking samples at random with replacement), smote (`SMOTE &lt;https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html&gt;`_: This object is an implementation of SMOTE - Synthetic Minority Over-sampling Technique), borderline (`BorderlineSMOTE &lt;https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.BorderlineSMOTE.html&gt;`_: This algorithm is a variant of the original SMOTE algorithm. Borderline samples will be detected and used to generate new synthetic samples), svmsmote (`SVMSMOTE &lt;https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SVMSMOTE.html&gt;`_: Variant of SMOTE algorithm which use an SVM algorithm to detect sample to use for generating new synthetic samples), adasyn (`ADASYN &lt;https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.ADASYN.html&gt;`_: Perform over-sampling using Adaptive Synthetic -ADASYN- sampling approach for imbalanced datasets).</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (1022 > 999 characters):</p>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l37">
+                  <tt><i>37</i> <span class="sd">            * **sampling_strategy** (*dict*) - ({ &quot;target&quot;: &quot;auto&quot; })  Sampling information to sample the data set. Formats: { &quot;target&quot;: &quot;auto&quot; }, { &quot;ratio&quot;: 0.3 }, { &quot;dict&quot;: { 0: 300, 1: 200, 2: 100 } } or { &quot;list&quot;: [0, 2, 3] }. When &quot;target&quot;, specify the class targeted by the resampling; the number of samples in the different classes will be equalized; possible choices are: minority (resample only the minority class), not minority (resample all classes but the minority class), not majority (resample all classes but the majority class), all (resample all classes), auto (equivalent to &#39;not majority&#39;). When &quot;ratio&quot;, it corresponds to the desired ratio of the number of samples in the minority class over the number of samples in the majority class after resampling (ONLY IN CASE OF BINARY CLASSIFICATION).  When &quot;dict&quot;, the keys correspond to the targeted classes, the values correspond to the desired number of samples for each targeted class. When &quot;list&quot;, the list contains the classes targeted by the resampling.</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W293">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>W293:</strong> blank line contains whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l167">
+                  <tt><i>167</i>         </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l213">
+                  <tt><i>213</i>                 </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E271">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E271:</strong> multiple spaces after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l13">
+                  <tt><i>13</i> <span class="kn">from</span> <span class="nn">biobb_common.configuration</span> <span class="kn">import</span>  <span class="n">settings</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E303">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E303:</strong> too many blank lines (2)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l114">
+                  <tt><i>114</i>     <span class="nd">@launchlogger</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E305">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E305:</strong> expected 2 blank lines after class or function definition, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l297">
+                  <tt><i>297</i> <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W391">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W391:</strong> blank line at end of file
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.resampling.oversampling.source.html#l299">
+                  <tt><i>299</i> &nbsp;</tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

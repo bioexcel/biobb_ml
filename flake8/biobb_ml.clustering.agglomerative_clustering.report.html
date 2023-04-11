@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: biobb_ml/clustering/agglomerative_clustering.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-1"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="biobb_ml.clustering.agglomerative_clustering.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               biobb_ml/clustering/agglomerative_clustering.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="F405">
+               <span class="count sev-1">
+                  10
+               </span>
+               <strong>F405:</strong> 'check_input_path' may be undefined, or defined from star imports: biobb_ml.clustering.common
+               
+                  (and 8 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>'check_input_path' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l96">
+                  <tt><i>96</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_input_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l97">
+                  <tt><i>97</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l99">
+                  <tt><i>99</i>             <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getHeader' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l115">
+                  <tt><i>115</i>             <span class="n">labels</span> <span class="o">=</span> <span class="n">getHeader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l120">
+                  <tt><i>120</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getIndependentVars' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l123">
+                  <tt><i>123</i>         <span class="n">predictors</span> <span class="o">=</span> <span class="n">getIndependentVars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getIndependentVarsList' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l124">
+                  <tt><i>124</i>         <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Predictors: [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">getIndependentVarsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictors</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'hopkins' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l127">
+                  <tt><i>127</i>         <span class="n">H</span> <span class="o">=</span> <span class="n">hopkins</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'AgglomerativeClustering' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l137">
+                  <tt><i>137</i>         <span class="n">model</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">affinity</span><span class="p">,</span> <span class="n">linkage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkage</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'plotCluster' may be undefined, or defined from star imports: biobb_ml.clustering.common:</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l162">
+                  <tt><i>162</i>             <span class="n">plot</span> <span class="o">=</span> <span class="n">plotCluster</span><span class="p">(</span><span class="n">new_plots</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="F403">
+               <span class="count sev-1">
+                  1
+               </span>
+               <strong>F403:</strong> 'from biobb_ml.clustering.common import *' used; unable to detect undefined names
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l10">
+                  <tt><i>10</i> <span class="kn">from</span> <span class="nn">biobb_ml.clustering.common</span> <span class="kn">import</span> <span class="o">*</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  28
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l16">
+                  <tt><i>16</i> <span class="sd">    | Wrapper of the scikit-learn AgglomerativeClustering method. </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l17">
+                  <tt><i>17</i> <span class="sd">    | Clusters a given dataset. Visit the `AgglomerativeClustering documentation page &lt;https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html&gt;`_ in the sklearn official website for further information. </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l37">
+                  <tt><i>37</i> <span class="sd">            prop = { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l38">
+                  <tt><i>38</i> <span class="sd">                &#39;predictors&#39;: { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l39">
+                  <tt><i>39</i> <span class="sd">                    &#39;columns&#39;: [ &#39;column1&#39;, &#39;column2&#39;, &#39;column3&#39; ] </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l40">
+                  <tt><i>40</i> <span class="sd">                }, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l41">
+                  <tt><i>41</i> <span class="sd">                &#39;clusters&#39;: 3, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l42">
+                  <tt><i>42</i> <span class="sd">                &#39;affinity&#39;: &#39;euclidean&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l43">
+                  <tt><i>43</i> <span class="sd">                &#39;linkage&#39;: &#39;ward&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l44">
+                  <tt><i>44</i> <span class="sd">                &#39;plots&#39;: [ </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l45">
+                  <tt><i>45</i> <span class="sd">                    { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l46">
+                  <tt><i>46</i> <span class="sd">                        &#39;title&#39;: &#39;Plot 1&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l47">
+                  <tt><i>47</i> <span class="sd">                        &#39;features&#39;: [&#39;feat1&#39;, &#39;feat2&#39;] </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l48">
+                  <tt><i>48</i> <span class="sd">                    } </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l49">
+                  <tt><i>49</i> <span class="sd">                ] </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l51">
+                  <tt><i>51</i> <span class="sd">            agglomerative_clustering(input_dataset_path=&#39;/path/to/myDataset.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l52">
+                  <tt><i>52</i> <span class="sd">                                    output_results_path=&#39;/path/to/newTable.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l53">
+                  <tt><i>53</i> <span class="sd">                                    output_plot_path=&#39;/path/to/newPlot.png&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l67">
+                  <tt><i>67</i>     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dataset_path</span><span class="p">,</span> <span class="n">output_results_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l76">
+                  <tt><i>76</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span> <span class="o">=</span> <span class="p">{</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l77">
+                  <tt><i>77</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l78">
+                  <tt><i>78</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_results_path&quot;</span><span class="p">:</span> <span class="n">output_results_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l131">
+                  <tt><i>131</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l152">
+                  <tt><i>152</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">plots</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l182">
+                  <tt><i>182</i>     <span class="k">return</span> <span class="n">AgglClustering</span><span class="p">(</span><span class="n">input_dataset_path</span><span class="o">=</span><span class="n">input_dataset_path</span><span class="p">,</span>  </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l183">
+                  <tt><i>183</i>                    <span class="n">output_results_path</span><span class="o">=</span><span class="n">output_results_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l204">
+                  <tt><i>204</i>                            <span class="n">output_results_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_results_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l205">
+                  <tt><i>205</i>                            <span class="n">output_plot_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_plot_path</span><span class="p">,</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E251">
+               <span class="count sev-2">
+                  8
+               </span>
+               <strong>E251:</strong> unexpected spaces around keyword / parameter equals
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l120">
+                  <tt><i>120</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 4 places):</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l137">
+                  <tt><i>137</i>         <span class="n">model</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">affinity</span><span class="p">,</span> <span class="n">linkage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkage</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l150">
+                  <tt><i>150</i>         <span class="n">clusters</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E128">
+               <span class="count sev-2">
+                  7
+               </span>
+               <strong>E128:</strong> continuation line under-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l68">
+                  <tt><i>68</i>                 <span class="n">output_plot_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l183">
+                  <tt><i>183</i>                    <span class="n">output_results_path</span><span class="o">=</span><span class="n">output_results_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l184">
+                  <tt><i>184</i>                    <span class="n">output_plot_path</span><span class="o">=</span><span class="n">output_plot_path</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l185">
+                  <tt><i>185</i>                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l204">
+                  <tt><i>204</i>                            <span class="n">output_results_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_results_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l205">
+                  <tt><i>205</i>                            <span class="n">output_plot_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_plot_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l206">
+                  <tt><i>206</i>                            <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E201">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E201:</strong> whitespace after '{'
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l77">
+                  <tt><i>77</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l78">
+                  <tt><i>78</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_results_path&quot;</span><span class="p">:</span> <span class="n">output_results_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E202">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E202:</strong> whitespace before '}'
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l77">
+                  <tt><i>77</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l78">
+                  <tt><i>78</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_results_path&quot;</span><span class="p">:</span> <span class="n">output_results_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E231">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E231:</strong> missing whitespace after ','
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l97">
+                  <tt><i>97</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_results_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l99">
+                  <tt><i>99</i>             <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E302">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E302:</strong> expected 2 blank lines, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l178">
+                  <tt><i>178</i> <span class="k">def</span> <span class="nf">agglomerative_clustering</span><span class="p">(</span><span class="n">input_dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_results_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_plot_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l187">
+                  <tt><i>187</i> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E271">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E271:</strong> multiple spaces after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l7">
+                  <tt><i>7</i> <span class="kn">from</span> <span class="nn">biobb_common.configuration</span> <span class="kn">import</span>  <span class="n">settings</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E305">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E305:</strong> expected 2 blank lines after class or function definition, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l208">
+                  <tt><i>208</i> <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E701">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E701:</strong> multiple statements on one line (colon)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.clustering.agglomerative_clustering.source.html#l109">
+                  <tt><i>109</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_restart</span><span class="p">():</span> <span class="k">return</span> <span class="mi">0</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

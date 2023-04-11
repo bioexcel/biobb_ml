@@ -1,5 +1,0 @@
-feature,coefficient
-R2 calib,0.770
-R2 CV,0.738
-MSE calib,0.054
-MSE CV,0.061

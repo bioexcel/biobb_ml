@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: biobb_ml/neural_networks/classification_neural_network.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-1"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="biobb_ml.neural_networks.classification_neural_network.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               biobb_ml/neural_networks/classification_neural_network.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="F405">
+               <span class="count sev-1">
+                  32
+               </span>
+               <strong>F405:</strong> 'check_input_path' may be undefined, or defined from star imports: biobb_ml.neural_networks.common
+               
+                  (and 11 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>'check_input_path' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l133">
+                  <tt><i>133</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_input_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l134">
+                  <tt><i>134</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l135">
+                  <tt><i>135</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'check_output_path' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l136">
+                  <tt><i>136</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getHeader' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l173">
+                  <tt><i>173</i>             <span class="n">labels</span> <span class="o">=</span> <span class="n">getHeader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l178">
+                  <tt><i>178</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l180">
+                  <tt><i>180</i>         <span class="n">targets_list</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getFeatures' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l182">
+                  <tt><i>182</i>         <span class="n">X</span> <span class="o">=</span> <span class="n">getFeatures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getIndependentVarsList' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l183">
+                  <tt><i>183</i>         <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Features: [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">getIndependentVarsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTarget' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l185">
+                  <tt><i>185</i>         <span class="n">y</span> <span class="o">=</span> <span class="n">getTarget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getTargetValue' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l186">
+                  <tt><i>186</i>         <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Target: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">getTargetValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">))),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'getWeight' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l189">
+                  <tt><i>189</i>             <span class="n">w</span> <span class="o">=</span> <span class="n">getWeight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l193">
+                  <tt><i>193</i>         <span class="n">shuffled_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l194">
+                  <tt><i>194</i>         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">shuffled_indices</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l217">
+                  <tt><i>217</i>         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_model</span><span class="p">((</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],),</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l262">
+                  <tt><i>262</i>         <span class="n">train_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l270">
+                  <tt><i>270</i>         <span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">train_predictions</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l272">
+                  <tt><i>272</i>         <span class="p">[</span><span class="n">norm_pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">train_predictions</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l274">
+                  <tt><i>274</i>         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l276">
+                  <tt><i>276</i>             <span class="n">cnf_matrix_train</span> <span class="o">=</span> <span class="n">cnf_matrix_train</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">cnf_matrix_train</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l289">
+                  <tt><i>289</i>         <span class="n">test_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l297">
+                  <tt><i>297</i>         <span class="n">test_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">test_predictions</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'pd' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l300">
+                  <tt><i>300</i>         <span class="n">test_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l301">
+                  <tt><i>301</i>         <span class="n">test_table</span><span class="p">[</span><span class="s1">&#39;P&#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">))]</span> <span class="o">=</span> <span class="n">tpr</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l308">
+                  <tt><i>308</i>         <span class="p">[</span><span class="n">norm_pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">test_predictions</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l310">
+                  <tt><i>310</i>         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l312">
+                  <tt><i>312</i>             <span class="n">cnf_matrix_test</span> <span class="o">=</span> <span class="n">cnf_matrix_test</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">cnf_matrix_test</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l326">
+                  <tt><i>326</i>             <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">targets_list</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'plotResultsClassMultCM' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l329">
+                  <tt><i>329</i>                 <span class="n">plot</span> <span class="o">=</span> <span class="n">plotResultsClassMultCM</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">history</span><span class="p">,</span> <span class="n">cnf_matrix_train</span><span class="p">,</span> <span class="n">cnf_matrix_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_cm</span><span class="p">,</span> <span class="n">vs</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'plotResultsClassBinCM' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l332">
+                  <tt><i>332</i>                 <span class="n">plot</span> <span class="o">=</span> <span class="n">plotResultsClassBinCM</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">history</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">cnf_matrix_train</span><span class="p">,</span> <span class="n">cnf_matrix_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_cm</span><span class="p">,</span> <span class="n">vs</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'np' may be undefined, or defined from star imports: biobb_ml.neural_networks.common:</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l337">
+                  <tt><i>337</i>         <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">targets_list</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="F403">
+               <span class="count sev-1">
+                  1
+               </span>
+               <strong>F403:</strong> 'from biobb_ml.neural_networks.common import *' used; unable to detect undefined names
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l19">
+                  <tt><i>19</i> <span class="kn">from</span> <span class="nn">biobb_ml.neural_networks.common</span> <span class="kn">import</span> <span class="o">*</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="F841">
+               <span class="count sev-1">
+                  1
+               </span>
+               <strong>F841:</strong> local variable 'y' is assigned to but never used
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l185">
+                  <tt><i>185</i>         <span class="n">y</span> <span class="o">=</span> <span class="n">getTarget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  32
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l25">
+                  <tt><i>25</i> <span class="sd">    | Wrapper of the TensorFlow Keras Sequential method for classification. </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l26">
+                  <tt><i>26</i> <span class="sd">    | Trains and tests a given dataset and save the complete model for a Neural Network Classification. Visit the `Sequential documentation page &lt;https://www.tensorflow.org/api_docs/python/tf/keras/Sequential&gt;`_ in the TensorFlow Keras official website for further information. </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l55">
+                  <tt><i>55</i> <span class="sd">            prop = { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l57">
+                  <tt><i>57</i> <span class="sd">                    &#39;columns&#39;: [ &#39;column1&#39;, &#39;column2&#39;, &#39;column3&#39; ] </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l59">
+                  <tt><i>59</i> <span class="sd">                &#39;target&#39;: { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l60">
+                  <tt><i>60</i> <span class="sd">                    &#39;column&#39;: &#39;target&#39; </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l65">
+                  <tt><i>65</i> <span class="sd">                    { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l66">
+                  <tt><i>66</i> <span class="sd">                        &#39;size&#39;: 10, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l67">
+                  <tt><i>67</i> <span class="sd">                        &#39;activation&#39;: &#39;relu&#39; </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l69">
+                  <tt><i>69</i> <span class="sd">                    { </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l70">
+                  <tt><i>70</i> <span class="sd">                        &#39;size&#39;: 8, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l71">
+                  <tt><i>71</i> <span class="sd">                        &#39;activation&#39;: &#39;relu&#39; </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l79">
+                  <tt><i>79</i> <span class="sd">            classification_neural_network(input_dataset_path=&#39;/path/to/myDataset.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l80">
+                  <tt><i>80</i> <span class="sd">                                        output_model_path=&#39;/path/to/newModel.h5&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l81">
+                  <tt><i>81</i> <span class="sd">                                        output_test_table_path=&#39;/path/to/newTable.csv&#39;, </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l105">
+                  <tt><i>105</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span> <span class="o">=</span> <span class="p">{</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l106">
+                  <tt><i>106</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l107">
+                  <tt><i>107</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_model_path&quot;</span><span class="p">:</span> <span class="n">output_model_path</span><span class="p">,</span> <span class="s2">&quot;output_test_table_path&quot;</span><span class="p">:</span> <span class="n">output_test_table_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l211">
+                  <tt><i>211</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l238">
+                  <tt><i>238</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l250">
+                  <tt><i>250</i>         <span class="n">mf</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l251">
+                  <tt><i>251</i>                        <span class="n">y_train</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l254">
+                  <tt><i>254</i>                        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l255">
+                  <tt><i>255</i>                        <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l284">
+                  <tt><i>284</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l320">
+                  <tt><i>320</i>         <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">]):</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l325">
+                  <tt><i>325</i>         <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]):</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l368">
+                  <tt><i>368</i>     <span class="k">return</span> <span class="n">ClassificationNeuralNetwork</span><span class="p">(</span><span class="n">input_dataset_path</span><span class="o">=</span><span class="n">input_dataset_path</span><span class="p">,</span>  </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l369">
+                  <tt><i>369</i>                    <span class="n">output_model_path</span><span class="o">=</span><span class="n">output_model_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l392">
+                  <tt><i>392</i>                                    <span class="n">output_model_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_model_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l393">
+                  <tt><i>393</i>                                    <span class="n">output_test_table_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_test_table_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l394">
+                  <tt><i>394</i>                                    <span class="n">output_plot_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_plot_path</span><span class="p">,</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E251">
+               <span class="count sev-2">
+                  28
+               </span>
+               <strong>E251:</strong> unexpected spaces around keyword / parameter equals
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 4 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l151">
+                  <tt><i>151</i>                 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">],</span> <span class="n">kernel_initializer</span><span class="o">=</span><span class="s1">&#39;he_normal&#39;</span><span class="p">,</span> <span class="n">input_shape</span> <span class="o">=</span> <span class="n">input_shape</span><span class="p">))</span> <span class="c1"># 1st hidden layer</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l153">
+                  <tt><i>153</i>                 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">],</span> <span class="n">kernel_initializer</span><span class="o">=</span><span class="s1">&#39;he_normal&#39;</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l178">
+                  <tt><i>178</i>         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;in&quot;</span><span class="p">][</span><span class="s2">&quot;input_dataset_path&quot;</span><span class="p">],</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s+|;|:|,|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l206">
+                  <tt><i>206</i>             <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">w_train</span><span class="p">,</span> <span class="n">w_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="o">*</span><span class="n">arrays_sets</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l208">
+                  <tt><i>208</i>             <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="o">*</span><span class="n">arrays_sets</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l226">
+                  <tt><i>226</i>         <span class="n">mod</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;tensorflow.keras.optimizers&#39;</span><span class="p">,</span> <span class="n">fromlist</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l228">
+                  <tt><i>228</i>         <span class="n">opt</span> <span class="o">=</span> <span class="n">opt_class</span><span class="p">(</span><span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 6 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l230">
+                  <tt><i>230</i>         <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">opt</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="s1">&#39;sparse_categorical_crossentropy&#39;</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;mse&#39;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l253">
+                  <tt><i>253</i>                        <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l258">
+                  <tt><i>258</i>                        <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l322">
+                  <tt><i>322</i>             <span class="n">test_table</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E231">
+               <span class="count sev-2">
+                  6
+               </span>
+               <strong>E231:</strong> missing whitespace after ','
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l134">
+                  <tt><i>134</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_model_path&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l135">
+                  <tt><i>135</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l136">
+                  <tt><i>136</i>         <span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_output_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">],</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l149">
+                  <tt><i>149</i>         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l263">
+                  <tt><i>263</i>         <span class="n">train_metrics</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Train loss&#39;</span><span class="p">,</span><span class="s1">&#39; Train accuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;Train MSE&#39;</span><span class="p">,</span> <span class="s1">&#39;Validation loss&#39;</span><span class="p">,</span> <span class="s1">&#39;Validation accuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;Validation MSE&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l290">
+                  <tt><i>290</i>         <span class="n">test_metrics</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Test loss&#39;</span><span class="p">,</span><span class="s1">&#39; Test accuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;Test MSE&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E128">
+               <span class="count sev-2">
+                  5
+               </span>
+               <strong>E128:</strong> continuation line under-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l97">
+                  <tt><i>97</i>                 <span class="n">output_test_table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_plot_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l369">
+                  <tt><i>369</i>                    <span class="n">output_model_path</span><span class="o">=</span><span class="n">output_model_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l370">
+                  <tt><i>370</i>                    <span class="n">output_test_table_path</span><span class="o">=</span><span class="n">output_test_table_path</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l371">
+                  <tt><i>371</i>                    <span class="n">output_plot_path</span><span class="o">=</span><span class="n">output_plot_path</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l372">
+                  <tt><i>372</i>                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E127">
+               <span class="count sev-2">
+                  4
+               </span>
+               <strong>E127:</strong> continuation line over-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l392">
+                  <tt><i>392</i>                                    <span class="n">output_model_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_model_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l393">
+                  <tt><i>393</i>                                    <span class="n">output_test_table_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_test_table_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l394">
+                  <tt><i>394</i>                                    <span class="n">output_plot_path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_plot_path</span><span class="p">,</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l395">
+                  <tt><i>395</i>                                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E201">
+               <span class="count sev-2">
+                  4
+               </span>
+               <strong>E201:</strong> whitespace after '{'
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Whitespace after '{':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l106">
+                  <tt><i>106</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace after '{':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l107">
+                  <tt><i>107</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_model_path&quot;</span><span class="p">:</span> <span class="n">output_model_path</span><span class="p">,</span> <span class="s2">&quot;output_test_table_path&quot;</span><span class="p">:</span> <span class="n">output_test_table_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace after '[':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l146">
+                  <tt><i>146</i>             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span> <span class="p">}</span> <span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace after '{':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l146">
+                  <tt><i>146</i>             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span> <span class="p">}</span> <span class="p">]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E202">
+               <span class="count sev-2">
+                  4
+               </span>
+               <strong>E202:</strong> whitespace before '}'
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l106">
+                  <tt><i>106</i>             <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;input_dataset_path&quot;</span><span class="p">:</span> <span class="n">input_dataset_path</span> <span class="p">},</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l107">
+                  <tt><i>107</i>             <span class="s2">&quot;out&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;output_model_path&quot;</span><span class="p">:</span> <span class="n">output_model_path</span><span class="p">,</span> <span class="s2">&quot;output_test_table_path&quot;</span><span class="p">:</span> <span class="n">output_test_table_path</span><span class="p">,</span> <span class="s2">&quot;output_plot_path&quot;</span><span class="p">:</span> <span class="n">output_plot_path</span> <span class="p">}</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before ']':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l146">
+                  <tt><i>146</i>             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span> <span class="p">}</span> <span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Whitespace before '}':</p>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l146">
+                  <tt><i>146</i>             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span> <span class="p">}</span> <span class="p">]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E261">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>E261:</strong> at least two spaces before inline comment
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l151">
+                  <tt><i>151</i>                 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">],</span> <span class="n">kernel_initializer</span><span class="o">=</span><span class="s1">&#39;he_normal&#39;</span><span class="p">,</span> <span class="n">input_shape</span> <span class="o">=</span> <span class="n">input_shape</span><span class="p">))</span> <span class="c1"># 1st hidden layer</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l155">
+                  <tt><i>155</i>         <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_layer_activation</span><span class="p">))</span> <span class="c1"># output layer</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l246">
+                  <tt><i>246</i>             <span class="n">class_weight</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#compute_class_weight(&#39;balanced&#39;, np.unique(y_train), y_train)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E265">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E265:</strong> block comment should start with '# '
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l9">
+                  <tt><i>9</i> <span class="c1">#from sklearn.utils.class_weight import compute_class_weight</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l243">
+                  <tt><i>243</i>             <span class="c1">#fu.log(&#39;No weight provided, class_weight will be estimated from the target data&#39;, self.out_log, self.global_log)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E275">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E275:</strong> missing whitespace after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l320">
+                  <tt><i>320</i>         <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_test_table_path&quot;</span><span class="p">]):</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l325">
+                  <tt><i>325</i>         <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_dict</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">][</span><span class="s2">&quot;output_plot_path&quot;</span><span class="p">]):</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E302">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E302:</strong> expected 2 blank lines, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l364">
+                  <tt><i>364</i> <span class="k">def</span> <span class="nf">classification_neural_network</span><span class="p">(</span><span class="n">input_dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_test_table_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_plot_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l374">
+                  <tt><i>374</i> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E701">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E701:</strong> multiple statements on one line (colon)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l167">
+                  <tt><i>167</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_restart</span><span class="p">():</span> <span class="k">return</span> <span class="mi">0</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l198">
+                  <tt><i>198</i>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">:</span> <span class="n">shuffled_w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">shuffled_indices</span><span class="p">]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E222">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E222:</strong> multiple spaces after operator
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l122">
+                  <tt><i>122</i>         <span class="bp">self</span><span class="o">.</span><span class="n">normalize_cm</span> <span class="o">=</span>  <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;normalize_cm&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E262">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E262:</strong> inline comment should start with '# '
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l246">
+                  <tt><i>246</i>             <span class="n">class_weight</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#compute_class_weight(&#39;balanced&#39;, np.unique(y_train), y_train)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E271">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E271:</strong> multiple spaces after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l16">
+                  <tt><i>16</i> <span class="kn">from</span> <span class="nn">biobb_common.configuration</span> <span class="kn">import</span>  <span class="n">settings</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E305">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E305:</strong> expected 2 blank lines after class or function definition, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l397">
+                  <tt><i>397</i> <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E501">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E501:</strong> line too long (1175 > 999 characters)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.classification_neural_network.source.html#l41">
+                  <tt><i>41</i> <span class="sd">            * **optimizer** (*string*) - (&quot;Adam&quot;) Name of optimizer instance. Values: Adadelta (Adadelta optimization is a stochastic gradient descent method that is based on adaptive learning rate per dimension to address two drawbacks: the continual decay of learning rates throughout training and the need for a manually selected global learning rate), Adagrad (Adagrad is an optimizer with parameter-specific learning rates; which are adapted relative to how frequently a parameter gets updated during training. The more updates a parameter receives; the smaller the updates), Adam (Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments), Adamax (It is a variant of Adam based on the infinity norm. Default parameters follow those provided in the paper. Adamax is sometimes superior to adam; specially in models with embeddings), Ftrl (Optimizer that implements the FTRL algorithm), Nadam (Much like Adam is essentially RMSprop with momentum; Nadam is Adam with Nesterov momentum), RMSprop (Optimizer that implements the RMSprop algorithm), SGD (Gradient descent -with momentum- optimizer).</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

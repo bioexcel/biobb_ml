@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: biobb_ml/neural_networks/common.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-2"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="biobb_ml.neural_networks.common.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               biobb_ml/neural_networks/common.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="E101">
+               <span class="count sev-2">
+                  33
+               </span>
+               <strong>E101:</strong> indentation contains mixed spaces and tabs
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l33">
+                  <tt><i>33</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l34">
+                  <tt><i>34</i> 	<span class="k">if</span> <span class="n">optional</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l35">
+                  <tt><i>35</i> 		<span class="k">return</span> <span class="kc">None</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l36">
+                  <tt><i>36</i> 	<span class="k">if</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l37">
+                  <tt><i>37</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder, exiting&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l38">
+                  <tt><i>38</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l39">
+                  <tt><i>39</i> 	<span class="n">file_extension</span> <span class="o">=</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l40">
+                  <tt><i>40</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_file</span><span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l41">
+                  <tt><i>41</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">),</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l42">
+                  <tt><i>42</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l43">
+                  <tt><i>43</i> 	<span class="k">return</span> <span class="n">path</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l46">
+                  <tt><i>46</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks if file format is compatible &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l47">
+                  <tt><i>47</i> 	<span class="n">formats</span> <span class="o">=</span> <span class="p">{</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l48">
+                  <tt><i>48</i> 		<span class="s1">&#39;input_dataset_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l53">
+                  <tt><i>53</i> 		<span class="s1">&#39;output_results_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l54">
+                  <tt><i>54</i> 		<span class="s1">&#39;output_test_table_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l59">
+                  <tt><i>59</i> 		<span class="s1">&#39;output_plot_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l60">
+                  <tt><i>60</i> 	<span class="p">}</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l61">
+                  <tt><i>61</i> 	<span class="k">return</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">[</span><span class="n">argument</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l64">
+                  <tt><i>64</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="nb">property</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l65">
+                  <tt><i>65</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property, exiting&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l66">
+                  <tt><i>66</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l67">
+                  <tt><i>67</i> 	<span class="k">return</span> <span class="nb">property</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l73">
+                  <tt><i>73</i> 	<span class="n">p</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l74">
+                  <tt><i>74</i> 	<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l75">
+                  <tt><i>75</i> 		<span class="n">a</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l76">
+                  <tt><i>76</i> 		<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l77">
+                  <tt><i>77</i> 			<span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l78">
+                  <tt><i>78</i> 		<span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l79">
+                  <tt><i>79</i> 	<span class="k">return</span> <span class="n">p</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l173">
+                  <tt><i>173</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l226">
+                  <tt><i>226</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l263">
+                  <tt><i>263</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W191">
+               <span class="count sev-2">
+                  33
+               </span>
+               <strong>W191:</strong> indentation contains tabs
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l33">
+                  <tt><i>33</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l34">
+                  <tt><i>34</i> 	<span class="k">if</span> <span class="n">optional</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l35">
+                  <tt><i>35</i> 		<span class="k">return</span> <span class="kc">None</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l36">
+                  <tt><i>36</i> 	<span class="k">if</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l37">
+                  <tt><i>37</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder, exiting&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l38">
+                  <tt><i>38</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l39">
+                  <tt><i>39</i> 	<span class="n">file_extension</span> <span class="o">=</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l40">
+                  <tt><i>40</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_file</span><span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l41">
+                  <tt><i>41</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">),</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l42">
+                  <tt><i>42</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l43">
+                  <tt><i>43</i> 	<span class="k">return</span> <span class="n">path</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l46">
+                  <tt><i>46</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks if file format is compatible &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l47">
+                  <tt><i>47</i> 	<span class="n">formats</span> <span class="o">=</span> <span class="p">{</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l48">
+                  <tt><i>48</i> 		<span class="s1">&#39;input_dataset_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l53">
+                  <tt><i>53</i> 		<span class="s1">&#39;output_results_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l54">
+                  <tt><i>54</i> 		<span class="s1">&#39;output_test_table_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l59">
+                  <tt><i>59</i> 		<span class="s1">&#39;output_plot_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l60">
+                  <tt><i>60</i> 	<span class="p">}</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l61">
+                  <tt><i>61</i> 	<span class="k">return</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">[</span><span class="n">argument</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l64">
+                  <tt><i>64</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="nb">property</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l65">
+                  <tt><i>65</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property, exiting&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l66">
+                  <tt><i>66</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l67">
+                  <tt><i>67</i> 	<span class="k">return</span> <span class="nb">property</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l73">
+                  <tt><i>73</i> 	<span class="n">p</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l74">
+                  <tt><i>74</i> 	<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l75">
+                  <tt><i>75</i> 		<span class="n">a</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l76">
+                  <tt><i>76</i> 		<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l77">
+                  <tt><i>77</i> 			<span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l78">
+                  <tt><i>78</i> 		<span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l79">
+                  <tt><i>79</i> 	<span class="k">return</span> <span class="n">p</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l173">
+                  <tt><i>173</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l226">
+                  <tt><i>226</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l263">
+                  <tt><i>263</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E302">
+               <span class="count sev-2">
+                  22
+               </span>
+               <strong>E302:</strong> expected 2 blank lines, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l19">
+                  <tt><i>19</i> <span class="k">def</span> <span class="nf">check_input_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">optional</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l32">
+                  <tt><i>32</i> <span class="k">def</span> <span class="nf">check_output_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">optional</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l45">
+                  <tt><i>45</i> <span class="k">def</span> <span class="nf">is_valid_file</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l63">
+                  <tt><i>63</i> <span class="k">def</span> <span class="nf">check_mandatory_property</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l81">
+                  <tt><i>81</i> <span class="k">def</span> <span class="nf">get_keys_of_predictors</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l87">
+                  <tt><i>87</i> <span class="k">def</span> <span class="nf">get_num_cols</span><span class="p">(</span><span class="n">num</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l93">
+                  <tt><i>93</i> <span class="k">def</span> <span class="nf">split_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l107">
+                  <tt><i>107</i> <span class="k">def</span> <span class="nf">doublePlot</span><span class="p">(</span><span class="n">tit</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">legend</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l115">
+                  <tt><i>115</i> <span class="k">def</span> <span class="nf">predictionPlot</span><span class="p">(</span><span class="n">tit</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l126">
+                  <tt><i>126</i> <span class="k">def</span> <span class="nf">histogramPlot</span><span class="p">(</span><span class="n">tit</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l133">
+                  <tt><i>133</i> <span class="k">def</span> <span class="nf">CMPlotBinary</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">group_names</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">normalize</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l148">
+                  <tt><i>148</i> <span class="k">def</span> <span class="nf">CMplotNonBinary</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">normalize</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l171">
+                  <tt><i>171</i> <span class="k">def</span> <span class="nf">plotResultsClassMultCM</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cm_train</span><span class="p">,</span> <span class="n">cm_test</span><span class="p">,</span> <span class="n">normalize</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l193">
+                  <tt><i>193</i> <span class="k">def</span> <span class="nf">distPredPlot</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pos_p</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l207">
+                  <tt><i>207</i> <span class="k">def</span> <span class="nf">ROCPlot</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l224">
+                  <tt><i>224</i> <span class="k">def</span> <span class="nf">plotResultsClassBinCM</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">proba_train</span><span class="p">,</span> <span class="n">proba_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">cm_train</span><span class="p">,</span> <span class="n">cm_test</span><span class="p">,</span> <span class="n">normalize</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l291">
+                  <tt><i>291</i> <span class="k">def</span> <span class="nf">getFeatures</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l306">
+                  <tt><i>306</i> <span class="k">def</span> <span class="nf">getIndependentVarsList</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l314">
+                  <tt><i>314</i> <span class="k">def</span> <span class="nf">getTarget</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l323">
+                  <tt><i>323</i> <span class="k">def</span> <span class="nf">getWeight</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l332">
+                  <tt><i>332</i> <span class="k">def</span> <span class="nf">getHeader</span><span class="p">(</span><span class="n">file</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l342">
+                  <tt><i>342</i> <span class="k">def</span> <span class="nf">getTargetValue</span><span class="p">(</span><span class="n">target</span><span class="p">):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E231">
+               <span class="count sev-2">
+                  17
+               </span>
+               <strong>E231:</strong> missing whitespace after ','
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l111">
+                  <tt><i>111</i>     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l112">
+                  <tt><i>112</i>     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l118">
+                  <tt><i>118</i>     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l119">
+                  <tt><i>119</i>     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l130">
+                  <tt><i>130</i>     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l131">
+                  <tt><i>131</i>     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l142">
+                  <tt><i>142</i>     <span class="n">labels_cfm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels_cfm</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l165">
+                  <tt><i>165</i>     <span class="n">labels_cfm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels_cfm</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ':':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l166">
+                  <tt><i>166</i>     <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="n">labels_cfm</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">annot_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span><span class="n">fs</span><span class="p">})</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l174">
+                  <tt><i>174</i>     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ':':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l194">
+                  <tt><i>194</i>     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;probPos&#39;</span><span class="p">:</span><span class="n">pos_p</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">})</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l201">
+                  <tt><i>201</i>     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l208">
+                  <tt><i>208</i>     <span class="n">fp_rates</span><span class="p">,</span> <span class="n">tp_rates</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">p</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l227">
+                  <tt><i>227</i>     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l238">
+                  <tt><i>238</i>     <span class="n">pos_p</span> <span class="o">=</span> <span class="n">proba_train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l247">
+                  <tt><i>247</i>     <span class="n">pos_p</span> <span class="o">=</span> <span class="n">proba_test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Missing whitespace after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l264">
+                  <tt><i>264</i>     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E117">
+               <span class="count sev-2">
+                  13
+               </span>
+               <strong>E117:</strong> over-indented
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l33">
+                  <tt><i>33</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l35">
+                  <tt><i>35</i> 		<span class="k">return</span> <span class="kc">None</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l37">
+                  <tt><i>37</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder, exiting&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l41">
+                  <tt><i>41</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">),</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l46">
+                  <tt><i>46</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks if file format is compatible &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l64">
+                  <tt><i>64</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="nb">property</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l65">
+                  <tt><i>65</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property, exiting&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l73">
+                  <tt><i>73</i> 	<span class="n">p</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l75">
+                  <tt><i>75</i> 		<span class="n">a</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented:</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l77">
+                  <tt><i>77</i> 			<span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented (comment):</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l173">
+                  <tt><i>173</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented (comment):</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l226">
+                  <tt><i>226</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Over-indented (comment):</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l263">
+                  <tt><i>263</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E122">
+               <span class="count sev-2">
+                  8
+               </span>
+               <strong>E122:</strong> continuation line missing indentation or outdented
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l49">
+                  <tt><i>49</i>         <span class="s1">&#39;input_decode_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l50">
+                  <tt><i>50</i>         <span class="s1">&#39;input_predict_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l51">
+                  <tt><i>51</i>         <span class="s1">&#39;input_model_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;h5&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l52">
+                  <tt><i>52</i>         <span class="s1">&#39;output_model_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;h5&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l55">
+                  <tt><i>55</i>         <span class="s1">&#39;output_test_decode_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l56">
+                  <tt><i>56</i>         <span class="s1">&#39;output_test_predict_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l57">
+                  <tt><i>57</i>         <span class="s1">&#39;output_decode_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l58">
+                  <tt><i>58</i>         <span class="s1">&#39;output_predict_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E265">
+               <span class="count sev-2">
+                  6
+               </span>
+               <strong>E265:</strong> block comment should start with '# '
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l173">
+                  <tt><i>173</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l214">
+                  <tt><i>214</i>     <span class="c1">#plot current decision point:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l226">
+                  <tt><i>226</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l240">
+                  <tt><i>240</i>     <span class="c1">#CMplotNonBinary(334, cm_train, &#39;Confusion Matrix Train&#39;, normalize, values)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l249">
+                  <tt><i>249</i>     <span class="c1">#CMplotNonBinary(337, cm_test, &#39;Confusion Matrix Test&#39;, normalize, values)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l263">
+                  <tt><i>263</i> 	<span class="c1">#FIGURE</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W293">
+               <span class="count sev-2">
+                  6
+               </span>
+               <strong>W293:</strong> blank line contains whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l190">
+                  <tt><i>190</i>     </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l257">
+                  <tt><i>257</i>     </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l277">
+                  <tt><i>277</i>     </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l283">
+                  <tt><i>283</i>     </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l288">
+                  <tt><i>288</i>     </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l341">
+                  <tt><i>341</i>         </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E701">
+               <span class="count sev-2">
+                  5
+               </span>
+               <strong>E701:</strong> multiple statements on one line (colon)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l150">
+                  <tt><i>150</i>     <span class="k">if</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>  <span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l151">
+                  <tt><i>151</i>     <span class="k">elif</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="n">fs</span> <span class="o">=</span> <span class="mi">8</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l152">
+                  <tt><i>152</i>     <span class="k">elif</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span> <span class="n">fs</span> <span class="o">=</span> <span class="mi">6</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l162">
+                  <tt><i>162</i>         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span> <span class="n">group_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;True &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l163">
+                  <tt><i>163</i>         <span class="k">else</span><span class="p">:</span> <span class="n">group_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;False &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E241">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>E241:</strong> multiple spaces after ':'
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Multiple spaces after ':':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l150">
+                  <tt><i>150</i>     <span class="k">if</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>  <span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Multiple spaces after ':':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l151">
+                  <tt><i>151</i>     <span class="k">elif</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">cm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="n">fs</span> <span class="o">=</span> <span class="mi">8</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Multiple spaces after ',':</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l197">
+                  <tt><i>197</i>              <span class="n">alpha</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l20">
+                  <tt><i>20</i> <span class="w">    </span><span class="sd">&quot;&quot;&quot; Checks input file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l33">
+                  <tt><i>33</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l169">
+                  <tt><i>169</i>     <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E225">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E225:</strong> missing whitespace around operator
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l196">
+                  <tt><i>196</i>     <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">target</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">probPos</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l198">
+                  <tt><i>198</i>     <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">target</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">probPos</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E251">
+               <span class="count sev-2">
+                  2
+               </span>
+               <strong>E251:</strong> unexpected spaces around keyword / parameter equals
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Unexpected spaces around keyword / parameter equals (in 2 places):</p>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l129">
+                  <tt><i>129</i>     <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E126">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E126:</strong> continuation line over-indented for hanging indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l48">
+                  <tt><i>48</i> 		<span class="s1">&#39;input_dataset_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E128">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E128:</strong> continuation line under-indented for visual indent
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l141">
+                  <tt><i>141</i>               <span class="nb">zip</span><span class="p">(</span><span class="n">group_counts</span><span class="p">,</span> <span class="n">group_names</span><span class="p">)]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E211">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E211:</strong> whitespace before '('
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l297">
+                  <tt><i>297</i>             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E275">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E275:</strong> missing whitespace after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l337">
+                  <tt><i>337</i>     <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W292">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W292:</strong> no newline at end of file
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l346">
+                  <tt><i>346</i>         <span class="k">return</span> <span class="n">target</span><span class="p">[</span><span class="s1">&#39;column&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W605">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W605:</strong> invalid escape sequence '\s'
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.neural_networks.common.source.html#l338">
+                  <tt><i>338</i>         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\s+|;|:|,|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

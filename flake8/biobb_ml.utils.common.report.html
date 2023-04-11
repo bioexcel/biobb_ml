@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: biobb_ml/utils/common.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-1"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="biobb_ml.utils.common.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               biobb_ml/utils/common.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="F401">
+               <span class="count sev-1">
+                  2
+               </span>
+               <strong>F401:</strong> 'matplotlib.pyplot as plt' imported but unused
+               
+                  (and 1 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>'matplotlib.pyplot as plt' imported but unused:</p>
+               
+               <a href="biobb_ml.utils.common.source.html#l2">
+                  <tt><i>2</i> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span></tt>
+               </a>
+            </li><li>
+               
+               <p>'importlib.import_module' imported but unused:</p>
+               
+               <a href="biobb_ml.utils.common.source.html#l6">
+                  <tt><i>6</i> <span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E101">
+               <span class="count sev-2">
+                  37
+               </span>
+               <strong>E101:</strong> indentation contains mixed spaces and tabs
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l57">
+                  <tt><i>57</i>     <span class="k">if</span> <span class="s1">&#39;indexes&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l58">
+                  <tt><i>58</i>         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;indexes&#39;</span><span class="p">]]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l59">
+                  <tt><i>59</i>     <span class="k">elif</span> <span class="s1">&#39;range&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l60">
+                  <tt><i>60</i>         <span class="n">ranges_list</span> <span class="o">=</span> <span class="p">[]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l61">
+                  <tt><i>61</i>         <span class="k">for</span> <span class="n">rng</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l62">
+                  <tt><i>62</i>             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l63">
+                  <tt><i>63</i>                 <span class="n">ranges_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l64">
+                  <tt><i>64</i>         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">ranges_list</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l65">
+                  <tt><i>65</i>     <span class="k">elif</span> <span class="s1">&#39;columns&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l66">
+                  <tt><i>66</i>         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l67">
+                  <tt><i>67</i>     <span class="k">else</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l68">
+                  <tt><i>68</i>         <span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Incorrect independent_vars format&#39;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l69">
+                  <tt><i>69</i>         <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Incorrect independent_vars format&#39;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l72">
+                  <tt><i>72</i>     <span class="k">if</span> <span class="s1">&#39;indexes&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l73">
+                  <tt><i>73</i>         <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;indexes&#39;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l74">
+                  <tt><i>74</i>     <span class="k">elif</span> <span class="s1">&#39;range&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l75">
+                  <tt><i>75</i>         <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l76">
+                  <tt><i>76</i>     <span class="k">elif</span> <span class="s1">&#39;columns&#39;</span> <span class="ow">in</span> <span class="n">independent_vars</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l77">
+                  <tt><i>77</i>         <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l81">
+                  <tt><i>81</i>     <span class="k">if</span> <span class="ow">not</span> <span class="n">targets</span> <span class="ow">and</span> <span class="n">tool</span> <span class="o">==</span> <span class="s1">&#39;drop&#39;</span><span class="p">:</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l82">
+                  <tt><i>82</i>     	<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: No targets provided, exiting&#39;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l83">
+                  <tt><i>83</i>     	<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: No targets provided, exiting&#39;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l84">
+                  <tt><i>84</i>     <span class="k">elif</span> <span class="ow">not</span> <span class="n">targets</span> <span class="ow">and</span> <span class="n">tool</span> <span class="o">!=</span> <span class="s1">&#39;drop&#39;</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l85">
+                  <tt><i>85</i>     	<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;No targets provided, all columns will be taken&#39;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l87">
+                  <tt><i>87</i>     <span class="k">if</span> <span class="s1">&#39;indexes&#39;</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l88">
+                  <tt><i>88</i>         <span class="k">return</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;indexes&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l89">
+                  <tt><i>89</i>     <span class="k">elif</span> <span class="s1">&#39;range&#39;</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l90">
+                  <tt><i>90</i>         <span class="k">return</span> <span class="p">([</span><span class="n">y</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l91">
+                  <tt><i>91</i>     <span class="k">elif</span> <span class="s1">&#39;columns&#39;</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l92">
+                  <tt><i>92</i>         <span class="k">return</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l95">
+                  <tt><i>95</i>     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l96">
+                  <tt><i>96</i>         <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l97">
+                  <tt><i>97</i>         <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l99">
+                  <tt><i>99</i>     <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l100">
+                  <tt><i>100</i>         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\s+|;|:|,|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l101">
+                  <tt><i>101</i>     <span class="k">else</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l102">
+                  <tt><i>102</i>         <span class="k">return</span> <span class="n">header</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W191">
+               <span class="count sev-2">
+                  36
+               </span>
+               <strong>W191:</strong> indentation contains tabs
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l16">
+                  <tt><i>16</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks input file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l17">
+                  <tt><i>17</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l18">
+                  <tt><i>18</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting </span><span class="si">%s</span><span class="s1"> file, exiting&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l19">
+                  <tt><i>19</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting </span><span class="si">%s</span><span class="s1"> file&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l20">
+                  <tt><i>20</i> 	<span class="n">file_extension</span> <span class="o">=</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l21">
+                  <tt><i>21</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_file</span><span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l22">
+                  <tt><i>22</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">),</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l23">
+                  <tt><i>23</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l24">
+                  <tt><i>24</i> 	<span class="k">return</span> <span class="n">path</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l27">
+                  <tt><i>27</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l28">
+                  <tt><i>28</i> 	<span class="k">if</span> <span class="n">optional</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l29">
+                  <tt><i>29</i> 		<span class="k">return</span> <span class="kc">None</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l30">
+                  <tt><i>30</i> 	<span class="k">if</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l31">
+                  <tt><i>31</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder, exiting&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l32">
+                  <tt><i>32</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> folder&#39;</span> <span class="o">%</span> <span class="n">argument</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l33">
+                  <tt><i>33</i> 	<span class="n">file_extension</span> <span class="o">=</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l34">
+                  <tt><i>34</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_file</span><span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l35">
+                  <tt><i>35</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">),</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l36">
+                  <tt><i>36</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Format </span><span class="si">%s</span><span class="s1"> in  </span><span class="si">%s</span><span class="s1"> file is not compatible&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_extension</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">argument</span><span class="p">))</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l37">
+                  <tt><i>37</i> 	<span class="k">return</span> <span class="n">path</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l40">
+                  <tt><i>40</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks if file format is compatible &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l41">
+                  <tt><i>41</i> 	<span class="n">formats</span> <span class="o">=</span> <span class="p">{</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l42">
+                  <tt><i>42</i> 		<span class="s1">&#39;input_dataset_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l43">
+                  <tt><i>43</i> 		<span class="s1">&#39;output_dataset_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l44">
+                  <tt><i>44</i> 		<span class="s1">&#39;output_plot_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l45">
+                  <tt><i>45</i> 		<span class="s1">&#39;input_model_path&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;pkl&#39;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l46">
+                  <tt><i>46</i> 	<span class="p">}</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l47">
+                  <tt><i>47</i> 	<span class="k">return</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">[</span><span class="n">argument</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l50">
+                  <tt><i>50</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks if property is mandatory &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l51">
+                  <tt><i>51</i> 	<span class="k">if</span> <span class="ow">not</span> <span class="nb">property</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l52">
+                  <tt><i>52</i> 		<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property, exiting&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l53">
+                  <tt><i>53</i> 		<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: Unexisting  </span><span class="si">%s</span><span class="s1"> property&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l54">
+                  <tt><i>54</i> 	<span class="k">return</span> <span class="nb">property</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l82">
+                  <tt><i>82</i>     	<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: No targets provided, exiting&#39;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l83">
+                  <tt><i>83</i>     	<span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">classname</span> <span class="o">+</span> <span class="s1">&#39;: No targets provided, exiting&#39;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l85">
+                  <tt><i>85</i>     	<span class="n">fu</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;No targets provided, all columns will be taken&#39;</span><span class="p">,</span> <span class="n">out_log</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E302">
+               <span class="count sev-2">
+                  7
+               </span>
+               <strong>E302:</strong> expected 2 blank lines, found 1
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l26">
+                  <tt><i>26</i> <span class="k">def</span> <span class="nf">check_output_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">optional</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l39">
+                  <tt><i>39</i> <span class="k">def</span> <span class="nf">is_valid_file</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l49">
+                  <tt><i>49</i> <span class="k">def</span> <span class="nf">check_mandatory_property</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l56">
+                  <tt><i>56</i> <span class="k">def</span> <span class="nf">getIndependentVars</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l71">
+                  <tt><i>71</i> <span class="k">def</span> <span class="nf">getIndependentVarsList</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l79">
+                  <tt><i>79</i> <span class="k">def</span> <span class="nf">getTargetsList</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">tool</span><span class="p">,</span> <span class="n">out_log</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l94">
+                  <tt><i>94</i> <span class="k">def</span> <span class="nf">getHeader</span><span class="p">(</span><span class="n">file</span><span class="p">):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l16">
+                  <tt><i>16</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks input file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l27">
+                  <tt><i>27</i> <span class="w">	</span><span class="sd">&quot;&quot;&quot; Checks output file &quot;&quot;&quot;</span> </tt>
+               </a>
+            </li><li>
+               
+               <a href="biobb_ml.utils.common.source.html#l81">
+                  <tt><i>81</i>     <span class="k">if</span> <span class="ow">not</span> <span class="n">targets</span> <span class="ow">and</span> <span class="n">tool</span> <span class="o">==</span> <span class="s1">&#39;drop&#39;</span><span class="p">:</span> </tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E211">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E211:</strong> whitespace before '('
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l62">
+                  <tt><i>62</i>             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">rng</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E275">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E275:</strong> missing whitespace after keyword
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l99">
+                  <tt><i>99</i>     <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W292">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W292:</strong> no newline at end of file
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l102">
+                  <tt><i>102</i>         <span class="k">return</span> <span class="n">header</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W605">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W605:</strong> invalid escape sequence '\s'
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="biobb_ml.utils.common.source.html#l100">
+                  <tt><i>100</i>         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\s+|;|:|,|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

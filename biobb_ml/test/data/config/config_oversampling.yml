@@ -1,9 +1,0 @@
-properties:
-  evaluate: true
-  method: random
-  n_bins: 10
-  sampling_strategy:
-    target: minority
-  target:
-    column: VALUE
-  type: regression
