@@ -35,7 +35,7 @@
 7     F841 local variable 'y' is assigned to but never used
 417   W191 indentation contains tabs
 891   W291 trailing whitespace
-64    W292 no newline at end of file
+42    W292 no newline at end of file
 74    W293 blank line contains whitespace
 25    W391 blank line at end of file
 5     W503 line break before binary operator
