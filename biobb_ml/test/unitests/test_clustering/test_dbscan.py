@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.clustering.dbscan import dbscan
 import platform
 
+
 class TestDBSCANClustering():
     def setup_class(self):
-        fx.test_setup(self,'dbscan')
+        fx.test_setup(self, 'dbscan')
 
     def teardown_class(self):
         fx.test_teardown(self)

@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.dimensionality_reduction.pls_regression import pls_regression
 import platform
 
+
 class TestPLS_Regression():
     def setup_class(self):
-        fx.test_setup(self,'pls_regression')
+        fx.test_setup(self, 'pls_regression')
 
     def teardown_class(self):
         fx.test_teardown(self)

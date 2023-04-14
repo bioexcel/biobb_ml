@@ -4,7 +4,7 @@ from biobb_ml.utils.map_variables import map_variables
 
 class TestMapVariables():
     def setup_class(self):
-        fx.test_setup(self,'map_variables')
+        fx.test_setup(self, 'map_variables')
 
     def teardown_class(self):
         fx.test_teardown(self)

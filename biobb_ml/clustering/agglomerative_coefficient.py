@@ -2,19 +2,21 @@
 
 """Module containing the AgglomerativeCoefficient class and the command line interface."""
 import argparse
+import pandas as pd
+import numpy as np
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.clustering.common import *
+from biobb_ml.clustering.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, hopkins, getSilhouetthe, plotAgglomerativeTrain
 
 
 class AgglomerativeCoefficient(BiobbObject):
     """
     | biobb_ml AgglomerativeCoefficient
-    | Wrapper of the scikit-learn AgglomerativeClustering method. 
-    | Clusters a given dataset and calculates best K coefficient. Visit the `AgglomerativeClustering documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn AgglomerativeClustering method.
+    | Clusters a given dataset and calculates best K coefficient. Visit the `AgglomerativeClustering documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_agglomerative_coefficient.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -33,23 +35,23 @@ class AgglomerativeCoefficient(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.clustering.agglomerative_coefficient import agglomerative_coefficient
-            prop = { 
-                'predictors': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'clusters': 3, 
-                'affinity': 'euclidean', 
-                'linkage': 'ward', 
-                'plots': [ 
-                    { 
-                        'title': 'Plot 1', 
-                        'features': ['feat1', 'feat2'] 
-                    } 
-                ] 
+            prop = {
+                'predictors': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'clusters': 3,
+                'affinity': 'euclidean',
+                'linkage': 'ward',
+                'plots': [
+                    {
+                        'title': 'Plot 1',
+                        'features': ['feat1', 'feat2']
+                    }
+                ]
             }
-            agglomerative_coefficient(input_dataset_path='/path/to/myDataset.csv', 
-                                    output_results_path='/path/to/newTable.csv', 
-                                    output_plot_path='/path/to/newPlot.png', 
+            agglomerative_coefficient(input_dataset_path='/path/to/myDataset.csv',
+                                    output_results_path='/path/to/newTable.csv',
+                                    output_plot_path='/path/to/newPlot.png',
                                     properties=prop)
 
     Info:
@@ -63,8 +65,8 @@ class AgglomerativeCoefficient(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -72,9 +74,9 @@ class AgglomerativeCoefficient(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -92,9 +94,9 @@ class AgglomerativeCoefficient(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -104,7 +106,8 @@ class AgglomerativeCoefficient(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -115,7 +118,7 @@ class AgglomerativeCoefficient(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # the features are the predictors
         predictors = getIndependentVars(self.predictors, data, self.out_log, self.__class__.__name__)
@@ -126,13 +129,13 @@ class AgglomerativeCoefficient(BiobbObject):
         fu.log('Performing Hopkins test over dataset. H = %f' % H, self.out_log, self.global_log)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             predictors = scaler.fit_transform(predictors)
 
         # calculate silhouette
-        silhouette_list, s_list = getSilhouetthe(method = 'agglomerative', X = predictors, max_clusters = self.max_clusters, affinity = self.affinity, linkage = self.linkage)
+        silhouette_list, s_list = getSilhouetthe(method='agglomerative', X=predictors, max_clusters=self.max_clusters, affinity=self.affinity, linkage=self.linkage)
 
         # silhouette table
         silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})
@@ -147,10 +150,10 @@ class AgglomerativeCoefficient(BiobbObject):
         results_table = pd.DataFrame(data={'method': ['silhouette'], 'coefficient': [max(silhouette_list)], 'cluster': [best_s]})
         fu.log('Gathering results\n\nRESULTS TABLE\n\n%s\n' % results_table.to_string(index=False), self.out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        results_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        results_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # wcss plot
-        if self.io_dict["out"]["output_plot_path"]: 
+        if self.io_dict["out"]["output_plot_path"]:
             fu.log('Saving methods plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot = plotAgglomerativeTrain(self.max_clusters, silhouette_list, best_s)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
@@ -167,14 +170,16 @@ class AgglomerativeCoefficient(BiobbObject):
 
         return 0
 
+
 def agglomerative_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`AgglomerativeCoefficient <clustering.agglomerative_coefficient.AgglomerativeCoefficient>` class and
     execute the :meth:`launch() <clustering.agglomerative_coefficient.AgglomerativeCoefficient.launch>` method."""
 
-    return AgglomerativeCoefficient(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return AgglomerativeCoefficient(input_dataset_path=input_dataset_path,
+                                    output_results_path=output_results_path,
+                                    output_plot_path=output_plot_path,
+                                    properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -193,9 +198,10 @@ def main():
 
     # Specific call of each building block
     agglomerative_coefficient(input_dataset_path=args.input_dataset_path,
-                               output_results_path=args.output_results_path, 
-                               output_plot_path=args.output_plot_path, 
-                               properties=properties)
+                              output_results_path=args.output_results_path,
+                              output_plot_path=args.output_plot_path,
+                              properties=properties)
+
 
 if __name__ == '__main__':
     main()

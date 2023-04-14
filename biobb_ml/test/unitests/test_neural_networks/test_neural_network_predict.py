@@ -4,7 +4,7 @@ from biobb_ml.neural_networks.neural_network_predict import neural_network_predi
 
 class TestPredictNeuralNetwork():
     def setup_class(self):
-        fx.test_setup(self,'neural_network_predict')
+        fx.test_setup(self, 'neural_network_predict')
 
     def teardown_class(self):
         fx.test_teardown(self)

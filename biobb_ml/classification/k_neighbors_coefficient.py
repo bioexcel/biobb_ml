@@ -2,22 +2,25 @@
 
 """Module containing the KNeighborsCoefficient class and the command line interface."""
 import argparse
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, log_loss
 from sklearn.neighbors import KNeighborsClassifier
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.classification.common import *
+from biobb_ml.classification.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTarget, getTargetValue, getWeight
 
 
 class KNeighborsCoefficient(BiobbObject):
     """
     | biobb_ml KNeighborsCoefficient
-    | Wrapper of the scikit-learn KNeighborsClassifier method. 
-    | Trains and tests a given dataset and calculates the best K coefficient. Visit the `KNeighborsClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn KNeighborsClassifier method.
+    | Trains and tests a given dataset and calculates the best K coefficient. Visit the `KNeighborsClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_k_neighbors_coefficient.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -38,19 +41,19 @@ class KNeighborsCoefficient(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.classification.k_neighbors_coefficient import k_neighbors_coefficient
-            prop = { 
-                'independent_vars': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'max_neighbors': 6, 
-                'test_size': 0.2 
+            prop = {
+                'independent_vars': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'max_neighbors': 6,
+                'test_size': 0.2
             }
-            k_neighbors_coefficient(input_dataset_path='/path/to/myDataset.csv', 
-                                    output_results_path='/path/to/newTable.csv', 
-                                    output_plot_path='/path/to/newPlot.png', 
+            k_neighbors_coefficient(input_dataset_path='/path/to/myDataset.csv',
+                                    output_results_path='/path/to/newTable.csv',
+                                    output_plot_path='/path/to/newPlot.png',
                                     properties=prop)
 
     Info:
@@ -64,8 +67,8 @@ class KNeighborsCoefficient(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -73,9 +76,9 @@ class KNeighborsCoefficient(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -96,9 +99,9 @@ class KNeighborsCoefficient(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -108,7 +111,8 @@ class KNeighborsCoefficient(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -119,7 +123,7 @@ class KNeighborsCoefficient(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -139,39 +143,39 @@ class KNeighborsCoefficient(BiobbObject):
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
 
         # training and getting accuracy for each K
         fu.log('Training dataset applying k neighbors classification from 1 to %d n_neighbors' % self.max_neighbors, self.out_log, self.global_log)
-        neighbors = np.arange(1,self.max_neighbors + 1)
+        neighbors = np.arange(1, self.max_neighbors + 1)
         train_accuracy = np.empty(len(neighbors))
         test_accuracy = np.empty(len(neighbors))
         std_acc = np.zeros((self.max_neighbors))
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             X_test = scaler.fit_transform(X_test)
 
-        for i,k in enumerate(neighbors):
-            #Setup a knn classifier with k neighbors
-            model = KNeighborsClassifier(n_neighbors = k)
-            #Fit the model
+        for i, k in enumerate(neighbors):
+            # Setup a knn classifier with k neighbors
+            model = KNeighborsClassifier(n_neighbors=k)
+            # Fit the model
             arrays_fit = (X_train, y_train)
             # if user provide weights
             if self.weight:
                 arrays_fit = arrays_fit + (w_train,)
             model.fit(*arrays_fit)
-            #Compute accuracy on the training set
+            # Compute accuracy on the training set
             train_accuracy[i] = model.score(X_train, y_train)
-            #Compute accuracy on the test set
+            # Compute accuracy on the test set
             test_accuracy[i] = model.score(X_test, y_test)
             # deviation
             yhat_test = model.predict(X_test)
@@ -193,13 +197,13 @@ class KNeighborsCoefficient(BiobbObject):
         fu.log('Calculating report for testing dataset and best K = %d | accuracy = %.3f\n\nCLASSIFICATION REPORT\n\n%s\nLog loss: %.3f\n' % (best_k, best_accuracy, cr_test, l_loss), self.out_log, self.global_log)
 
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        test_table_accuracy.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        test_table_accuracy.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # accuracy plot
-        if self.io_dict["out"]["output_plot_path"]: 
+        if self.io_dict["out"]["output_plot_path"]:
             fu.log('Saving accuracy plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plt.title('k-NN Varying number of neighbors')
-            plt.fill_between(range(1, self.max_neighbors + 1), test_accuracy - std_acc, test_accuracy + std_acc, alpha = 0.10)
+            plt.fill_between(range(1, self.max_neighbors + 1), test_accuracy - std_acc, test_accuracy + std_acc, alpha=0.10)
             plt.plot(neighbors, train_accuracy)
             plt.plot(neighbors, test_accuracy)
             plt.axvline(x=best_k, c='red')
@@ -221,14 +225,16 @@ class KNeighborsCoefficient(BiobbObject):
 
         return 0
 
+
 def k_neighbors_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`KNeighborsCoefficient <classification.k_neighbors_coefficient.KNeighborsCoefficient>` class and
     execute the :meth:`launch() <classification.k_neighbors_coefficient.KNeighborsCoefficient.launch>` method."""
 
-    return KNeighborsCoefficient(input_dataset_path=input_dataset_path, 
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return KNeighborsCoefficient(input_dataset_path=input_dataset_path,
+                                 output_results_path=output_results_path,
+                                 output_plot_path=output_plot_path,
+                                 properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -247,10 +253,10 @@ def main():
 
     # Specific call of each building block
     k_neighbors_coefficient(input_dataset_path=args.input_dataset_path,
-                           output_results_path=args.output_results_path, 
-                           output_plot_path=args.output_plot_path, 
-                           properties=properties)
+                            output_results_path=args.output_results_path,
+                            output_plot_path=args.output_plot_path,
+                            properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

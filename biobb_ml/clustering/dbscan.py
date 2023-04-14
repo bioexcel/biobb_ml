@@ -2,19 +2,21 @@
 
 """Module containing the DBSCANClustering class and the command line interface."""
 import argparse
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
-from biobb_common.configuration import  settings
+from sklearn.cluster import DBSCAN
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.clustering.common import *
+from biobb_ml.clustering.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, hopkins, plotCluster
 
 
 class DBSCANClustering(BiobbObject):
     """
     | biobb_ml DBSCANClustering
-    | Wrapper of the scikit-learn DBSCAN method. 
-    | Clusters a given dataset. Visit the `DBSCAN documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn DBSCAN method.
+    | Clusters a given dataset. Visit the `DBSCAN documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_dbscan.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -34,23 +36,23 @@ class DBSCANClustering(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.clustering.dbscan import dbscan
-            prop = { 
-                'predictors': { 
-                        'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'eps': 1.4, 
-                'min_samples': 3, 
-                'metric': 'euclidean', 
-                'plots': [ 
-                    { 
-                        'title': 'Plot 1', 
-                        'features': ['feat1', 'feat2'] 
-                    } 
-                ] 
+            prop = {
+                'predictors': {
+                        'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'eps': 1.4,
+                'min_samples': 3,
+                'metric': 'euclidean',
+                'plots': [
+                    {
+                        'title': 'Plot 1',
+                        'features': ['feat1', 'feat2']
+                    }
+                ]
             }
-            dbscan(input_dataset_path='/path/to/myDataset.csv', 
-                    output_results_path='/path/to/newTable.csv', 
-                    output_plot_path='/path/to/newPlot.png', 
+            dbscan(input_dataset_path='/path/to/myDataset.csv',
+                    output_results_path='/path/to/newTable.csv',
+                    output_plot_path='/path/to/newPlot.png',
                     properties=prop)
 
     Info:
@@ -64,8 +66,8 @@ class DBSCANClustering(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -73,9 +75,9 @@ class DBSCANClustering(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -94,9 +96,9 @@ class DBSCANClustering(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -106,7 +108,8 @@ class DBSCANClustering(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -117,7 +120,7 @@ class DBSCANClustering(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # the features are the predictors
         predictors = getIndependentVars(self.predictors, data, self.out_log, self.__class__.__name__)
@@ -128,7 +131,7 @@ class DBSCANClustering(BiobbObject):
         fu.log('Performing Hopkins test over dataset. H = %f' % H, self.out_log, self.global_log)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             predictors = scaler.fit_transform(predictors)
@@ -147,7 +150,8 @@ class DBSCANClustering(BiobbObject):
 
         # get number of clusters discarding outliers
         clstrs = set(clusters['cluster'])
-        if -1 in clstrs: clstrs.remove(-1)
+        if -1 in clstrs:
+            clstrs.remove(-1)
         fu.log('Total of clusters computed by DBSCAN = %d' % len(clstrs), self.out_log, self.global_log)
 
         outliers = clusters['cluster'].tolist().count(-1)
@@ -156,9 +160,9 @@ class DBSCANClustering(BiobbObject):
 
         # save results
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        clusters.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        clusters.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
-        if self.io_dict["out"]["output_plot_path"] and self.plots: 
+        if self.io_dict["out"]["output_plot_path"] and self.plots:
             new_plots = []
             i = 0
             for plot in self.plots:
@@ -184,14 +188,16 @@ class DBSCANClustering(BiobbObject):
 
         return 0
 
+
 def dbscan(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`DBSCANClustering <clustering.dbscan.DBSCANClustering>` class and
     execute the :meth:`launch() <clustering.dbscan.DBSCANClustering.launch>` method."""
 
-    return DBSCANClustering(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return DBSCANClustering(input_dataset_path=input_dataset_path,
+                            output_results_path=output_results_path,
+                            output_plot_path=output_plot_path,
+                            properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -210,9 +216,10 @@ def main():
 
     # Specific call of each building block
     dbscan(input_dataset_path=args.input_dataset_path,
-           output_results_path=args.output_results_path, 
-           output_plot_path=args.output_plot_path, 
+           output_results_path=args.output_results_path,
+           output_plot_path=args.output_plot_path,
            properties=properties)
+
 
 if __name__ == '__main__':
     main()

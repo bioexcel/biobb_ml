@@ -3,22 +3,24 @@
 """Module containing the RandomForestClassifier class and the command line interface."""
 import argparse
 import joblib
+import pandas as pd
+import numpy as np
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report, log_loss
 from sklearn import ensemble
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.classification.common import *
+from biobb_ml.classification.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTarget, getTargetValue, getWeight, plotMultipleCM, plotBinaryClassifier
 
 
 class RandomForestClassifier(BiobbObject):
     """
     | biobb_ml RandomForestClassifier
     | Wrapper of the scikit-learn RandomForestClassifier method.
-    | Trains and tests a given dataset and saves the model and scaler. Visit the `RandomForestClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>`_ in the sklearn official website for further information. 
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `RandomForestClassifier documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_random_forest_classifier.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -43,20 +45,20 @@ class RandomForestClassifier(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.classification.random_forest_classifier import random_forest_classifier
-            prop = { 
-                'independent_vars': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'n_estimators': 100, 
-                'test_size': 0.2 
+            prop = {
+                'independent_vars': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'n_estimators': 100,
+                'test_size': 0.2
             }
-            random_forest_classifier(input_dataset_path='/path/to/myDataset.csv', 
-                                    output_model_path='/path/to/newModel.pkl', 
-                                    output_test_table_path='/path/to/newTable.csv', 
-                                    output_plot_path='/path/to/newPlot.png', 
+            random_forest_classifier(input_dataset_path='/path/to/myDataset.csv',
+                                    output_model_path='/path/to/newModel.pkl',
+                                    output_test_table_path='/path/to/newTable.csv',
+                                    output_plot_path='/path/to/newPlot.png',
                                     properties=prop)
 
     Info:
@@ -70,8 +72,8 @@ class RandomForestClassifier(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_model_path, 
-                output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_model_path,
+                 output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -79,9 +81,9 @@ class RandomForestClassifier(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -90,7 +92,7 @@ class RandomForestClassifier(BiobbObject):
         self.weight = properties.get('weight', {})
         self.n_estimators = properties.get('n_estimators', 100)
         self.bootstrap = properties.get('bootstrap', True)
-        self.normalize_cm =  properties.get('normalize_cm', False)
+        self.normalize_cm = properties.get('normalize_cm', False)
         self.random_state_method = properties.get('random_state_method', 5)
         self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
@@ -104,11 +106,11 @@ class RandomForestClassifier(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"], "output_model_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_test_table_path"]:
-            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"], "output_test_table_path", True, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -118,7 +120,8 @@ class RandomForestClassifier(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -129,7 +132,7 @@ class RandomForestClassifier(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -149,26 +152,26 @@ class RandomForestClassifier(BiobbObject):
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
 
         # classification
         fu.log('Training dataset applying random forest classification', self.out_log, self.global_log)
-        model = ensemble.RandomForestClassifier(n_estimators = self.n_estimators,  bootstrap = self.bootstrap, random_state = self.random_state_method)
+        model = ensemble.RandomForestClassifier(n_estimators=self.n_estimators, bootstrap=self.bootstrap, random_state=self.random_state_method)
         arrays_fit = (X_train, y_train)
         # if user provide weights
         if self.weight:
             arrays_fit = arrays_fit + (w_train,)
 
         model.fit(*arrays_fit)
-        
+
         y_hat_train = model.predict(X_train)
         # classification report
         cr_train = classification_report(y_train, y_hat_train)
@@ -190,7 +193,7 @@ class RandomForestClassifier(BiobbObject):
 
         # testing
         if self.scale:
-            X_test = scaler.transform(X_test)        
+            X_test = scaler.transform(X_test)
         y_hat_test = model.predict(X_test)
         test_table = pd.DataFrame()
         y_hat_prob = model.predict_proba(X_test)
@@ -219,12 +222,12 @@ class RandomForestClassifier(BiobbObject):
 
         fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix), self.out_log, self.global_log)
 
-        if(self.io_dict["out"]["output_test_table_path"]): 
+        if (self.io_dict["out"]["output_test_table_path"]):
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
-            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
+            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index=False, header=True)
 
-        # plot 
-        if self.io_dict["out"]["output_plot_path"]: 
+        # plot
+        if self.io_dict["out"]["output_plot_path"]:
             vs = y.unique().tolist()
             vs.sort()
             if len(vs) > 2:
@@ -247,7 +250,8 @@ class RandomForestClassifier(BiobbObject):
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
-            if self.scale: joblib.dump(scaler, f)
+            if self.scale:
+                joblib.dump(scaler, f)
             joblib.dump(variables, f)
 
         # Copy files to host
@@ -262,15 +266,17 @@ class RandomForestClassifier(BiobbObject):
 
         return 0
 
+
 def random_forest_classifier(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`RandomForestClassifier <classification.random_forest_classifier.RandomForestClassifier>` class and
     execute the :meth:`launch() <classification.random_forest_classifier.RandomForestClassifier.launch>` method."""
 
-    return RandomForestClassifier(input_dataset_path=input_dataset_path, 
-                   output_model_path=output_model_path, 
-                   output_test_table_path=output_test_table_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return RandomForestClassifier(input_dataset_path=input_dataset_path,
+                                  output_model_path=output_model_path,
+                                  output_test_table_path=output_test_table_path,
+                                  output_plot_path=output_plot_path,
+                                  properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -290,11 +296,11 @@ def main():
 
     # Specific call of each building block
     random_forest_classifier(input_dataset_path=args.input_dataset_path,
-                           output_model_path=args.output_model_path, 
-                           output_test_table_path=args.output_test_table_path, 
-                           output_plot_path=args.output_plot_path, 
-                           properties=properties)
+                             output_model_path=args.output_model_path,
+                             output_test_table_path=args.output_test_table_path,
+                             output_plot_path=args.output_plot_path,
+                             properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

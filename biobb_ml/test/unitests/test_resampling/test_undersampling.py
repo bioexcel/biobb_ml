@@ -4,7 +4,7 @@ from biobb_ml.resampling.undersampling import undersampling
 
 class TestUndersampling():
     def setup_class(self):
-        fx.test_setup(self,'undersampling')
+        fx.test_setup(self, 'undersampling')
 
     def teardown_class(self):
         fx.test_teardown(self)

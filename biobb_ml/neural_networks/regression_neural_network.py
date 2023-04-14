@@ -4,26 +4,27 @@
 import argparse
 import h5py
 import json
+import numpy as np
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
-#from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.callbacks import EarlyStopping
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.neural_networks.common import *
+from biobb_ml.neural_networks.common import check_input_path, check_output_path, getHeader, getTargetValue, plotResultsReg, getFeatures, getIndependentVarsList, getTarget, getWeight
 
 
 class RegressionNeuralNetwork(BiobbObject):
     """
     | biobb_ml RegressionNeuralNetwork
     | Wrapper of the TensorFlow Keras Sequential method for regression.
-    | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `Sequential documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ in the TensorFlow Keras official website for further information. 
+    | Trains and tests a given dataset and save the complete model for a Neural Network Regression. Visit the `Sequential documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/Sequential>`_ in the TensorFlow Keras official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_regression.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -51,23 +52,23 @@ class RegressionNeuralNetwork(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.neural_networks.regression_neural_network import regression_neural_network
-            prop = { 
+            prop = {
                 'features': {
-                    'columns': [ 'column1', 'column2', 'column3' ] 
+                    'columns': [ 'column1', 'column2', 'column3' ]
                 },
-                'target': { 
-                    'column': 'target' 
+                'target': {
+                    'column': 'target'
                 },
                 'validation_size': 0.2,
                 'test_size': .33,
                 'hidden_layers': [
-                    { 
-                        'size': 10, 
-                        'activation': 'relu' 
+                    {
+                        'size': 10,
+                        'activation': 'relu'
                     },
-                    { 
-                        'size': 8, 
-                        'activation': 'relu' 
+                    {
+                        'size': 8,
+                        'activation': 'relu'
                     }
                 ],
                 'optimizer': 'Adam',
@@ -75,9 +76,9 @@ class RegressionNeuralNetwork(BiobbObject):
                 'batch_size': 32,
                 'max_epochs': 150
             }
-            regression_neural_network(input_dataset_path='/path/to/myDataset.csv', 
-                                        output_model_path='/path/to/newModel.h5', 
-                                        output_test_table_path='/path/to/newTable.csv', 
+            regression_neural_network(input_dataset_path='/path/to/myDataset.csv',
+                                        output_model_path='/path/to/newModel.h5',
+                                        output_test_table_path='/path/to/newTable.csv',
                                         output_plot_path='/path/to/newPlot.png',
                                         properties=prop)
 
@@ -101,9 +102,9 @@ class RegressionNeuralNetwork(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -129,9 +130,9 @@ class RegressionNeuralNetwork(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"], "output_model_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"], "output_test_table_path", True, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     def build_model(self, input_shape):
         """ Builds Neural network according to hidden_layers property """
@@ -141,16 +142,16 @@ class RegressionNeuralNetwork(BiobbObject):
 
         # if no hidden_layers provided, create manually a hidden layer with default values
         if not self.hidden_layers:
-            self.hidden_layers = [ { 'size': 50, 'activation': 'relu' } ]
+            self.hidden_layers = [{'size': 50, 'activation': 'relu'}]
 
         # generate hidden_layers
-        for i,layer in enumerate(self.hidden_layers):
+        for i, layer in enumerate(self.hidden_layers):
             if i == 0:
-                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal', input_shape = input_shape)) # 1st hidden layer
+                model.add(Dense(layer['size'], activation=layer['activation'], kernel_initializer='he_normal', input_shape=input_shape))  # 1st hidden layer
             else:
-                model.add(Dense(layer['size'], activation = layer['activation'], kernel_initializer='he_normal'))
+                model.add(Dense(layer['size'], activation=layer['activation'], kernel_initializer='he_normal'))
 
-        model.add(Dense(1)) # output layer
+        model.add(Dense(1))  # output layer
 
         return model
 
@@ -162,7 +163,8 @@ class RegressionNeuralNetwork(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -173,7 +175,7 @@ class RegressionNeuralNetwork(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         X = getFeatures(self.features, data, self.out_log, self.__class__.__name__)
         fu.log('Features: [%s]' % (getIndependentVarsList(self.features)), self.out_log, self.global_log)
@@ -191,7 +193,8 @@ class RegressionNeuralNetwork(BiobbObject):
         np_X = X.to_numpy()
         shuffled_X = np_X[shuffled_indices]
         shuffled_y = y[shuffled_indices]
-        if self.weight: shuffled_w = w[shuffled_indices]
+        if self.weight:
+            shuffled_w = w[shuffled_indices]
 
         # train / test split
         fu.log('Creating train and test sets', self.out_log, self.global_log)
@@ -199,12 +202,12 @@ class RegressionNeuralNetwork(BiobbObject):
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (shuffled_w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             X_train = scale(X_train)
 
@@ -219,11 +222,11 @@ class RegressionNeuralNetwork(BiobbObject):
         fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         # get optimizer
-        mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
+        mod = __import__('tensorflow.keras.optimizers', fromlist=[self.optimizer])
         opt_class = getattr(mod, self.optimizer)
-        opt = opt_class(lr = self.learning_rate)
+        opt = opt_class(lr=self.learning_rate)
         # compile model
-        model.compile(optimizer = opt, loss = 'mse', metrics = ['mae', 'mse'], sample_weight_mode='samplewise')
+        model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'], sample_weight_mode='samplewise')
 
         # fitting
         fu.log('Training model', self.out_log, self.global_log)
@@ -231,36 +234,36 @@ class RegressionNeuralNetwork(BiobbObject):
         # set patience=2, to be a bit tolerant against random validation loss increases
         early_stopping = EarlyStopping(patience=2)
 
-        if self.weight: 
+        if self.weight:
             sample_weight = w_train
             class_weight = []
         else:
             # TODO: class_weight not working since TF 2.4.1 update
-            #fu.log('No weight provided, class_weight will be estimated from the target data', self.out_log, self.global_log)
+            # fu.log('No weight provided, class_weight will be estimated from the target data', self.out_log, self.global_log)
             sample_weight = None
-            class_weight = []#compute_class_weight('balanced', np.unique(y_train), y_train)
+            class_weight = []  # compute_class_weight('balanced', np.unique(y_train), y_train)
 
         # fit the model
-        mf = model.fit(X_train, 
-                       y_train, 
+        mf = model.fit(X_train,
+                       y_train,
                        class_weight=class_weight,
-                       sample_weight = sample_weight,
-                       batch_size=self.batch_size, 
-                       epochs=self.max_epochs, 
-                       callbacks=[early_stopping], 
+                       sample_weight=sample_weight,
+                       batch_size=self.batch_size,
+                       epochs=self.max_epochs,
+                       callbacks=[early_stopping],
                        validation_split=self.validation_size,
-                       verbose = 1)
+                       verbose=1)
 
         fu.log('Total epochs performed: %s' % len(mf.history['loss']), self.out_log, self.global_log)
 
         # predict data from X_train
         train_predictions = model.predict(X_train)
-        train_predictions = np.around(train_predictions, decimals=2)    
+        train_predictions = np.around(train_predictions, decimals=2)
 
         score_train_inputs = (y_train, train_predictions)
         if self.weight:
             score_train_inputs = score_train_inputs + (w_train,)
-        train_score = r2_score(*score_train_inputs)    
+        train_score = r2_score(*score_train_inputs)
 
         train_metrics = pd.DataFrame()
         train_metrics['metric'] = ['Train loss', 'Train MAE', 'Train MSE', 'Train R2', 'Validation loss', 'Validation MAE', 'Validation MSE']
@@ -269,14 +272,14 @@ class RegressionNeuralNetwork(BiobbObject):
         fu.log('Training metrics\n\nTRAINING METRICS TABLE\n\n%s\n' % train_metrics, self.out_log, self.global_log)
 
         # testing
-        if self.scale: 
+        if self.scale:
             X_test = scale(X_test)
         fu.log('Testing model', self.out_log, self.global_log)
         test_loss, test_mae, test_mse = model.evaluate(X_test, y_test)
 
         # predict data from X_test
         test_predictions = model.predict(X_test)
-        test_predictions = np.around(test_predictions, decimals=2)        
+        test_predictions = np.around(test_predictions, decimals=2)
         tpr = np.squeeze(np.asarray(test_predictions))
 
         score_test_inputs = (y_test, test_predictions)
@@ -302,12 +305,12 @@ class RegressionNeuralNetwork(BiobbObject):
         fu.log('TEST DATA\n\n%s\n' % test_table, self.out_log, self.global_log)
 
         # save test data
-        if(self.io_dict["out"]["output_test_table_path"]): 
+        if (self.io_dict["out"]["output_test_table_path"]):
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
-            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
+            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index=False, header=True)
 
         # create test plot
-        if(self.io_dict["out"]["output_plot_path"]): 
+        if (self.io_dict["out"]["output_plot_path"]):
             fu.log('Saving plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             test_predictions = test_predictions.flatten()
             train_predictions = model.predict(X_train).flatten()
@@ -339,15 +342,17 @@ class RegressionNeuralNetwork(BiobbObject):
 
         return 0
 
+
 def regression_neural_network(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`RegressionNeuralNetwork <neural_networks.regression_neural_network.RegressionNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.regression_neural_network.RegressionNeuralNetwork.launch>` method."""
 
-    return RegressionNeuralNetwork(input_dataset_path=input_dataset_path,  
-                   output_model_path=output_model_path, 
-                   output_test_table_path=output_test_table_path,
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return RegressionNeuralNetwork(input_dataset_path=input_dataset_path,
+                                   output_model_path=output_model_path,
+                                   output_test_table_path=output_test_table_path,
+                                   output_plot_path=output_plot_path,
+                                   properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -359,7 +364,7 @@ def main():
     required_args.add_argument('--input_dataset_path', required=True, help='Path to the input dataset. Accepted formats: csv.')
     required_args.add_argument('--output_model_path', required=True, help='Path to the output model file. Accepted formats: h5.')
     parser.add_argument('--output_test_table_path', required=False, help='Path to the test table file. Accepted formats: csv.')
-    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')    
+    parser.add_argument('--output_plot_path', required=False, help='Loss, MAE and MSE plots. Accepted formats: png.')
 
     args = parser.parse_args()
     args.config = args.config or "{}"
@@ -367,11 +372,11 @@ def main():
 
     # Specific call of each building block
     regression_neural_network(input_dataset_path=args.input_dataset_path,
-                               output_model_path=args.output_model_path, 
-                               output_test_table_path=args.output_test_table_path, 
-                               output_plot_path=args.output_plot_path, 
-                               properties=properties)
+                              output_model_path=args.output_model_path,
+                              output_test_table_path=args.output_test_table_path,
+                              output_plot_path=args.output_plot_path,
+                              properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

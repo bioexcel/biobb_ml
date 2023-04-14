@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.dimensionality_reduction.pls_components import pls_components
 import platform
 
+
 class TestPLSComponents():
     def setup_class(self):
-        fx.test_setup(self,'pls_components')
+        fx.test_setup(self, 'pls_components')
 
     def teardown_class(self):
         fx.test_teardown(self)

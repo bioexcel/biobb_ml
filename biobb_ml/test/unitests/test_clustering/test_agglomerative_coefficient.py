@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.clustering.agglomerative_coefficient import agglomerative_coefficient
 import platform
 
+
 class TestAgglomerativeCoefficient():
     def setup_class(self):
-        fx.test_setup(self,'agglomerative_coefficient')
+        fx.test_setup(self, 'agglomerative_coefficient')
 
     def teardown_class(self):
         fx.test_teardown(self)

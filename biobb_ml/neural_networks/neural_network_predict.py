@@ -4,13 +4,17 @@
 import argparse
 import h5py
 import json
+import csv
+import numpy as np
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
 from sklearn.preprocessing import scale
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.neural_networks.common import *
+from biobb_ml.neural_networks.common import check_input_path, check_output_path, getHeader, getTargetValue, get_list_of_predictors, get_keys_of_predictors, get_num_cols
+
 
 class PredictNeuralNetwork(BiobbObject):
     """
@@ -31,20 +35,20 @@ class PredictNeuralNetwork(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.neural_networks.neural_network_predict import neural_network_predict
-            prop = { 
+            prop = {
                 'predictions': [
-                    { 
-                        'var1': 1.0, 
-                        'var2': 2.0 
-                    }, 
-                    { 
-                        'var1': 4.0, 
-                        'var2': 2.7 
+                    {
+                        'var1': 1.0,
+                        'var2': 2.0
+                    },
+                    {
+                        'var1': 4.0,
+                        'var2': 2.7
                     }
-                ] 
+                ]
             }
-            neural_network_predict(input_model_path='/path/to/myModel.h5', 
-                                    input_dataset_path='/path/to/myDataset.csv', 
+            neural_network_predict(input_model_path='/path/to/myModel.h5',
+                                    input_dataset_path='/path/to/myDataset.csv',
                                     output_results_path='/path/to/newPredictedResults.csv',
                                     properties=prop)
 
@@ -56,11 +60,11 @@ class PredictNeuralNetwork(BiobbObject):
         * ontology:
             * name: EDAM
             * schema: http://edamontology.org/EDAM.owl
-            
+
     """
 
-    def __init__(self, input_model_path, output_results_path, 
-                input_dataset_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path, output_results_path,
+                 input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -68,9 +72,9 @@ class PredictNeuralNetwork(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_model_path": input_model_path, "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path } 
+        self.io_dict = {
+            "in": {"input_model_path": input_model_path, "input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path}
         }
 
         # Properties specific for BB
@@ -84,7 +88,7 @@ class PredictNeuralNetwork(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["in"]["input_dataset_path"]:
             self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", False, out_log, self.__class__.__name__)
 
@@ -96,7 +100,8 @@ class PredictNeuralNetwork(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], self.out_log, self.global_log)
@@ -120,8 +125,8 @@ class PredictNeuralNetwork(BiobbObject):
                 labels = None
                 skiprows = None
                 with open(self.io_dict["in"]["input_dataset_path"]) as csvfile:
-                    reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
-                    for row in reader: # each row is a list
+                    reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC)  # change contents to floats
+                    for row in reader:  # each row is a list
                         self.predictions.append(row)
             else:
                 # classification or regression
@@ -131,10 +136,10 @@ class PredictNeuralNetwork(BiobbObject):
                 else:
                     labels = None
                     skiprows = None
-            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
         else:
             if vars_obj['type'] != 'recurrent':
-                new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+                new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions), columns=get_keys_of_predictors(self.predictions))
             else:
                 new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
 
@@ -142,15 +147,16 @@ class PredictNeuralNetwork(BiobbObject):
         if vars_obj['type'] != 'recurrent':
             # classification or regression
 
-            #new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
+            # new_data_table = pd.DataFrame(data=get_list_of_predictors(self.predictions),columns=get_keys_of_predictors(self.predictions))
             new_data = new_data_table
-            if vars_obj['scale']: new_data = scale(new_data)
+            if vars_obj['scale']:
+                new_data = scale(new_data)
 
             predictions = new_model.predict(new_data)
             predictions = np.around(predictions, decimals=2)
 
             clss = ''
-            #if predictions.shape[1] > 1:
+            # if predictions.shape[1] > 1:
             if vars_obj['type'] == 'classification':
                 # classification
                 pr = tuple(map(tuple, predictions))
@@ -164,7 +170,7 @@ class PredictNeuralNetwork(BiobbObject):
         else:
             # recurrent
 
-            #new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
+            # new_data_table = pd.DataFrame(data=self.predictions, columns=get_num_cols(vars_obj['window_size']))
             predictions = []
 
             for r in self.predictions:
@@ -175,12 +181,12 @@ class PredictNeuralNetwork(BiobbObject):
 
                 predictions.append(pred[0][0])
 
-            #pd.set_option('display.float_format', lambda x: '%.2f' % x)
-            new_data_table["predictions"] = predictions 
+            # pd.set_option('display.float_format', lambda x: '%.2f' % x)
+            new_data_table["predictions"] = predictions
 
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, self.out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # Copy files to host
         self.copy_to_host()
@@ -194,14 +200,16 @@ class PredictNeuralNetwork(BiobbObject):
 
         return 0
 
+
 def neural_network_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PredictNeuralNetwork <neural_networks.neural_network_predict.PredictNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.neural_network_predict.PredictNeuralNetwork.launch>` method."""
 
-    return PredictNeuralNetwork(input_model_path=input_model_path,  
-                   output_results_path=output_results_path, 
-                   input_dataset_path=input_dataset_path,
-                   properties=properties, **kwargs).launch()
+    return PredictNeuralNetwork(input_model_path=input_model_path,
+                                output_results_path=output_results_path,
+                                input_dataset_path=input_dataset_path,
+                                properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -220,9 +228,10 @@ def main():
 
     # Specific call of each building block
     neural_network_predict(input_model_path=args.input_model_path,
-                           output_results_path=args.output_results_path, 
+                           output_results_path=args.output_results_path,
                            input_dataset_path=args.input_dataset_path,
                            properties=properties)
+
 
 if __name__ == '__main__':
     main()

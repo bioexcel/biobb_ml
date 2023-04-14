@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.regression.polynomial_regression import polynomial_regression
 import platform
 
+
 class TestPolynomialRegression():
     def setup_class(self):
-        fx.test_setup(self,'polynomial_regression')
+        fx.test_setup(self, 'polynomial_regression')
 
     def teardown_class(self):
         fx.test_teardown(self)

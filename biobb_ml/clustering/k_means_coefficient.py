@@ -2,19 +2,21 @@
 
 """Module containing the KMeansCoefficient class and the command line interface."""
 import argparse
+import pandas as pd
+import numpy as np
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.clustering.common import *
+from biobb_ml.clustering.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, hopkins, getWCSS, get_best_K, getGap, getSilhouetthe, plotKmeansTrain
 
 
 class KMeansCoefficient(BiobbObject):
     """
     | biobb_ml KMeansCoefficient
-    | Wrapper of the scikit-learn KMeans method. 
-    | Clusters a given dataset and calculates best K coefficient. Visit the `KMeans documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn KMeans method.
+    | Clusters a given dataset and calculates best K coefficient. Visit the `KMeans documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_k_means_coefficient.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -32,17 +34,17 @@ class KMeansCoefficient(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.clustering.k_means_coefficient import k_means_coefficient
-            prop = { 
-                'predictors': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'max_clusters': 3 
+            prop = {
+                'predictors': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'max_clusters': 3
             }
-            k_means_coefficient(input_dataset_path='/path/to/myDataset.csv', 
-                                output_results_path='/path/to/newTable.csv', 
-                                output_plot_path='/path/to/newPlot.png', 
+            k_means_coefficient(input_dataset_path='/path/to/myDataset.csv',
+                                output_results_path='/path/to/newTable.csv',
+                                output_plot_path='/path/to/newPlot.png',
                                 properties=prop)
-    
+
     Info:
         * wrapped_software:
             * name: scikit-learn KMeans
@@ -54,8 +56,8 @@ class KMeansCoefficient(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -63,9 +65,9 @@ class KMeansCoefficient(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -82,9 +84,9 @@ class KMeansCoefficient(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -94,9 +96,10 @@ class KMeansCoefficient(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
-        
+
         # load dataset
         fu.log('Getting dataset from %s' % self.io_dict["in"]["input_dataset_path"], self.out_log, self.global_log)
         if 'columns' in self.predictors:
@@ -105,7 +108,7 @@ class KMeansCoefficient(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # the features are the predictors
         predictors = getIndependentVars(self.predictors, data, self.out_log, self.__class__.__name__)
@@ -116,7 +119,7 @@ class KMeansCoefficient(BiobbObject):
         fu.log('Performing Hopkins test over dataset. H = %f' % H, self.out_log, self.global_log)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             predictors = scaler.fit_transform(predictors)
@@ -124,7 +127,7 @@ class KMeansCoefficient(BiobbObject):
         # calculate wcss for each cluster
         fu.log('Calculating Within-Clusters Sum of Squares (WCSS) for each %d clusters' % self.max_clusters, self.out_log, self.global_log)
         wcss = getWCSS('kmeans', self.max_clusters, predictors)
-            
+
         # wcss table
         wcss_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'WCSS': wcss})
         fu.log('Calculating WCSS for each cluster\n\nWCSS TABLE\n\n%s\n' % wcss_table.to_string(index=False), self.out_log, self.global_log)
@@ -144,7 +147,7 @@ class KMeansCoefficient(BiobbObject):
         fu.log('Optimal number of clusters according to the Gap Statistics Method is %d' % best_g, self.out_log, self.global_log)
 
         # calculate silhouette
-        silhouette_list, s_list = getSilhouetthe(method = 'kmeans', X = predictors, max_clusters = self.max_clusters, random_state = self.random_state_method)
+        silhouette_list, s_list = getSilhouetthe(method='kmeans', X=predictors, max_clusters=self.max_clusters, random_state=self.random_state_method)
 
         # silhouette table
         silhouette_table = pd.DataFrame(data={'cluster': np.arange(1, self.max_clusters + 1), 'SILHOUETTE': silhouette_list})
@@ -156,13 +159,13 @@ class KMeansCoefficient(BiobbObject):
         fu.log('Optimal number of clusters according to the Silhouette Method is %d' % best_s, self.out_log, self.global_log)
 
         # save results table
-        results_table = pd.DataFrame(data={'method': ['elbow', 'gap', 'silhouette'], 'coefficient': [wcss[elbow_index], max(gap['gap']) ,max(silhouette_list)], 'clusters': [best_k, best_g ,best_s]})
+        results_table = pd.DataFrame(data={'method': ['elbow', 'gap', 'silhouette'], 'coefficient': [wcss[elbow_index], max(gap['gap']), max(silhouette_list)], 'clusters': [best_k, best_g, best_s]})
         fu.log('Gathering results\n\nRESULTS TABLE\n\n%s\n' % results_table.to_string(index=False), self.out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        results_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        results_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # wcss plot
-        if self.io_dict["out"]["output_plot_path"]: 
+        if self.io_dict["out"]["output_plot_path"]:
             fu.log('Saving methods plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot = plotKmeansTrain(self.max_clusters, wcss, gap['gap'], silhouette_list, best_k, best_g, best_s)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
@@ -179,14 +182,16 @@ class KMeansCoefficient(BiobbObject):
 
         return 0
 
+
 def k_means_coefficient(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`KMeansCoefficient <clustering.k_means_coefficient.KMeansCoefficient>` class and
     execute the :meth:`launch() <clustering.k_means_coefficient.KMeansCoefficient.launch>` method."""
 
-    return KMeansCoefficient(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return KMeansCoefficient(input_dataset_path=input_dataset_path,
+                             output_results_path=output_results_path,
+                             output_plot_path=output_plot_path,
+                             properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -205,9 +210,10 @@ def main():
 
     # Specific call of each building block
     k_means_coefficient(input_dataset_path=args.input_dataset_path,
-                       output_results_path=args.output_results_path, 
-                       output_plot_path=args.output_plot_path, 
-                       properties=properties)
+                        output_results_path=args.output_results_path,
+                        output_plot_path=args.output_plot_path,
+                        properties=properties)
+
 
 if __name__ == '__main__':
     main()

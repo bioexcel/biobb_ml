@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.utils.pairwise_comparison import pairwise_comparison
 import platform
 
+
 class TestPairwiseComparison():
     def setup_class(self):
-        fx.test_setup(self,'pairwise_comparison')
+        fx.test_setup(self, 'pairwise_comparison')
 
     def teardown_class(self):
         fx.test_teardown(self)

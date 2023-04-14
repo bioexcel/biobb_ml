@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.clustering.agglomerative_clustering import agglomerative_clustering
 import platform
 
+
 class TestAgglClustering():
     def setup_class(self):
-        fx.test_setup(self,'agglomerative_clustering')
+        fx.test_setup(self, 'agglomerative_clustering')
 
     def teardown_class(self):
         fx.test_teardown(self)

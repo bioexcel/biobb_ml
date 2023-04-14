@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.classification.random_forest_classifier import random_forest_classifier
 import platform
 
+
 class TestRandomForestClassifier():
     def setup_class(self):
-        fx.test_setup(self,'random_forest_classifier')
+        fx.test_setup(self, 'random_forest_classifier')
 
     def teardown_class(self):
         fx.test_teardown(self)

@@ -1,2 +1,2 @@
 name = "resampling"
-__all__ = ["oversampling","undersampling","resampling"]
+__all__ = ["oversampling", "undersampling", "resampling"]

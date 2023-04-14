@@ -4,7 +4,7 @@ from biobb_ml.regression.regression_predict import regression_predict
 
 class TestRegressionPredict():
     def setup_class(self):
-        fx.test_setup(self,'regression_predict')
+        fx.test_setup(self, 'regression_predict')
 
     def teardown_class(self):
         fx.test_teardown(self)

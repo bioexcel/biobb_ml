@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.dimensionality_reduction.principal_component import principal_component
 import platform
 
+
 class TestPrincipalComponentAnalysis():
     def setup_class(self):
-        fx.test_setup(self,'principal_component')
+        fx.test_setup(self, 'principal_component')
 
     def teardown_class(self):
         fx.test_teardown(self)

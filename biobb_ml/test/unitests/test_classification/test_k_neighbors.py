@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.classification.k_neighbors import k_neighbors
 import platform
 
+
 class TestKNeighborsTrain():
     def setup_class(self):
-        fx.test_setup(self,'k_neighbors')
+        fx.test_setup(self, 'k_neighbors')
 
     def teardown_class(self):
         fx.test_teardown(self)

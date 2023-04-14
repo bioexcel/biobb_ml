@@ -3,6 +3,7 @@
 """Module containing the Oversampling class and the command line interface."""
 import argparse
 import numpy as np
+import pandas as pd
 from collections import Counter
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn import preprocessing
@@ -10,10 +11,10 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from biobb_ml.resampling.reg_resampler import resampler
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.resampling.common import *
+from biobb_ml.resampling.common import check_input_path, check_output_path, getResamplingMethod, checkResamplingType, getSamplingStrategy, getTargetValue, getHeader, getTarget, oversampling_methods
 
 
 class Oversampling(BiobbObject):
@@ -45,20 +46,20 @@ class Oversampling(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.resampling.oversampling import oversampling
-            prop = { 
-                'method': 'random, 
-                'type': 'regression, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'evaluate': true, 
+            prop = {
+                'method': 'random,
+                'type': 'regression,
+                'target': {
+                    'column': 'target'
+                },
+                'evaluate': true,
                 'n_bins': 10,
-                'sampling_strategy': { 
-                    'target': 'minority' 
+                'sampling_strategy': {
+                    'target': 'minority'
                 }
             }
-            oversampling(input_dataset_path='/path/to/myDataset.csv', 
-                        output_dataset_path='/path/to/newDataset.csv', 
+            oversampling(input_dataset_path='/path/to/myDataset.csv',
+                        output_dataset_path='/path/to/newDataset.csv',
                         properties=prop)
 
     Info:
@@ -72,8 +73,8 @@ class Oversampling(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_dataset_path, 
-                properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path,
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -81,9 +82,9 @@ class Oversampling(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_dataset_path": output_dataset_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_dataset_path": output_dataset_path}
         }
 
         # Properties specific for BB
@@ -95,7 +96,7 @@ class Oversampling(BiobbObject):
         self.evaluate_repeats = properties.get('evaluate_repeats', 3)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
-        self.sampling_strategy = properties.get('sampling_strategy', { 'target': 'auto' })
+        self.sampling_strategy = properties.get('sampling_strategy', {'target': 'auto'})
         self.k_neighbors = properties.get('k_neighbors', 5)
         self.random_state_method = properties.get('random_state_method', 5)
         self.random_state_evaluate = properties.get('random_state_evaluate', 5)
@@ -108,8 +109,7 @@ class Oversampling(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"],"output_dataset_path", False, out_log, self.__class__.__name__)
-
+        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"], "output_dataset_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -119,7 +119,8 @@ class Oversampling(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # check mandatory properties
@@ -137,7 +138,7 @@ class Oversampling(BiobbObject):
             labels = None
             skiprows = None
             header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         train_df = data
         ranges = None
@@ -152,7 +153,7 @@ class Oversampling(BiobbObject):
                 train_df[column] = le.fit_transform(train_df[column])
 
         # defining X
-        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, self.out_log, self.__class__.__name__)] 
+        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, self.out_log, self.__class__.__name__)]
         # calling oversample method
         if self.method == 'random':
             method = method(sampling_strategy=sampling_strategy, random_state=self.random_state_method)
@@ -164,13 +165,13 @@ class Oversampling(BiobbObject):
             method = method(sampling_strategy=sampling_strategy, k_neighbors=self.k_neighbors, random_state=self.random_state_method)
         elif self.method == 'adasyn':
             method = method(sampling_strategy=sampling_strategy, n_neighbors=self.k_neighbors, random_state=self.random_state_method)
-        
+
         fu.log('Target: %s' % (getTargetValue(self.target, self.out_log, self.__class__.__name__)), self.out_log, self.global_log)
 
         # oversampling
         if self.type == 'regression':
             fu.log('Oversampling regression dataset, continuous data will be classified', self.out_log, self.global_log)
-            # call resampler class for Regression ReSampling            
+            # call resampler class for Regression ReSampling
             rs = resampler()
             # Create n_bins classes for the dataset
             ranges, y, target_pos = rs.fit(train_df, target=getTargetValue(self.target, self.out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
@@ -196,10 +197,11 @@ class Oversampling(BiobbObject):
 
         # log distribution before oversampling
         dist = ''
-        for k,v in Counter(y).items():
+        for k, v in Counter(y).items():
             per = v / len(y) * 100
             rng = ''
-            if ranges: rng = str(ranges[k])
+            if ranges:
+                rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution before oversampling:\n\n%s' % dist, self.out_log, self.global_log)
 
@@ -210,20 +212,23 @@ class Oversampling(BiobbObject):
         else:
             # pandas
             out_df = final_X.join(final_y)
-                
+
         # if no header, convert np to pd
-        if header is None: out_df = pd.DataFrame(data=out_df)
+        if header is None:
+            out_df = pd.DataFrame(data=out_df)
 
         # if cols encoded, decode them
         if cols_encoded:
             for column in cols_encoded:
                 if header is None:
-                    out_df = out_df.astype({column: int } ) 
+                    out_df = out_df.astype({column: int})
                 out_df[column] = le.inverse_transform(out_df[column].values.ravel())
 
         # if no header, target is in a different column
-        if target_pos: t = target_pos
-        else: t = getTargetValue(self.target, self.out_log, self.__class__.__name__)
+        if target_pos:
+            t = target_pos
+        else:
+            t = getTargetValue(self.target, self.out_log, self.__class__.__name__)
         # log distribution after oversampling
         if self.type == 'regression':
             ranges, y_out, _ = rs.fit(out_df, target=t, bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
@@ -231,10 +236,11 @@ class Oversampling(BiobbObject):
             y_out = getTarget(self.target, out_df, self.out_log, self.__class__.__name__)
 
         dist = ''
-        for k,v in Counter(y_out).items():
+        for k, v in Counter(y_out).items():
             per = v / len(y_out) * 100
             rng = ''
-            if ranges: rng = str(ranges[k])
+            if ranges:
+                rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution after oversampling:\n\n%s' % dist, self.out_log, self.global_log)
 
@@ -251,9 +257,10 @@ class Oversampling(BiobbObject):
 
         # save output
         hdr = False
-        if header == 0: hdr = True
+        if header == 0:
+            hdr = True
         fu.log('Saving oversampled dataset to %s' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
-        out_df.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
+        out_df.to_csv(self.io_dict["out"]["output_dataset_path"], index=False, header=hdr)
 
         # Copy files to host
         self.copy_to_host()
@@ -267,13 +274,15 @@ class Oversampling(BiobbObject):
 
         return 0
 
+
 def oversampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Oversampling <resampling.oversampling.Oversampling>` class and
     execute the :meth:`launch() <resampling.oversampling.Oversampling.launch>` method."""
 
     return Oversampling(input_dataset_path=input_dataset_path,
-                   output_dataset_path=output_dataset_path,
-                   properties=properties, **kwargs).launch()
+                        output_dataset_path=output_dataset_path,
+                        properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -291,9 +300,9 @@ def main():
 
     # Specific call of each building block
     oversampling(input_dataset_path=args.input_dataset_path,
-                   output_dataset_path=args.output_dataset_path,
-                   properties=properties)
+                 output_dataset_path=args.output_dataset_path,
+                 properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

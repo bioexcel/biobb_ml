@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.regression.random_forest_regressor import random_forest_regressor
 import platform
 
+
 class TestRandomForestRegressor():
     def setup_class(self):
-        fx.test_setup(self,'random_forest_regressor')
+        fx.test_setup(self, 'random_forest_regressor')
 
     def teardown_class(self):
         fx.test_teardown(self)

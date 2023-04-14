@@ -2,9 +2,10 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_ml.utils.dendrogram import dendrogram
 import platform
 
+
 class TestDendrogram():
     def setup_class(self):
-        fx.test_setup(self,'dendrogram')
+        fx.test_setup(self, 'dendrogram')
 
     def teardown_class(self):
         fx.test_teardown(self)

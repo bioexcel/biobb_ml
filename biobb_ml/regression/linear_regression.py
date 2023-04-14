@@ -11,17 +11,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import f_regression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn import linear_model
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.regression.common import *
+from biobb_ml.regression.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTarget, getTargetValue, getWeight, adjusted_r2, plotResults
 
 
 class LinearRegression(BiobbObject):
     """
     | biobb_ml LinearRegression
-    | Wrapper of the scikit-learn LinearRegression method. 
-    | Trains and tests a given dataset and saves the model and scaler. Visit the `LinearRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn LinearRegression method.
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `LinearRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/regression/dataset_linear_regression.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -42,19 +42,19 @@ class LinearRegression(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.regression.linear_regression import linear_regression
-            prop = { 
-                'independent_vars': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'test_size': 0.2 
+            prop = {
+                'independent_vars': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'test_size': 0.2
             }
-            linear_regression(input_dataset_path='/path/to/myDataset.csv', 
-                            output_model_path='/path/to/newModel.pkl', 
-                            output_test_table_path='/path/to/newTable.csv', 
-                            output_plot_path='/path/to/newPlot.png', 
+            linear_regression(input_dataset_path='/path/to/myDataset.csv',
+                            output_model_path='/path/to/newModel.pkl',
+                            output_test_table_path='/path/to/newTable.csv',
+                            output_plot_path='/path/to/newPlot.png',
                             properties=prop)
 
     Info:
@@ -68,8 +68,8 @@ class LinearRegression(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_model_path, 
-                output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_model_path,
+                 output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -77,9 +77,9 @@ class LinearRegression(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -98,11 +98,11 @@ class LinearRegression(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"], "output_model_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_test_table_path"]:
-            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"], "output_test_table_path", True, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -112,7 +112,8 @@ class LinearRegression(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -123,7 +124,7 @@ class LinearRegression(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -143,12 +144,12 @@ class LinearRegression(BiobbObject):
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
@@ -170,14 +171,14 @@ class LinearRegression(BiobbObject):
         score = r2_score(y_hat_train, y_train)
         bias = model.intercept_
         coef = model.coef_
-        coef = [ '%.3f' % item for item in coef ]
+        coef = ['%.3f' % item for item in coef]
         adj_r2 = adjusted_r2(X_train, y_train, score)
         p_values = f_regression(X_train, y_train)[1]
-        p_values = [ '%.3f' % item for item in p_values ]
+        p_values = ['%.3f' % item for item in p_values]
 
         # r-squared
         r2_table = pd.DataFrame()
-        r2_table["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
+        r2_table["feature"] = ['R2', 'Adj. R2', 'RMSE', 'RSS']
         r2_table['coefficient'] = [score, adj_r2, rmse, rss]
 
         # p-values
@@ -190,12 +191,12 @@ class LinearRegression(BiobbObject):
         coefs_table['coefficient'] = c
         p = [0]
         p.extend(p_values)
-        
+
         coefs_table['p-value'] = p
         fu.log('Calculating scores and coefficients for training dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n\nCOEFFS & P-VALUES\n\n%s\n' % (r2_table, coefs_table), self.out_log, self.global_log)
 
         # testing
-        # predict data from x_test        
+        # predict data from x_test
         if self.scale:
             X_test = scaler.transform(X_test)
         y_hat_test = model.predict(X_test)
@@ -212,7 +213,7 @@ class LinearRegression(BiobbObject):
         test_table = test_table.sort_values(by=['difference %'])
         test_table = test_table.reset_index(drop=True)
         fu.log('Testing\n\nTEST DATA\n\n%s\n' % test_table, self.out_log, self.global_log)
-        
+
         # scores and coefficients test
         r2_test = r2_score(y_hat_test, y_test)
         adj_r2_test = adjusted_r2(X_test, y_test, r2_test)
@@ -222,17 +223,17 @@ class LinearRegression(BiobbObject):
         # r-squared
         pd.set_option('display.float_format', lambda x: '%.6f' % x)
         r2_table_test = pd.DataFrame()
-        r2_table_test["feature"] = ['R2','Adj. R2', 'RMSE', 'RSS']
+        r2_table_test["feature"] = ['R2', 'Adj. R2', 'RMSE', 'RSS']
         r2_table_test['coefficient'] = [r2_test, adj_r2_test, rmse_test, rss_test]
 
         fu.log('Calculating scores and coefficients for testing dataset\n\nR2, ADJUSTED R2 & RMSE\n\n%s\n' % r2_table_test, self.out_log, self.global_log)
 
-        if(self.io_dict["out"]["output_test_table_path"]): 
+        if (self.io_dict["out"]["output_test_table_path"]):
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
-            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
+            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index=False, header=True)
 
         # create test plot
-        if(self.io_dict["out"]["output_plot_path"]): 
+        if (self.io_dict["out"]["output_plot_path"]):
             fu.log('Saving residual plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             y_hat_test = y_hat_test.flatten()
             y_hat_train = y_hat_train.flatten()
@@ -248,7 +249,8 @@ class LinearRegression(BiobbObject):
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
-            if self.scale: joblib.dump(scaler, f)
+            if self.scale:
+                joblib.dump(scaler, f)
             joblib.dump(variables, f)
 
         # Copy files to host
@@ -263,15 +265,17 @@ class LinearRegression(BiobbObject):
 
         return 0
 
+
 def linear_regression(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`LinearRegression <regression.linear_regression.LinearRegression>` class and
     execute the :meth:`launch() <regression.linear_regression.LinearRegression.launch>` method."""
 
-    return LinearRegression(input_dataset_path=input_dataset_path,  
-                   output_model_path=output_model_path, 
-                   output_test_table_path=output_test_table_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return LinearRegression(input_dataset_path=input_dataset_path,
+                            output_model_path=output_model_path,
+                            output_test_table_path=output_test_table_path,
+                            output_plot_path=output_plot_path,
+                            properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -291,11 +295,11 @@ def main():
 
     # Specific call of each building block
     linear_regression(input_dataset_path=args.input_dataset_path,
-                       output_model_path=args.output_model_path, 
-                       output_test_table_path=args.output_test_table_path, 
-                       output_plot_path=args.output_plot_path, 
-                       properties=properties)
+                      output_model_path=args.output_model_path,
+                      output_test_table_path=args.output_test_table_path,
+                      output_plot_path=args.output_plot_path,
+                      properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

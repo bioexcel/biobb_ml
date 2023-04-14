@@ -4,7 +4,7 @@ from biobb_ml.neural_networks.neural_network_decode import neural_network_decode
 
 class TestDecodingNeuralNetwork():
     def setup_class(self):
-        fx.test_setup(self,'neural_network_decode')
+        fx.test_setup(self, 'neural_network_decode')
 
     def teardown_class(self):
         fx.test_teardown(self)

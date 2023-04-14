@@ -3,19 +3,22 @@
 """Module containing the DecodingNeuralNetwork class and the command line interface."""
 import argparse
 import h5py
-import json
+# import json
+import numpy as np
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.neural_networks.common import *
+from biobb_ml.neural_networks.common import check_input_path, check_output_path
+
 
 class DecodingNeuralNetwork(BiobbObject):
     """
     | biobb_ml DecodingNeuralNetwork
-    | Wrapper of the TensorFlow Keras LSTM method for decoding. 
-    | Decodes and predicts given a dataset and a model file compiled by an Autoencoder Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information. 
+    | Wrapper of the TensorFlow Keras LSTM method for decoding.
+    | Decodes and predicts given a dataset and a model file compiled by an Autoencoder Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information.
 
     Args:
         input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_decoder.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -31,10 +34,10 @@ class DecodingNeuralNetwork(BiobbObject):
 
             from biobb_ml.neural_networks.neural_network_decode import neural_network_decode
             prop = { }
-            neural_network_decode(input_decode_path='/path/to/myDecodeDataset.csv', 
-                                input_model_path='/path/to/newModel.h5', 
-                                output_decode_path='/path/to/newDecodeDataset.csv', 
-                                output_predict_path='/path/to/newPredictDataset.csv', 
+            neural_network_decode(input_decode_path='/path/to/myDecodeDataset.csv',
+                                input_model_path='/path/to/newModel.h5',
+                                output_decode_path='/path/to/newDecodeDataset.csv',
+                                output_predict_path='/path/to/newPredictDataset.csv',
                                 properties=prop)
 
     Info:
@@ -45,11 +48,11 @@ class DecodingNeuralNetwork(BiobbObject):
         * ontology:
             * name: EDAM
             * schema: http://edamontology.org/EDAM.owl
-            
+
     """
 
-    def __init__(self, input_decode_path, input_model_path, output_decode_path, 
-                output_predict_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_decode_path, input_model_path, output_decode_path,
+                 output_predict_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -57,9 +60,9 @@ class DecodingNeuralNetwork(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_decode_path": input_decode_path, "input_model_path": input_model_path }, 
-            "out": { "output_decode_path": output_decode_path, "output_predict_path": output_predict_path } 
+        self.io_dict = {
+            "in": {"input_decode_path": input_decode_path, "input_model_path": input_model_path},
+            "out": {"output_decode_path": output_decode_path, "output_predict_path": output_predict_path}
         }
 
         # Properties specific for BB
@@ -73,9 +76,9 @@ class DecodingNeuralNetwork(BiobbObject):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_decode_path"] = check_input_path(self.io_dict["in"]["input_decode_path"], "input_decode_path", False, out_log, self.__class__.__name__)
         self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", False, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_decode_path"] = check_output_path(self.io_dict["out"]["output_decode_path"],"output_decode_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_decode_path"] = check_output_path(self.io_dict["out"]["output_decode_path"], "output_decode_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_predict_path"]:
-            self.io_dict["out"]["output_predict_path"] = check_output_path(self.io_dict["out"]["output_predict_path"],"output_predict_path", False, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_predict_path"] = check_output_path(self.io_dict["out"]["output_predict_path"], "output_predict_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -85,7 +88,8 @@ class DecodingNeuralNetwork(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load decode dataset
@@ -99,11 +103,11 @@ class DecodingNeuralNetwork(BiobbObject):
 
         fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], self.out_log, self.global_log)
         with h5py.File(self.io_dict["in"]["input_model_path"], mode='r') as f:
-            variables = f.attrs['variables']
+            # variables = f.attrs['variables']
             new_model = hdf5_format.load_model_from_hdf5(f)
 
         # get dictionary with variables
-        vars_obj = json.loads(variables)
+        # vars_obj = json.loads(variables)
 
         stringlist = []
         new_model.summary(print_fn=lambda x: stringlist.append(x))
@@ -112,7 +116,7 @@ class DecodingNeuralNetwork(BiobbObject):
 
         # decoding / predicting
         fu.log('Decoding / Predicting model', self.out_log, self.global_log)
-        yhat = new_model.predict(seq_in, verbose = 1)
+        yhat = new_model.predict(seq_in, verbose=1)
 
         # decoding
         decoding_table = pd.DataFrame()
@@ -123,7 +127,7 @@ class DecodingNeuralNetwork(BiobbObject):
         fu.log('RECONSTRUCTION TABLE\n\n%s\n' % decoding_table, self.out_log, self.global_log)
 
         fu.log('Saving reconstruction to %s' % self.io_dict["out"]["output_decode_path"], self.out_log, self.global_log)
-        decoding_table.to_csv(self.io_dict["out"]["output_decode_path"], index = False, header=True, float_format='%.5f')
+        decoding_table.to_csv(self.io_dict["out"]["output_decode_path"], index=False, header=True, float_format='%.5f')
 
         if len(yhat) == 2:
             # decoding
@@ -135,7 +139,7 @@ class DecodingNeuralNetwork(BiobbObject):
             fu.log('PREDICTION TABLE\n\n%s\n' % prediction_table, self.out_log, self.global_log)
 
             fu.log('Saving prediction to %s' % self.io_dict["out"]["output_predict_path"], self.out_log, self.global_log)
-            prediction_table.to_csv(self.io_dict["out"]["output_predict_path"], index = False, header=True, float_format='%.5f')
+            prediction_table.to_csv(self.io_dict["out"]["output_predict_path"], index=False, header=True, float_format='%.5f')
 
         # Copy files to host
         self.copy_to_host()
@@ -149,15 +153,17 @@ class DecodingNeuralNetwork(BiobbObject):
 
         return 0
 
+
 def neural_network_decode(input_decode_path: str, input_model_path: str, output_decode_path: str, output_predict_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`DecodingNeuralNetwork <neural_networks.neural_network_decode.DecodingNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.neural_network_decode.DecodingNeuralNetwork.launch>` method."""
 
-    return DecodingNeuralNetwork(input_decode_path=input_decode_path,  
-                   input_model_path=input_model_path, 
-                   output_decode_path=output_decode_path,
-                   output_predict_path=output_predict_path,
-                   properties=properties, **kwargs).launch()
+    return DecodingNeuralNetwork(input_decode_path=input_decode_path,
+                                 input_model_path=input_model_path,
+                                 output_decode_path=output_decode_path,
+                                 output_predict_path=output_predict_path,
+                                 properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -177,10 +183,11 @@ def main():
 
     # Specific call of each building block
     neural_network_decode(input_decode_path=args.input_decode_path,
-                           input_model_path=args.input_model_path,
-                           output_decode_path=args.output_decode_path, 
-                           output_predict_path=args.output_predict_path, 
-                           properties=properties)
+                          input_model_path=args.input_model_path,
+                          output_decode_path=args.output_decode_path,
+                          output_predict_path=args.output_predict_path,
+                          properties=properties)
+
 
 if __name__ == '__main__':
     main()

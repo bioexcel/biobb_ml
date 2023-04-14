@@ -2,19 +2,21 @@
 
 """Module containing the SpecClustering class and the command line interface."""
 import argparse
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
-from biobb_common.configuration import  settings
+from sklearn.cluster import SpectralClustering
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.clustering.common import *
+from biobb_ml.clustering.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, hopkins, plotCluster
 
 
 class SpecClustering(BiobbObject):
     """
     | biobb_ml SpecClustering
-    | Wrapper of the scikit-learn SpectralClustering method. 
-    | Clusters a given dataset. Visit the `SpectralClustering documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn SpectralClustering method.
+    | Clusters a given dataset. Visit the `SpectralClustering documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/clustering/dataset_spectral_clustering.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -34,22 +36,22 @@ class SpecClustering(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.clustering.spectral_clustering import spectral_clustering
-            prop = { 
-                'predictors': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'clusters': 3, 
-                'affinity': 'rbf', 
-                'plots': [ 
-                    { 
-                        'title': 'Plot 1', 
-                        'features': ['feat1', 'feat2'] 
-                    } 
+            prop = {
+                'predictors': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'clusters': 3,
+                'affinity': 'rbf',
+                'plots': [
+                    {
+                        'title': 'Plot 1',
+                        'features': ['feat1', 'feat2']
+                    }
                 ]
             }
-            spectral_clustering(input_dataset_path='/path/to/myDataset.csv', 
-                                output_results_path='/path/to/newTable.csv', 
-                                output_plot_path='/path/to/newPlot.png', 
+            spectral_clustering(input_dataset_path='/path/to/myDataset.csv',
+                                output_results_path='/path/to/newTable.csv',
+                                output_plot_path='/path/to/newPlot.png',
                                 properties=prop)
 
     Info:
@@ -63,8 +65,8 @@ class SpecClustering(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -72,9 +74,9 @@ class SpecClustering(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -93,9 +95,9 @@ class SpecClustering(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -105,7 +107,8 @@ class SpecClustering(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -116,7 +119,7 @@ class SpecClustering(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # the features are the predictors
         predictors = getIndependentVars(self.predictors, data, self.out_log, self.__class__.__name__)
@@ -127,13 +130,13 @@ class SpecClustering(BiobbObject):
         fu.log('Performing Hopkins test over dataset. H = %f' % H, self.out_log, self.global_log)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             predictors = scaler.fit_transform(predictors)
 
         # create a spectral clustering object with self.clusters clusters
-        model = SpectralClustering(n_clusters = self.clusters, affinity = self.affinity, random_state = self.random_state_method)
+        model = SpectralClustering(n_clusters=self.clusters, affinity=self.affinity, random_state=self.random_state_method)
         # fit the data
         model.fit(predictors)
 
@@ -146,9 +149,9 @@ class SpecClustering(BiobbObject):
 
         # save results
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        clusters.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        clusters.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
-        if self.io_dict["out"]["output_plot_path"] and self.plots: 
+        if self.io_dict["out"]["output_plot_path"] and self.plots:
             new_plots = []
             i = 0
             for plot in self.plots:
@@ -174,14 +177,16 @@ class SpecClustering(BiobbObject):
 
         return 0
 
+
 def spectral_clustering(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`SpecClustering <clustering.spectral_clustering.SpecClustering>` class and
     execute the :meth:`launch() <clustering.spectral_clustering.SpecClustering.launch>` method."""
 
-    return SpecClustering(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return SpecClustering(input_dataset_path=input_dataset_path,
+                          output_results_path=output_results_path,
+                          output_plot_path=output_plot_path,
+                          properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -200,9 +205,10 @@ def main():
 
     # Specific call of each building block
     spectral_clustering(input_dataset_path=args.input_dataset_path,
-                       output_results_path=args.output_results_path, 
-                       output_plot_path=args.output_plot_path, 
-                       properties=properties)
+                        output_results_path=args.output_results_path,
+                        output_plot_path=args.output_plot_path,
+                        properties=properties)
+
 
 if __name__ == '__main__':
     main()

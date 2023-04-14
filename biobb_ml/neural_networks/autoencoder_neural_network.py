@@ -4,25 +4,23 @@
 import argparse
 import h5py
 import json
+import numpy as np
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from tensorflow.python.keras.saving import hdf5_format
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input
-from tensorflow.keras.layers import LSTM
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import RepeatVector
-from tensorflow.keras.layers import TimeDistributed
-from biobb_common.configuration import  settings
+from tensorflow.keras.layers import Input, LSTM, Dense, RepeatVector, TimeDistributed
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.neural_networks.common import *
+from biobb_ml.neural_networks.common import check_input_path, check_output_path
 
 
 class AutoencoderNeuralNetwork(BiobbObject):
     """
     | biobb_ml AutoencoderNeuralNetwork
-    | Wrapper of the TensorFlow Keras LSTM method for encoding. 
-    | Fits and tests a given dataset and save the compiled model for an Autoencoder Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information. 
+    | Wrapper of the TensorFlow Keras LSTM method for encoding.
+    | Fits and tests a given dataset and save the compiled model for an Autoencoder Neural Network. Visit the `LSTM documentation page <https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM>`_ in the TensorFlow Keras official website for further information.
 
     Args:
         input_decode_path (str): Path to the input decode dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/neural_networks/dataset_autoencoder_decode.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -42,17 +40,17 @@ class AutoencoderNeuralNetwork(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.neural_networks.autoencoder_neural_network import autoencoder_neural_network
-            prop = { 
-                'optimizer': 'Adam', 
-                'learning_rate': 0.01, 
+            prop = {
+                'optimizer': 'Adam',
+                'learning_rate': 0.01,
                 'batch_size': 32,
                 'max_epochs': 300
             }
-            autoencoder_neural_network(input_decode_path='/path/to/myDecodeDataset.csv', 
-                                        output_model_path='/path/to/newModel.h5', 
-                                        input_predict_path='/path/to/myPredictDataset.csv', 
-                                        output_test_decode_path='/path/to/newDecodeDataset.csv', 
-                                        output_test_predict_path='/path/to/newPredictDataset.csv', 
+            autoencoder_neural_network(input_decode_path='/path/to/myDecodeDataset.csv',
+                                        output_model_path='/path/to/newModel.h5',
+                                        input_predict_path='/path/to/myPredictDataset.csv',
+                                        output_test_decode_path='/path/to/newDecodeDataset.csv',
+                                        output_test_predict_path='/path/to/newPredictDataset.csv',
                                         properties=prop)
 
     Info:
@@ -66,8 +64,9 @@ class AutoencoderNeuralNetwork(BiobbObject):
 
     """
 
-    def __init__(self, input_decode_path, output_model_path, 
-                input_predict_path=None, output_test_decode_path=None, output_test_predict_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_decode_path, output_model_path,
+                 input_predict_path=None, output_test_decode_path=None,
+                 output_test_predict_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -75,9 +74,9 @@ class AutoencoderNeuralNetwork(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_decode_path": input_decode_path, "input_predict_path": input_predict_path }, 
-            "out": { "output_model_path": output_model_path, "output_test_decode_path": output_test_decode_path, "output_test_predict_path": output_test_predict_path } 
+        self.io_dict = {
+            "in": {"input_decode_path": input_decode_path, "input_predict_path": input_predict_path},
+            "out": {"output_model_path": output_model_path, "output_test_decode_path": output_test_decode_path, "output_test_predict_path": output_test_predict_path}
         }
 
         # Properties specific for BB
@@ -96,20 +95,20 @@ class AutoencoderNeuralNetwork(BiobbObject):
         self.io_dict["in"]["input_decode_path"] = check_input_path(self.io_dict["in"]["input_decode_path"], "input_decode_path", False, out_log, self.__class__.__name__)
         if self.io_dict["in"]["input_predict_path"]:
             self.io_dict["in"]["input_predict_path"] = check_input_path(self.io_dict["in"]["input_predict_path"], "input_predict_path", True, out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"], "output_model_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_test_decode_path"]:
-            self.io_dict["out"]["output_test_decode_path"] = check_output_path(self.io_dict["out"]["output_test_decode_path"],"output_test_decode_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_test_decode_path"] = check_output_path(self.io_dict["out"]["output_test_decode_path"], "output_test_decode_path", True, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_test_predict_path"]:
-            self.io_dict["out"]["output_test_predict_path"] = check_output_path(self.io_dict["out"]["output_test_predict_path"],"output_test_predict_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_test_predict_path"] = check_output_path(self.io_dict["out"]["output_test_predict_path"], "output_test_predict_path", True, out_log, self.__class__.__name__)
 
-    def build_model(self, n_in, n_out = None):
+    def build_model(self, n_in, n_out=None):
         """ Builds Neural network """
 
         # outputs list
         outputs = []
 
         # define encoder
-        visible = Input(shape=(n_in,1))
+        visible = Input(shape=(n_in, 1))
         encoder = LSTM(100, activation='relu')(visible)
 
         # define reconstruct decoder
@@ -139,7 +138,8 @@ class AutoencoderNeuralNetwork(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load decode dataset
@@ -153,7 +153,7 @@ class AutoencoderNeuralNetwork(BiobbObject):
 
         # load predict dataset
         n_out = None
-        if(self.io_dict["in"]["input_predict_path"]): 
+        if (self.io_dict["in"]["input_predict_path"]):
             fu.log('Getting predict dataset from %s' % self.io_dict["in"]["input_predict_path"], self.out_log, self.global_log)
             data_pred = pd.read_csv(self.io_dict["in"]["input_predict_path"])
             seq_out = np.array(data_pred)
@@ -173,11 +173,11 @@ class AutoencoderNeuralNetwork(BiobbObject):
         fu.log('Model summary:\n\n%s\n' % model_summary, self.out_log, self.global_log)
 
         # get optimizer
-        mod = __import__('tensorflow.keras.optimizers', fromlist = [self.optimizer])
+        mod = __import__('tensorflow.keras.optimizers', fromlist=[self.optimizer])
         opt_class = getattr(mod, self.optimizer)
-        opt = opt_class(lr = self.learning_rate)
+        opt = opt_class(lr=self.learning_rate)
         # compile model
-        model.compile(optimizer = opt, loss = 'mse', metrics = ['mse', 'mae'])
+        model.compile(optimizer=opt, loss='mse', metrics=['mse', 'mae'])
 
         # fitting
         fu.log('Training model', self.out_log, self.global_log)
@@ -185,11 +185,11 @@ class AutoencoderNeuralNetwork(BiobbObject):
         if n_out:
             y_list.append(seq_out)
         # fit the model
-        mf = model.fit(seq_in, 
-                       y_list, 
-                       batch_size=self.batch_size, 
-                       epochs=self.max_epochs, 
-                       verbose = 1)
+        mf = model.fit(seq_in,
+                       y_list,
+                       batch_size=self.batch_size,
+                       epochs=self.max_epochs,
+                       verbose=1)
 
         train_metrics = pd.DataFrame()
         metric = []
@@ -208,7 +208,7 @@ class AutoencoderNeuralNetwork(BiobbObject):
         yhat = model.predict(seq_in, verbose=1)
 
         decoding_table = pd.DataFrame()
-        if(self.io_dict["in"]["input_predict_path"]): 
+        if (self.io_dict["in"]["input_predict_path"]):
             decoding_table['reconstructed'] = np.squeeze(np.asarray(yhat[0][0]))
             decoding_table['original'] = data_dec
         else:
@@ -223,11 +223,11 @@ class AutoencoderNeuralNetwork(BiobbObject):
         fu.log('RECONSTRUCTION TABLE\n\n%s\n' % decoding_table, self.out_log, self.global_log)
 
         # save reconstruction data
-        if(self.io_dict["out"]["output_test_decode_path"]): 
+        if (self.io_dict["out"]["output_test_decode_path"]):
             fu.log('Saving reconstruction data to %s' % self.io_dict["out"]["output_test_decode_path"], self.out_log, self.global_log)
-            decoding_table.to_csv(self.io_dict["out"]["output_test_decode_path"], index = False, header=True)
+            decoding_table.to_csv(self.io_dict["out"]["output_test_decode_path"], index=False, header=True)
 
-        if(self.io_dict["in"]["input_predict_path"]): 
+        if (self.io_dict["in"]["input_predict_path"]):
             prediction_table = pd.DataFrame()
             prediction_table['predicted'] = np.squeeze(np.asarray(yhat[1][0]))
             prediction_table['original'] = data_pred
@@ -240,9 +240,9 @@ class AutoencoderNeuralNetwork(BiobbObject):
             fu.log('PREDICTION TABLE\n\n%s\n' % prediction_table, self.out_log, self.global_log)
 
             # save decoding data
-            if(self.io_dict["out"]["output_test_predict_path"]): 
+            if (self.io_dict["out"]["output_test_predict_path"]):
                 fu.log('Saving prediction data to %s' % self.io_dict["out"]["output_test_predict_path"], self.out_log, self.global_log)
-                prediction_table.to_csv(self.io_dict["out"]["output_test_predict_path"], index = False, header=True)
+                prediction_table.to_csv(self.io_dict["out"]["output_test_predict_path"], index=False, header=True)
 
         # save model and parameters
         vars_obj = {
@@ -266,16 +266,18 @@ class AutoencoderNeuralNetwork(BiobbObject):
 
         return 0
 
+
 def autoencoder_neural_network(input_decode_path: str, output_model_path: str, input_predict_path: str = None, output_test_decode_path: str = None, output_test_predict_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`AutoencoderNeuralNetwork <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork>` class and
     execute the :meth:`launch() <neural_networks.autoencoder_neural_network.AutoencoderNeuralNetwork.launch>` method."""
 
-    return AutoencoderNeuralNetwork(input_decode_path=input_decode_path,  
-                    output_model_path=output_model_path, 
-                    input_predict_path=input_predict_path, 
-                    output_test_decode_path=output_test_decode_path,
-                    output_test_predict_path=output_test_predict_path,
-                    properties=properties, **kwargs).launch()
+    return AutoencoderNeuralNetwork(input_decode_path=input_decode_path,
+                                    output_model_path=output_model_path,
+                                    input_predict_path=input_predict_path,
+                                    output_test_decode_path=output_test_decode_path,
+                                    output_test_predict_path=output_test_predict_path,
+                                    properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -296,11 +298,12 @@ def main():
 
     # Specific call of each building block
     autoencoder_neural_network(input_decode_path=args.input_decode_path,
-                                output_model_path=args.output_model_path, 
-                                input_predict_path=args.input_predict_path, 
-                                output_test_decode_path=args.output_test_decode_path, 
-                                output_test_predict_path=args.output_test_predict_path, 
-                                properties=properties)
+                               output_model_path=args.output_model_path,
+                               input_predict_path=args.input_predict_path,
+                               output_test_decode_path=args.output_test_decode_path,
+                               output_test_predict_path=args.output_test_predict_path,
+                               properties=properties)
+
 
 if __name__ == '__main__':
     main()

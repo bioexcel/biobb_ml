@@ -4,7 +4,7 @@ from biobb_ml.utils.drop_columns import drop_columns
 
 class TestDropColumns():
     def setup_class(self):
-        fx.test_setup(self,'drop_columns')
+        fx.test_setup(self, 'drop_columns')
 
     def teardown_class(self):
         fx.test_teardown(self)

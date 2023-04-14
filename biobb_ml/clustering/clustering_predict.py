@@ -6,10 +6,12 @@ import pandas as pd
 import joblib
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
-from biobb_common.configuration import  settings
+from sklearn.cluster import KMeans
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.clustering.common import *
+from biobb_ml.clustering.common import check_input_path, check_output_path, getHeader, get_list_of_predictors, get_keys_of_predictors
+
 
 class ClusteringPredict(BiobbObject):
     """
@@ -30,21 +32,21 @@ class ClusteringPredict(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.clustering.clustering_predict import clustering_predict
-            prop = { 
+            prop = {
                 'predictions': [
-                    { 
-                        'var1': 1.0, 
-                        'var2': 2.0 
-                    }, 
-                    { 
-                        'var1': 4.0, 
-                        'var2': 2.7 
+                    {
+                        'var1': 1.0,
+                        'var2': 2.0
+                    },
+                    {
+                        'var1': 4.0,
+                        'var2': 2.7
                     }
-                ] 
+                ]
             }
-            clustering_predict(input_model_path='/path/to/myModel.pkl', 
-                                output_results_path='/path/to/newPredictedResults.csv', 
-                                input_dataset_path='/path/to/myDataset.csv', 
+            clustering_predict(input_model_path='/path/to/myModel.pkl',
+                                output_results_path='/path/to/newPredictedResults.csv',
+                                input_dataset_path='/path/to/myDataset.csv',
                                 properties=prop)
 
     Info:
@@ -58,8 +60,8 @@ class ClusteringPredict(BiobbObject):
 
     """
 
-    def __init__(self, input_model_path, output_results_path, 
-                input_dataset_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_model_path, output_results_path,
+                 input_dataset_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -67,9 +69,9 @@ class ClusteringPredict(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_model_path": input_model_path, "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path } 
+        self.io_dict = {
+            "in": {"input_model_path": input_model_path, "input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path}
         }
 
         # Properties specific for BB
@@ -83,7 +85,7 @@ class ClusteringPredict(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_model_path"] = check_input_path(self.io_dict["in"]["input_model_path"], "input_model_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["in"]["input_dataset_path"]:
             self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
 
@@ -95,7 +97,8 @@ class ClusteringPredict(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         fu.log('Getting model from %s' % self.io_dict["in"]["input_model_path"], self.out_log, self.global_log)
@@ -122,32 +125,33 @@ class ClusteringPredict(BiobbObject):
             else:
                 labels = None
                 skiprows = None
-            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+            new_data_table = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
         else:
             # load dataset from properties
             if 'columns' in variables['predictors']:
                 # sorting self.properties in the correct order given by variables['predictors']['columns']
-                index_map = { v: i for i, v in enumerate(variables['predictors']['columns']) }
+                index_map = {v: i for i, v in enumerate(variables['predictors']['columns'])}
                 predictions = []
                 for i, pred in enumerate(self.predictions):
                     sorted_pred = sorted(pred.items(), key=lambda pair: index_map[pair[0]])
                     predictions.append(dict(sorted_pred))
-                new_data_table = pd.DataFrame(data=get_list_of_predictors(predictions),columns=get_keys_of_predictors(predictions))
+                new_data_table = pd.DataFrame(data=get_list_of_predictors(predictions), columns=get_keys_of_predictors(predictions))
             else:
                 predictions = self.predictions
-                new_data_table = pd.DataFrame(data=predictions)            
+                new_data_table = pd.DataFrame(data=predictions)
 
-        if variables['scale']: 
+        if variables['scale']:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             new_data = scaler.transform(new_data_table)
-        else: new_data = new_data_table
+        else:
+            new_data = new_data_table
 
         p = new_model.predict(new_data)
 
         new_data_table['cluster'] = p
         fu.log('Predicting results\n\nPREDICTION RESULTS\n\n%s\n' % new_data_table, self.out_log, self.global_log)
         fu.log('Saving results to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        new_data_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # Copy files to host
         self.copy_to_host()
@@ -161,14 +165,16 @@ class ClusteringPredict(BiobbObject):
 
         return 0
 
+
 def clustering_predict(input_model_path: str, output_results_path: str, input_dataset_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`ClusteringPredict <clustering.clustering_predict.ClusteringPredict>` class and
     execute the :meth:`launch() <clustering.clustering_predict.ClusteringPredict.launch>` method."""
 
-    return ClusteringPredict(input_model_path=input_model_path, 
-                    output_results_path=output_results_path, 
-                    input_dataset_path=input_dataset_path,  
-                    properties=properties, **kwargs).launch()
+    return ClusteringPredict(input_model_path=input_model_path,
+                             output_results_path=output_results_path,
+                             input_dataset_path=input_dataset_path,
+                             properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -186,11 +192,11 @@ def main():
     properties = settings.ConfReader(config=args.config).get_prop_dic()
 
     # Specific call of each building block
-    clustering_predict(input_model_path=args.input_model_path, 
-                    output_results_path=args.output_results_path, 
-                    input_dataset_path=args.input_dataset_path,
-                    properties=properties)
+    clustering_predict(input_model_path=args.input_model_path,
+                       output_results_path=args.output_results_path,
+                       input_dataset_path=args.input_dataset_path,
+                       properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

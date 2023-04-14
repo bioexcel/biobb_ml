@@ -5,10 +5,11 @@ import argparse
 import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import MinMaxScaler
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.utils.common import *
+from biobb_ml.utils.common import check_input_path, check_output_path, getHeader, getIndependentVarsList, getTargetsList
+
 
 class ScaleColumns(BiobbObject):
     """
@@ -27,13 +28,13 @@ class ScaleColumns(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.utils.scale_columns import scale_columns
-            prop = { 
+            prop = {
                 'targets': {
-                    'columns': [ 'column1', 'column2', 'column3' ] 
+                    'columns': [ 'column1', 'column2', 'column3' ]
                 }
             }
-            scale_columns(input_dataset_path='/path/to/myDataset.csv', 
-                            output_dataset_path='/path/to/newDataset.csv', 
+            scale_columns(input_dataset_path='/path/to/myDataset.csv',
+                            output_dataset_path='/path/to/newDataset.csv',
                             properties=prop)
 
     Info:
@@ -47,7 +48,7 @@ class ScaleColumns(BiobbObject):
     """
 
     def __init__(self, input_dataset_path, output_dataset_path,
-                    properties=None, **kwargs) -> None:
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -55,9 +56,9 @@ class ScaleColumns(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_dataset_path": output_dataset_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_dataset_path": output_dataset_path}
         }
 
         # Properties specific for BB
@@ -71,8 +72,7 @@ class ScaleColumns(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"],"output_dataset_path", False, out_log, self.__class__.__name__)
-
+        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"], "output_dataset_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -82,7 +82,8 @@ class ScaleColumns(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -95,13 +96,15 @@ class ScaleColumns(BiobbObject):
             labels = None
             skiprows = None
             header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         targets = getTargetsList(self.targets, 'scale', self.out_log, self.__class__.__name__)
 
         fu.log('Scaling [%s] columns from dataset' % getIndependentVarsList(self.targets), self.out_log, self.global_log)
-        if not self.targets: df_scaled = data
-        else: df_scaled = (data[targets])
+        if not self.targets:
+            df_scaled = data
+        else:
+            df_scaled = (data[targets])
 
         scaler = MinMaxScaler()
 
@@ -110,9 +113,10 @@ class ScaleColumns(BiobbObject):
         data[targets] = df_scaled
 
         hdr = False
-        if header == 0: hdr = True
+        if header == 0:
+            hdr = True
         fu.log('Saving dataset to %s' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
-        data.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
+        data.to_csv(self.io_dict["out"]["output_dataset_path"], index=False, header=hdr)
 
         # Copy files to host
         self.copy_to_host()
@@ -126,13 +130,15 @@ class ScaleColumns(BiobbObject):
 
         return 0
 
+
 def scale_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`ScaleColumns <utils.scale_columns.ScaleColumns>` class and
     execute the :meth:`launch() <utils.scale_columns.ScaleColumns.launch>` method."""
 
-    return ScaleColumns(input_dataset_path=input_dataset_path, 
-                   output_dataset_path=output_dataset_path,
-                   properties=properties, **kwargs).launch()
+    return ScaleColumns(input_dataset_path=input_dataset_path,
+                        output_dataset_path=output_dataset_path,
+                        properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -150,9 +156,9 @@ def main():
 
     # Specific call of each building block
     scale_columns(input_dataset_path=args.input_dataset_path,
-                   output_dataset_path=args.output_dataset_path,
-                   properties=properties)
+                  output_dataset_path=args.output_dataset_path,
+                  properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

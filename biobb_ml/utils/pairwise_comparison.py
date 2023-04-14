@@ -6,10 +6,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.utils.common import *
+from biobb_ml.utils.common import check_input_path, check_output_path, getHeader, getIndependentVarsList, getIndependentVars
 
 
 class PairwiseComparison(BiobbObject):
@@ -29,13 +29,13 @@ class PairwiseComparison(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.utils.pairwise_comparison import pairwise_comparison
-            prop = { 
+            prop = {
                 'features': {
-                    'columns': [ 'column1', 'column2', 'column3' ] 
+                    'columns': [ 'column1', 'column2', 'column3' ]
                 }
             }
-            pairwise_comparison(input_dataset_path='/path/to/myDataset.csv', 
-                            output_plot_path='/path/to/newPlot.png', 
+            pairwise_comparison(input_dataset_path='/path/to/myDataset.csv',
+                            output_plot_path='/path/to/newPlot.png',
                             properties=prop)
 
     Info:
@@ -48,8 +48,8 @@ class PairwiseComparison(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_plot_path, 
-                properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_plot_path,
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -57,9 +57,9 @@ class PairwiseComparison(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -73,7 +73,7 @@ class PairwiseComparison(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -83,7 +83,8 @@ class PairwiseComparison(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -94,17 +95,19 @@ class PairwiseComparison(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         fu.log('Parsing [%s] columns of the dataset' % getIndependentVarsList(self.features), self.out_log, self.global_log)
-        if not self.features: cols = data[data.columns]
-        else: cols = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
+        if not self.features:
+            cols = data[data.columns]
+        else:
+            cols = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
         pp = sns.pairplot(cols, height=1.8, aspect=1.8,
                           plot_kws=dict(edgecolor="k", linewidth=0.5),
                           diag_kind="kde", diag_kws=dict(shade=True))
-        fig = pp.fig 
+        fig = pp.fig
         fig.subplots_adjust(top=0.93, wspace=0.3)
-        t = fig.suptitle('Attributes Pairwise Plots', fontsize=14)
+        fig.suptitle('Attributes Pairwise Plots', fontsize=14)
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
         plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
@@ -122,13 +125,15 @@ class PairwiseComparison(BiobbObject):
 
         return 0
 
+
 def pairwise_comparison(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PairwiseComparison <utils.pairwise_comparison.PairwiseComparison>` class and
     execute the :meth:`launch() <utils.pairwise_comparison.PairwiseComparison.launch>` method."""
 
-    return PairwiseComparison(input_dataset_path=input_dataset_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return PairwiseComparison(input_dataset_path=input_dataset_path,
+                              output_plot_path=output_plot_path,
+                              properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -146,9 +151,9 @@ def main():
 
     # Specific call of each building block
     pairwise_comparison(input_dataset_path=args.input_dataset_path,
-                       output_plot_path=args.output_plot_path,
-                       properties=properties)
+                        output_plot_path=args.output_plot_path,
+                        properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

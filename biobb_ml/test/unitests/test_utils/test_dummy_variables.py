@@ -4,7 +4,7 @@ from biobb_ml.utils.dummy_variables import dummy_variables
 
 class TestDummyVariables():
     def setup_class(self):
-        fx.test_setup(self,'dummy_variables')
+        fx.test_setup(self, 'dummy_variables')
 
     def teardown_class(self):
         fx.test_teardown(self)

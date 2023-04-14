@@ -11,17 +11,17 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from biobb_ml.resampling.reg_resampler import resampler
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.resampling.common import *
+from biobb_ml.resampling.common import check_input_path, check_output_path, checkResamplingType, getSamplingStrategy, getHeader, getTargetValue, getTarget, getResamplingMethod, undersampling_methods
 
 
 class Undersampling(BiobbObject):
     """
     | biobb_ml Undersampling
     | Wrapper of most of the imblearn.under_sampling methods.
-    | Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_, `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_, `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_, `TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_, `EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_, `NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_, `ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_.  
+    | Remove samples from the majority class of a given dataset, with or without replacement. If regression is specified as type, the data will be resampled to classes in order to apply the undersampling model. Visit the imbalanced-learn official website for the different methods accepted in this wrapper: `RandomUnderSampler <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.RandomUnderSampler.html>`_, `NearMiss <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NearMiss.html>`_, `CondensedNearestNeighbour <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.CondensedNearestNeighbour.html>`_, `TomekLinks <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.TomekLinks.html>`_, `EditedNearestNeighbours <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.EditedNearestNeighbours.html>`_, `NeighbourhoodCleaningRule <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.NeighbourhoodCleaningRule.html>`_, `ClusterCentroids <https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.under_sampling.ClusterCentroids.html>`_.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/resampling/dataset_resampling.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -48,21 +48,21 @@ class Undersampling(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.resampling.undersampling import undersampling
-            prop = { 
+            prop = {
                 'method': 'enn',
                 'type': 'regression',
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'evaluate': true, 
+                'target': {
+                    'column': 'target'
+                },
+                'evaluate': true,
                 'n_bins': 10,
                 'n_neighbors': 3,
-                'sampling_strategy': { 
+                'sampling_strategy': {
                     'target': 'auto'
                 }
             }
-            undersampling(input_dataset_path='/path/to/myDataset.csv', 
-                        output_dataset_path='/path/to/newDataset.csv', 
+            undersampling(input_dataset_path='/path/to/myDataset.csv',
+                        output_dataset_path='/path/to/newDataset.csv',
                         properties=prop)
 
     Info:
@@ -76,8 +76,8 @@ class Undersampling(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_dataset_path, 
-                properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path,
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -85,9 +85,9 @@ class Undersampling(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_dataset_path": output_dataset_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_dataset_path": output_dataset_path}
         }
 
         # Properties specific for BB
@@ -99,7 +99,7 @@ class Undersampling(BiobbObject):
         self.evaluate_repeats = properties.get('evaluate_repeats', 3)
         self.n_bins = properties.get('n_bins', 5)
         self.balanced_binning = properties.get('balanced_binning', False)
-        self.sampling_strategy = properties.get('sampling_strategy', { 'target': 'auto' })
+        self.sampling_strategy = properties.get('sampling_strategy', {'target': 'auto'})
         self.version = properties.get('version', 1)
         self.n_neighbors = properties.get('n_neighbors', 1)
         self.threshold_cleaning = properties.get('threshold_cleaning', 1)
@@ -114,7 +114,7 @@ class Undersampling(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"],"output_dataset_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"], "output_dataset_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -124,7 +124,8 @@ class Undersampling(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # check mandatory properties
@@ -142,7 +143,7 @@ class Undersampling(BiobbObject):
             labels = None
             skiprows = None
             header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         train_df = data
         ranges = None
@@ -157,14 +158,14 @@ class Undersampling(BiobbObject):
                 train_df[column] = le.fit_transform(train_df[column])
 
         # defining X
-        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, self.out_log, self.__class__.__name__)] 
+        X = train_df.loc[:, train_df.columns != getTargetValue(self.target, self.out_log, self.__class__.__name__)]
         # calling undersample method
         if self.method == 'random':
             method = method(sampling_strategy=sampling_strategy, random_state=self.random_state_method)
         elif self.method == 'nearmiss':
             if self.version == 3:
                 method = method(sampling_strategy=sampling_strategy, version=self.version, n_neighbors_ver3=self.n_neighbors)
-            else: 
+            else:
                 method = method(sampling_strategy=sampling_strategy, version=self.version, n_neighbors=self.n_neighbors)
         elif self.method == 'cnn':
             method = method(sampling_strategy=sampling_strategy, n_neighbors=self.n_neighbors)
@@ -182,7 +183,7 @@ class Undersampling(BiobbObject):
         # undersampling
         if self.type == 'regression':
             fu.log('Undersampling regression dataset, continuous data will be classified', self.out_log, self.global_log)
-            # call resampler class for Regression ReSampling            
+            # call resampler class for Regression ReSampling
             rs = resampler()
             # Create n_bins classes for the dataset
             ranges, y, target_pos = rs.fit(train_df, target=getTargetValue(self.target, self.out_log, self.__class__.__name__), bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
@@ -205,13 +206,14 @@ class Undersampling(BiobbObject):
                 fu.log('Mean Accuracy before undersampling: %.3f' % (np.mean(scores)), self.out_log, self.global_log)
             else:
                 fu.log('Unable to calculate cross validation score, NaN was returned.', self.out_log, self.global_log)
-        
+
         # log distribution before undersampling
-        dist = ''        
-        for k,v in Counter(y).items():
+        dist = ''
+        for k, v in Counter(y).items():
             per = v / len(y) * 100
             rng = ''
-            if ranges: rng = str(ranges[k])
+            if ranges:
+                rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution before undersampling:\n\n%s' % dist, self.out_log, self.global_log)
 
@@ -222,20 +224,23 @@ class Undersampling(BiobbObject):
         else:
             # pandas
             out_df = final_X.join(final_y)
-                
+
         # if no header, convert np to pd
-        if header is None: out_df = pd.DataFrame(data=out_df)
+        if header is None:
+            out_df = pd.DataFrame(data=out_df)
 
         # if cols encoded, decode them
         if cols_encoded:
             for column in cols_encoded:
                 if header is None:
-                    out_df = out_df.astype({column: int } ) 
+                    out_df = out_df.astype({column: int})
                 out_df[column] = le.inverse_transform(out_df[column].values.ravel())
 
         # if no header, target is in a different column
-        if target_pos: t = target_pos
-        else: t = getTargetValue(self.target, self.out_log, self.__class__.__name__)
+        if target_pos:
+            t = target_pos
+        else:
+            t = getTargetValue(self.target, self.out_log, self.__class__.__name__)
         # log distribution after undersampling
         if self.type == 'regression':
             ranges, y_out, _ = rs.fit(out_df, target=t, bins=self.n_bins, balanced_binning=self.balanced_binning, verbose=0)
@@ -243,10 +248,11 @@ class Undersampling(BiobbObject):
             y_out = getTarget(self.target, out_df, self.out_log, self.__class__.__name__)
 
         dist = ''
-        for k,v in Counter(y_out).items():
+        for k, v in Counter(y_out).items():
             per = v / len(y_out) * 100
             rng = ''
-            if ranges: rng = str(ranges[k])
+            if ranges:
+                rng = str(ranges[k])
             dist = dist + 'Class=%d, n=%d (%.3f%%) %s\n' % (k, v, per, rng)
         fu.log('Classes distribution after undersampling:\n\n%s' % dist, self.out_log, self.global_log)
 
@@ -263,9 +269,10 @@ class Undersampling(BiobbObject):
 
         # save output
         hdr = False
-        if header == 0: hdr = True
+        if header == 0:
+            hdr = True
         fu.log('Saving undersampled dataset to %s' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
-        out_df.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
+        out_df.to_csv(self.io_dict["out"]["output_dataset_path"], index=False, header=hdr)
 
         # Copy files to host
         self.copy_to_host()
@@ -279,13 +286,15 @@ class Undersampling(BiobbObject):
 
         return 0
 
+
 def undersampling(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Undersampling <resampling.undersampling.Undersampling>` class and
     execute the :meth:`launch() <resampling.undersampling.Undersampling.launch>` method."""
 
     return Undersampling(input_dataset_path=input_dataset_path,
-                   output_dataset_path=output_dataset_path,
-                   properties=properties, **kwargs).launch()
+                         output_dataset_path=output_dataset_path,
+                         properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -303,9 +312,9 @@ def main():
 
     # Specific call of each building block
     undersampling(input_dataset_path=args.input_dataset_path,
-                   output_dataset_path=args.output_dataset_path,
-                   properties=properties)
+                  output_dataset_path=args.output_dataset_path,
+                  properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

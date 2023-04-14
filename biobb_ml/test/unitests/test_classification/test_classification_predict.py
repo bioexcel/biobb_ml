@@ -4,7 +4,7 @@ from biobb_ml.classification.classification_predict import classification_predic
 
 class TestClassificationPredict():
     def setup_class(self):
-        fx.test_setup(self,'classification_predict')
+        fx.test_setup(self, 'classification_predict')
 
     def teardown_class(self):
         fx.test_teardown(self)

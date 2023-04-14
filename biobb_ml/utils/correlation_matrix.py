@@ -6,10 +6,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.utils.common import *
+from biobb_ml.utils.common import check_input_path, check_output_path, getHeader, getIndependentVars
 
 
 class CorrelationMatrix(BiobbObject):
@@ -29,13 +29,13 @@ class CorrelationMatrix(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.utils.correlation_matrix import correlation_matrix
-            prop = { 
+            prop = {
                 'features': {
-                    'columns': [ 'column1', 'column2', 'column3' ] 
+                    'columns': [ 'column1', 'column2', 'column3' ]
                 }
             }
-            correlation_matrix(input_dataset_path='/path/to/myDataset.csv', 
-                            output_plot_path='/path/to/newPlot.png', 
+            correlation_matrix(input_dataset_path='/path/to/myDataset.csv',
+                            output_plot_path='/path/to/newPlot.png',
                             properties=prop)
 
     Info:
@@ -48,8 +48,8 @@ class CorrelationMatrix(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_plot_path, 
-                properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_plot_path,
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -57,9 +57,9 @@ class CorrelationMatrix(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -73,7 +73,7 @@ class CorrelationMatrix(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -83,7 +83,8 @@ class CorrelationMatrix(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -94,26 +95,27 @@ class CorrelationMatrix(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
-        if self.features: data = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
+        if self.features:
+            data = getIndependentVars(self.features, data, self.out_log, self.__class__.__name__)
 
         fu.log('Parsing dataset', self.out_log, self.global_log)
-        if data.shape[1] < 10: 
+        if data.shape[1] < 10:
             s = None
             fs = 12
-        elif data.shape[1] >= 10 and data.shape[1] < 20: 
-            s = (12,12)
+        elif data.shape[1] >= 10 and data.shape[1] < 20:
+            s = (12, 12)
             fs = 9
-        elif data.shape[1] >= 20: 
-            s = (16,16)
+        elif data.shape[1] >= 20:
+            s = (16, 16)
             fs = 7
 
         f, ax = plt.subplots(figsize=s)
         corr = data.corr()
-        hm = sns.heatmap(round(corr,2), annot=True, ax=ax, cmap='Blues', fmt='.2f', square=True, annot_kws={"fontsize":fs} )
+        sns.heatmap(round(corr, 2), annot=True, ax=ax, cmap='Blues', fmt='.2f', square=True, annot_kws={"fontsize": fs})
         f.subplots_adjust(top=0.93)
-        t= f.suptitle('Attributes Correlation Matrix', fontsize=14)
+        f.suptitle('Attributes Correlation Matrix', fontsize=14)
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
         plt.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
@@ -131,13 +133,15 @@ class CorrelationMatrix(BiobbObject):
 
         return 0
 
+
 def correlation_matrix(input_dataset_path: str, output_plot_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`CorrelationMatrix <utils.correlation_matrix.CorrelationMatrix>` class and
     execute the :meth:`launch() <utils.correlation_matrix.CorrelationMatrix.launch>` method."""
 
-    return CorrelationMatrix(input_dataset_path=input_dataset_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return CorrelationMatrix(input_dataset_path=input_dataset_path,
+                             output_plot_path=output_plot_path,
+                             properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -158,6 +162,6 @@ def main():
                        output_plot_path=args.output_plot_path,
                        properties=properties)
 
+
 if __name__ == '__main__':
     main()
-

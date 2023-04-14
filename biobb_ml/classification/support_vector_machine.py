@@ -3,22 +3,24 @@
 """Module containing the SupportVectorMachine class and the command line interface."""
 import argparse
 import joblib
+import pandas as pd
+import numpy as np
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report, log_loss
 from sklearn import svm
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.classification.common import *
+from biobb_ml.classification.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTarget, getTargetValue, getWeight, plotMultipleCM, plotBinaryClassifier
 
 
 class SupportVectorMachine(BiobbObject):
     """
     | biobb_ml SupportVectorMachine
     | Wrapper of the scikit-learn SupportVectorMachine method.
-    | Trains and tests a given dataset and saves the model and scaler. Visit the `SupportVectorMachine documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_ in the sklearn official website for further information. 
+    | Trains and tests a given dataset and saves the model and scaler. Visit the `SupportVectorMachine documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/classification/dataset_support_vector_machine.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -42,22 +44,21 @@ class SupportVectorMachine(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.classification.support_vector_machine import support_vector_machine
-            prop = { 
-                'independent_vars': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'kernel': 'rbf', 
-                'test_size': 0.2 
+            prop = {
+                'independent_vars': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'kernel': 'rbf',
+                'test_size': 0.2
             }
-            support_vector_machine(input_dataset_path='/path/to/myDataset.csv', 
-                                    output_model_path='/path/to/newModel.pkl', 
-                                    output_test_table_path='/path/to/newTable.csv', 
-                                    output_plot_path='/path/to/newPlot.png', 
+            support_vector_machine(input_dataset_path='/path/to/myDataset.csv',
+                                    output_model_path='/path/to/newModel.pkl',
+                                    output_test_table_path='/path/to/newTable.csv',
+                                    output_plot_path='/path/to/newPlot.png',
                                     properties=prop)
-
 
     Info:
         * wrapped_software:
@@ -70,8 +71,8 @@ class SupportVectorMachine(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_model_path, 
-                output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_model_path,
+                 output_test_table_path=None, output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -79,9 +80,9 @@ class SupportVectorMachine(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_model_path": output_model_path, "output_test_table_path": output_test_table_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -89,7 +90,7 @@ class SupportVectorMachine(BiobbObject):
         self.target = properties.get('target', {})
         self.weight = properties.get('weight', {})
         self.kernel = properties.get('kernel', 'rbf')
-        self.normalize_cm =  properties.get('normalize_cm', False)
+        self.normalize_cm = properties.get('normalize_cm', False)
         self.random_state_method = properties.get('random_state_method', 5)
         self.random_state_train_test = properties.get('random_state_train_test', 5)
         self.test_size = properties.get('test_size', 0.2)
@@ -103,11 +104,11 @@ class SupportVectorMachine(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"],"output_model_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_model_path"] = check_output_path(self.io_dict["out"]["output_model_path"], "output_model_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_test_table_path"]:
-            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"],"output_test_table_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_test_table_path"] = check_output_path(self.io_dict["out"]["output_test_table_path"], "output_test_table_path", True, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -117,7 +118,8 @@ class SupportVectorMachine(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -128,7 +130,7 @@ class SupportVectorMachine(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the independent variables
@@ -148,19 +150,19 @@ class SupportVectorMachine(BiobbObject):
         # if user provide weights
         if self.weight:
             arrays_sets = arrays_sets + (w,)
-            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
         else:
-            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state = self.random_state_train_test)
+            X_train, X_test, y_train, y_test = train_test_split(*arrays_sets, test_size=self.test_size, random_state=self.random_state_train_test)
 
         # scale dataset
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             X_train = scaler.fit_transform(X_train)
 
         # classification
         fu.log('Training dataset applying support vector machine', self.out_log, self.global_log)
-        model = svm.SVC(kernel = self.kernel, probability = True, random_state = self.random_state_method)
+        model = svm.SVC(kernel=self.kernel, probability=True, random_state=self.random_state_method)
         arrays_fit = (X_train, y_train)
         # if user provide weights
         if self.weight:
@@ -217,12 +219,12 @@ class SupportVectorMachine(BiobbObject):
 
         fu.log('Calculating confusion matrix for testing dataset\n\n%s\n\n%s\n' % (cm_type, cnf_matrix), self.out_log, self.global_log)
 
-        if(self.io_dict["out"]["output_test_table_path"]): 
+        if (self.io_dict["out"]["output_test_table_path"]):
             fu.log('Saving testing data to %s' % self.io_dict["out"]["output_test_table_path"], self.out_log, self.global_log)
-            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index = False, header=True)
+            test_table.to_csv(self.io_dict["out"]["output_test_table_path"], index=False, header=True)
 
-        # plot 
-        if self.io_dict["out"]["output_plot_path"]: 
+        # plot
+        if self.io_dict["out"]["output_plot_path"]:
             vs = y.unique().tolist()
             vs.sort()
             if len(vs) > 2:
@@ -245,7 +247,8 @@ class SupportVectorMachine(BiobbObject):
         fu.log('Saving model to %s' % self.io_dict["out"]["output_model_path"], self.out_log, self.global_log)
         with open(self.io_dict["out"]["output_model_path"], "wb") as f:
             joblib.dump(model, f)
-            if self.scale: joblib.dump(scaler, f)
+            if self.scale:
+                joblib.dump(scaler, f)
             joblib.dump(variables, f)
 
         # Copy files to host
@@ -260,15 +263,17 @@ class SupportVectorMachine(BiobbObject):
 
         return 0
 
+
 def support_vector_machine(input_dataset_path: str, output_model_path: str, output_test_table_path: str = None, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`SupportVectorMachine <classification.support_vector_machine.SupportVectorMachine>` class and
     execute the :meth:`launch() <classification.support_vector_machine.SupportVectorMachine.launch>` method."""
 
-    return SupportVectorMachine(input_dataset_path=input_dataset_path, 
-                   output_model_path=output_model_path, 
-                   output_test_table_path=output_test_table_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return SupportVectorMachine(input_dataset_path=input_dataset_path,
+                                output_model_path=output_model_path,
+                                output_test_table_path=output_test_table_path,
+                                output_plot_path=output_plot_path,
+                                properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -288,11 +293,11 @@ def main():
 
     # Specific call of each building block
     support_vector_machine(input_dataset_path=args.input_dataset_path,
-                           output_model_path=args.output_model_path, 
-                           output_test_table_path=args.output_test_table_path, 
-                           output_plot_path=args.output_plot_path, 
+                           output_model_path=args.output_model_path,
+                           output_test_table_path=args.output_test_table_path,
+                           output_plot_path=args.output_plot_path,
                            properties=properties)
+
 
 if __name__ == '__main__':
     main()
-

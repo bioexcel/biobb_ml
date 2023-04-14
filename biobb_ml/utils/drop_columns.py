@@ -4,10 +4,10 @@
 import argparse
 import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.utils.common import *
+from biobb_ml.utils.common import check_input_path, check_output_path, getHeader, getTargetsList, getIndependentVarsList
 
 
 class DropColumns(BiobbObject):
@@ -27,13 +27,13 @@ class DropColumns(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.utils.drop_columns import drop_columns
-            prop = { 
+            prop = {
                 'targets': {
-                    'columns': [ 'column1', 'column2', 'column3' ] 
+                    'columns': [ 'column1', 'column2', 'column3' ]
                 }
             }
-            drop_columns(input_dataset_path='/path/to/myDataset.csv', 
-                            output_dataset_path='/path/to/newDataset.csv', 
+            drop_columns(input_dataset_path='/path/to/myDataset.csv',
+                            output_dataset_path='/path/to/newDataset.csv',
                             properties=prop)
 
     Info:
@@ -46,8 +46,8 @@ class DropColumns(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path,  output_dataset_path, 
-                properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_dataset_path,
+                 properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -55,9 +55,9 @@ class DropColumns(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_dataset_path": output_dataset_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_dataset_path": output_dataset_path}
         }
 
         # Properties specific for BB
@@ -71,7 +71,7 @@ class DropColumns(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"],"output_dataset_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_dataset_path"] = check_output_path(self.io_dict["out"]["output_dataset_path"], "output_dataset_path", False, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -81,7 +81,8 @@ class DropColumns(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -94,7 +95,7 @@ class DropColumns(BiobbObject):
             labels = None
             skiprows = None
             header = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         targets = getTargetsList(self.targets, 'drop', self.out_log, self.__class__.__name__)
 
@@ -102,9 +103,10 @@ class DropColumns(BiobbObject):
         data = data.drop(targets, axis=1)
 
         hdr = False
-        if header == 0: hdr = True
+        if header == 0:
+            hdr = True
         fu.log('Saving dataset to %s' % self.io_dict["out"]["output_dataset_path"], self.out_log, self.global_log)
-        data.to_csv(self.io_dict["out"]["output_dataset_path"], index = False, header=hdr)
+        data.to_csv(self.io_dict["out"]["output_dataset_path"], index=False, header=hdr)
 
         # Copy files to host
         self.copy_to_host()
@@ -118,13 +120,15 @@ class DropColumns(BiobbObject):
 
         return 0
 
+
 def drop_columns(input_dataset_path: str, output_dataset_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`DropColumns <utils.drop_columns.DropColumns>` class and
     execute the :meth:`launch() <utils.drop_columns.DropColumns.launch>` method."""
 
-    return DropColumns(input_dataset_path=input_dataset_path, 
-                   output_dataset_path=output_dataset_path,
-                   properties=properties, **kwargs).launch()
+    return DropColumns(input_dataset_path=input_dataset_path,
+                       output_dataset_path=output_dataset_path,
+                       properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -142,9 +146,9 @@ def main():
 
     # Specific call of each building block
     drop_columns(input_dataset_path=args.input_dataset_path,
-                   output_dataset_path=args.output_dataset_path,
-                   properties=properties)
+                 output_dataset_path=args.output_dataset_path,
+                 properties=properties)
+
 
 if __name__ == '__main__':
     main()
-
