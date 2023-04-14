@@ -3,22 +3,22 @@
 """Module containing the PLS_Regression class and the command line interface."""
 import argparse
 import warnings
-from sys import stdout
+import pandas as pd
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import mean_squared_error, r2_score
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.dimensionality_reduction.common import *
+from biobb_ml.dimensionality_reduction.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTarget, getTargetValue, PLSRegPlot
 
 
 class PLS_Regression(BiobbObject):
     """
     | biobb_ml PLS_Regression
-    | Wrapper of the scikit-learn PLSRegression method. 
-    | Gives results for a Partial Least Square (PLS) Regression. Visit the `PLSRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn PLSRegression method.
+    | Gives results for a Partial Least Square (PLS) Regression. Visit the `PLSRegression documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_pls_regression.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -37,19 +37,19 @@ class PLS_Regression(BiobbObject):
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.dimensionality_reduction.pls_regression import pls_regression
-            prop = { 
-                'features': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'n_components': 12, 
-                'cv': 10 
+            prop = {
+                'features': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'n_components': 12,
+                'cv': 10
             }
-            pls_regression(input_dataset_path='/path/to/myDataset.csv', 
-                            output_results_path='/path/to/newTable.csv', 
-                            output_plot_path='/path/to/newPlot.png', 
+            pls_regression(input_dataset_path='/path/to/myDataset.csv',
+                            output_results_path='/path/to/newTable.csv',
+                            output_plot_path='/path/to/newPlot.png',
                             properties=prop)
 
     Info:
@@ -60,11 +60,11 @@ class PLS_Regression(BiobbObject):
         * ontology:
             * name: EDAM
             * schema: http://edamontology.org/EDAM.owl
-            
+
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -72,9 +72,9 @@ class PLS_Regression(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -92,9 +92,9 @@ class PLS_Regression(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     def warn(*args, **kwargs):
         pass
@@ -110,7 +110,8 @@ class PLS_Regression(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -121,7 +122,7 @@ class PLS_Regression(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the features
@@ -138,12 +139,12 @@ class PLS_Regression(BiobbObject):
         X = features
 
         # define PLS object with optimal number of components
-        model = PLSRegression(n_components = self.n_components, scale = self.scale)
+        model = PLSRegression(n_components=self.n_components, scale=self.scale)
         # fit to the entire dataset
         model.fit(X, y)
         y_c = model.predict(X)
         # cross-validation
-        y_cv = cross_val_predict(model, X, y, cv = self.cv)
+        y_cv = cross_val_predict(model, X, y, cv=self.cv)
         # calculate scores for calibration and cross-validation
         score_c = r2_score(y, y_c)
         score_cv = r2_score(y, y_cv)
@@ -152,17 +153,17 @@ class PLS_Regression(BiobbObject):
         mse_cv = mean_squared_error(y, y_cv)
         # create scores table
         r2_table = pd.DataFrame()
-        r2_table["feature"] = ['R2 calib','R2 CV', 'MSE calib', 'MSE CV']
+        r2_table["feature"] = ['R2 calib', 'R2 CV', 'MSE calib', 'MSE CV']
         r2_table['coefficient'] = [score_c, score_cv, mse_c, mse_cv]
 
         fu.log('Generating scores table\n\nR2 & MSE TABLE\n\n%s\n' % r2_table, self.out_log, self.global_log)
 
         # save results table
         fu.log('Saving R2 & MSE table to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        r2_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True, float_format='%.3f')
+        r2_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True, float_format='%.3f')
 
         # mse plot
-        if self.io_dict["out"]["output_plot_path"]: 
+        if self.io_dict["out"]["output_plot_path"]:
             fu.log('Saving MSE plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             plot = PLSRegPlot(y, y_c, y_cv)
             plot.savefig(self.io_dict["out"]["output_plot_path"], dpi=150)
@@ -179,14 +180,16 @@ class PLS_Regression(BiobbObject):
 
         return 0
 
+
 def pls_regression(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PLS_Regression <dimensionality_reduction.pls_regression.PLS_Regression>` class and
     execute the :meth:`launch() <dimensionality_reduction.pls_regression.PLS_Regression.launch>` method."""
 
-    return PLS_Regression(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return PLS_Regression(input_dataset_path=input_dataset_path,
+                          output_results_path=output_results_path,
+                          output_plot_path=output_plot_path,
+                          properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -205,9 +208,10 @@ def main():
 
     # Specific call of each building block
     pls_regression(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   output_plot_path=args.output_plot_path, 
+                   output_results_path=args.output_results_path,
+                   output_plot_path=args.output_plot_path,
                    properties=properties)
+
 
 if __name__ == '__main__':
     main()

@@ -2,20 +2,23 @@
 
 """Module containing the PrincipalComponentAnalysis class and the command line interface."""
 import argparse
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from biobb_common.generic.biobb_object import BiobbObject
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from biobb_common.configuration import  settings
+from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_ml.dimensionality_reduction.common import *
+from biobb_ml.dimensionality_reduction.common import check_input_path, check_output_path, getHeader, getIndependentVars, getIndependentVarsList, getTargetValue, generate_columns_labels, PCA2CPlot, PCA3CPlot
 
 
 class PrincipalComponentAnalysis(BiobbObject):
     """
     | biobb_ml PrincipalComponentAnalysis
-    | Wrapper of the scikit-learn PCA method. 
-    | Analyses a given dataset through Principal Component Analysis (PCA). Visit the `PCA documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html>`_ in the sklearn official website for further information. 
+    | Wrapper of the scikit-learn PCA method.
+    | Analyses a given dataset through Principal Component Analysis (PCA). Visit the `PCA documentation page <https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html>`_ in the sklearn official website for further information.
 
     Args:
         input_dataset_path (str): Path to the input dataset. File type: input. `Sample file <https://github.com/bioexcel/biobb_ml/raw/master/biobb_ml/test/data/dimensionality_reduction/dataset_principal_component.csv>`_. Accepted formats: csv (edam:format_3752).
@@ -29,25 +32,25 @@ class PrincipalComponentAnalysis(BiobbObject):
             * **scale** (*bool*) - (False) Whether or not to scale the input dataset.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
-    
+
     Examples:
         This is a use example of how to use the building block from Python::
 
             from biobb_ml.dimensionality_reduction.principal_component import principal_component
-            prop = { 
-                'features': { 
-                    'columns': [ 'column1', 'column2', 'column3' ] 
-                }, 
-                'target': { 
-                    'column': 'target' 
-                }, 
-                'n_components': { 
-                    'int': 2 
-                } 
+            prop = {
+                'features': {
+                    'columns': [ 'column1', 'column2', 'column3' ]
+                },
+                'target': {
+                    'column': 'target'
+                },
+                'n_components': {
+                    'int': 2
+                }
             }
-            principal_component(input_dataset_path='/path/to/myDataset.csv', 
-                                output_results_path='/path/to/newTable.csv', 
-                                output_plot_path='/path/to/newPlot.png', 
+            principal_component(input_dataset_path='/path/to/myDataset.csv',
+                                output_results_path='/path/to/newTable.csv',
+                                output_plot_path='/path/to/newPlot.png',
                                 properties=prop)
 
     Info:
@@ -61,8 +64,8 @@ class PrincipalComponentAnalysis(BiobbObject):
 
     """
 
-    def __init__(self, input_dataset_path, output_results_path, 
-                output_plot_path=None, properties=None, **kwargs) -> None:
+    def __init__(self, input_dataset_path, output_results_path,
+                 output_plot_path=None, properties=None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -70,9 +73,9 @@ class PrincipalComponentAnalysis(BiobbObject):
         self.locals_var_dict = locals().copy()
 
         # Input/Output files
-        self.io_dict = { 
-            "in": { "input_dataset_path": input_dataset_path }, 
-            "out": { "output_results_path": output_results_path, "output_plot_path": output_plot_path } 
+        self.io_dict = {
+            "in": {"input_dataset_path": input_dataset_path},
+            "out": {"output_results_path": output_results_path, "output_plot_path": output_plot_path}
         }
 
         # Properties specific for BB
@@ -90,9 +93,9 @@ class PrincipalComponentAnalysis(BiobbObject):
     def check_data_params(self, out_log, err_log):
         """ Checks all the input/output paths and parameters """
         self.io_dict["in"]["input_dataset_path"] = check_input_path(self.io_dict["in"]["input_dataset_path"], "input_dataset_path", out_log, self.__class__.__name__)
-        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"],"output_results_path", False, out_log, self.__class__.__name__)
+        self.io_dict["out"]["output_results_path"] = check_output_path(self.io_dict["out"]["output_results_path"], "output_results_path", False, out_log, self.__class__.__name__)
         if self.io_dict["out"]["output_plot_path"]:
-            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"],"output_plot_path", True, out_log, self.__class__.__name__)
+            self.io_dict["out"]["output_plot_path"] = check_output_path(self.io_dict["out"]["output_plot_path"], "output_plot_path", True, out_log, self.__class__.__name__)
 
     @launchlogger
     def launch(self) -> int:
@@ -102,7 +105,8 @@ class PrincipalComponentAnalysis(BiobbObject):
         self.check_data_params(self.out_log, self.err_log)
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # load dataset
@@ -113,7 +117,7 @@ class PrincipalComponentAnalysis(BiobbObject):
         else:
             labels = None
             skiprows = None
-        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header = None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
+        data = pd.read_csv(self.io_dict["in"]["input_dataset_path"], header=None, sep="\\s+|;|:|,|\t", engine="python", skiprows=skiprows, names=labels)
 
         # declare inputs, targets and weights
         # the inputs are all the features
@@ -123,18 +127,18 @@ class PrincipalComponentAnalysis(BiobbObject):
         y_value = getTargetValue(self.target)
         fu.log('Target: %s' % (y_value), self.out_log, self.global_log)
 
-        if self.scale: 
+        if self.scale:
             fu.log('Scaling dataset', self.out_log, self.global_log)
             scaler = StandardScaler()
             features = scaler.fit_transform(features)
 
         # create a PCA object with self.n_components['value'] n_components
-        if not 'value' in self.n_components:
+        if 'value' not in self.n_components:
             n_c = None
         else:
             n_c = self.n_components['value']
         fu.log('Fitting dataset', self.out_log, self.global_log)
-        model = PCA(n_components = n_c, random_state = self.random_state_method)
+        model = PCA(n_components=n_c, random_state=self.random_state_method)
         # fit the data
         model.fit(features)
 
@@ -145,26 +149,26 @@ class PrincipalComponentAnalysis(BiobbObject):
         # transform
         fu.log('Transforming dataset', self.out_log, self.global_log)
         pca = model.transform(features)
-        pca = pd.DataFrame(data = pca, columns = generate_columns_labels('PC', v_ratio.shape[0]))
+        pca = pd.DataFrame(data=pca, columns=generate_columns_labels('PC', v_ratio.shape[0]))
 
         if 'columns' in self.features:
             d = data[[y_value]]
             target_plot = y_value
         else:
-            d = data.loc[:,int(y_value)]
+            d = data.loc[:, int(y_value)]
             target_plot = int(y_value)
 
         # output results
-        pca_table = pd.concat([pca, d], axis = 1)
+        pca_table = pd.concat([pca, d], axis=1)
         fu.log('Calculating PCA for dataset\n\n%d COMPONENT PCA TABLE\n\n%s\n' % (v_ratio.shape[0], pca_table), self.out_log, self.global_log)
 
         # save results
         fu.log('Saving data to %s' % self.io_dict["out"]["output_results_path"], self.out_log, self.global_log)
-        pca_table.to_csv(self.io_dict["out"]["output_results_path"], index = False, header=True)
+        pca_table.to_csv(self.io_dict["out"]["output_results_path"], index=False, header=True)
 
         # create output plot
-        if(self.io_dict["out"]["output_plot_path"]): 
-            if v_ratio.shape[0] > 3: 
+        if (self.io_dict["out"]["output_plot_path"]):
+            if v_ratio.shape[0] > 3:
                 fu.log('%d PC\'s found. Displaying only 1st, 2nd and 3rd PC' % v_ratio.shape[0], self.out_log, self.global_log)
             fu.log('Saving PC plot to %s' % self.io_dict["out"]["output_plot_path"], self.out_log, self.global_log)
             targets = np.unique(d)
@@ -188,14 +192,16 @@ class PrincipalComponentAnalysis(BiobbObject):
 
         return 0
 
+
 def principal_component(input_dataset_path: str, output_results_path: str, output_plot_path: str = None, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`PrincipalComponentAnalysis <dimensionality_reduction.principal_component.PrincipalComponentAnalysis>` class and
     execute the :meth:`launch() <dimensionality_reduction.principal_component.PrincipalComponentAnalysis.launch>` method."""
 
-    return PrincipalComponentAnalysis(input_dataset_path=input_dataset_path,  
-                   output_results_path=output_results_path, 
-                   output_plot_path=output_plot_path,
-                   properties=properties, **kwargs).launch()
+    return PrincipalComponentAnalysis(input_dataset_path=input_dataset_path,
+                                      output_results_path=output_results_path,
+                                      output_plot_path=output_plot_path,
+                                      properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -214,9 +220,10 @@ def main():
 
     # Specific call of each building block
     principal_component(input_dataset_path=args.input_dataset_path,
-                   output_results_path=args.output_results_path, 
-                   output_plot_path=args.output_plot_path, 
-                   properties=properties)
+                        output_results_path=args.output_results_path,
+                        output_plot_path=args.output_plot_path,
+                        properties=properties)
+
 
 if __name__ == '__main__':
     main()
