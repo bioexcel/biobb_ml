@@ -1,42 +1,26 @@
-653   E101 indentation contains mixed spaces and tabs
-1     E111 indentation is not a multiple of 4
-15    E117 over-indented
-13    E122 continuation line missing indentation or outdented
-1     E126 continuation line over-indented for hanging indent
-54    E127 continuation line over-indented for visual indent
-203   E128 continuation line under-indented for visual indent
-2     E129 visually indented line with same indent as next logical line
-93    E201 whitespace after '{'
-100   E202 whitespace before '}'
-6     E203 whitespace before ','
-6     E211 whitespace before '('
+137   E101 indentation contains mixed spaces and tabs
+1     E122 continuation line missing indentation or outdented
+15    E128 continuation line under-indented for visual indent
+6     E201 whitespace after '{'
+6     E202 whitespace before '}'
+4     E203 whitespace before ','
+1     E211 whitespace before '('
 1     E221 multiple spaces before operator
-7     E222 multiple spaces after operator
-11    E225 missing whitespace around operator
-286   E231 missing whitespace after ','
-8     E241 multiple spaces after ','
-425   E251 unexpected spaces around keyword / parameter equals
-12    E261 at least two spaces before inline comment
-2     E262 inline comment should start with '# '
-70    E265 block comment should start with '# '
-38    E271 multiple spaces after keyword
-30    E275 missing whitespace after keyword
-1     E301 expected 1 blank line, found 0
-205   E302 expected 2 blank lines, found 1
-6     E303 too many blank lines (2)
-38    E305 expected 2 blank lines after class or function definition, found 1
-10    E501 line too long (1632 > 999 characters)
-102   E701 multiple statements on one line (colon)
-3     E713 test for membership should be 'not in'
-1     E741 ambiguous variable name 'l'
-11    F401 'sklearn.metrics.accuracy_score' imported but unused
-38    F403 'from biobb_ml.classification.common import *' used; unable to detect undefined names
-546   F405 'check_input_path' may be undefined, or defined from star imports: biobb_ml.classification.common
-7     F841 local variable 'y' is assigned to but never used
-417   W191 indentation contains tabs
-891   W291 trailing whitespace
-42    W292 no newline at end of file
-74    W293 blank line contains whitespace
-25    W391 blank line at end of file
-5     W503 line break before binary operator
-7     W605 invalid escape sequence '\s'
+2     E225 missing whitespace around operator
+41    E231 missing whitespace after ','
+79    E251 unexpected spaces around keyword / parameter equals
+3     E265 block comment should start with '# '
+3     E271 multiple spaces after keyword
+2     E275 missing whitespace after keyword
+24    E302 expected 2 blank lines, found 1
+3     E305 expected 2 blank lines after class or function definition, found 1
+6     E701 multiple statements on one line (colon)
+1     E713 test for membership should be 'not in'
+3     F401 'pandas as pd' imported but unused
+3     F403 'from biobb_ml.dimensionality_reduction.common import *' used; unable to detect undefined names
+59    F405 'check_input_path' may be undefined, or defined from star imports: biobb_ml.dimensionality_reduction.common
+26    W191 indentation contains tabs
+85    W291 trailing whitespace
+1     W292 no newline at end of file
+14    W293 blank line contains whitespace
+1     W605 invalid escape sequence '\s'
