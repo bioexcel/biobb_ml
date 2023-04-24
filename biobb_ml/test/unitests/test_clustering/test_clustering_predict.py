@@ -13,4 +13,4 @@ class TestClusteringPredict():
     def test_clustering_predict(self):
         clustering_predict(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_results_path'])
-        # assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])
+        assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])

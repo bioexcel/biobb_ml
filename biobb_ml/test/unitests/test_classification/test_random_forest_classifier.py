@@ -1,5 +1,6 @@
 from biobb_common.tools import test_fixtures as fx
 from biobb_ml.classification.random_forest_classifier import random_forest_classifier
+from biobb_ml.test.unitests.common import compare_images
 import platform
 
 
@@ -19,5 +20,4 @@ class TestRandomForestClassifier():
         assert fx.not_empty(self.paths['output_test_table_path'])
         assert fx.equal(self.paths['output_test_table_path'], self.paths['ref_output_test_table_path'])
         assert fx.not_empty(self.paths['output_plot_path'])
-        if platform.system() == 'Darwin':
-            assert fx.equal(self.paths['output_plot_path'], self.paths['ref_output_plot_path'])
+        assert compare_images(self.paths['output_plot_path'], self.paths['ref_output_plot_path'])

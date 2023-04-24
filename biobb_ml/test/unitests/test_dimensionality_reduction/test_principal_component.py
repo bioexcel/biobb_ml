@@ -1,5 +1,6 @@
 from biobb_common.tools import test_fixtures as fx
 from biobb_ml.dimensionality_reduction.principal_component import principal_component
+from biobb_ml.test.unitests.common import compare_images
 import platform
 
 
@@ -17,5 +18,4 @@ class TestPrincipalComponentAnalysis():
         if platform.system() == 'Darwin':
             assert fx.equal(self.paths['output_results_path'], self.paths['ref_output_results_path'])
         assert fx.not_empty(self.paths['output_plot_path'])
-        if platform.system() == 'Darwin':
-            assert fx.equal(self.paths['output_plot_path'], self.paths['ref_output_plot_path'])
+        assert compare_images(self.paths['output_plot_path'], self.paths['ref_output_plot_path'])

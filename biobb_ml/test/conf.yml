@@ -384,7 +384,7 @@ clustering_predict:
   paths:
     input_model_path: file:test_data_dir/clustering/model_clustering_predict.pkl
     output_results_path: output_results.csv
-    ref_output_results_path: file:test_reference_dir/clustering/ref_output_clustering_predict.csv
+    ref_output_results_path: file:test_reference_dir/clustering/ref_output_results_clustering_predict.csv
   properties:
     predictions: [
       { 'sepal_length': 5.1, 'sepal_width': 3.5, 'petal_length': 1.4, 'petal_width': 0.2 },
