@@ -39,6 +39,8 @@ bioinformatics tools.
 The latest documentation of this package can be found in our readthedocs site:
 [latest API documentation](http://biobb-ml.readthedocs.io/en/latest/).
 
+Important: This package has been discontinued, superseeded by biobb_pytorch.
+
 ### Version
 v4.2.0 2024.1
 
