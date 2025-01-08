@@ -28,7 +28,7 @@ class resampler:
         tmp = target
 
         # If data is numpy, then convert it into pandas
-        if type(target) == int:
+        if type(target) is int:
             if target < 0:
                 target = X.shape[1]+target
                 tmp = target
@@ -96,7 +96,7 @@ class resampler:
         # Finally concatenate and return as dataframe or numpy
         # Based on what type of target was sent
         self.X["classes"] = self.Y_classes
-        if type(tmp) == int:
+        if type(tmp) is int:
             self.target = tmp
         else:
             self.target = target
@@ -105,7 +105,7 @@ class resampler:
     # This function performs the re-sampling
     def resample(self, sampler_obj, trainX, trainY):
         # If classes haven't yet been created, then run the "fit" function
-        if type(self.Y_classes) == int:
+        if type(self.Y_classes) is int:
             print("Error! Run fit method first!!")
             return None
 
@@ -115,7 +115,7 @@ class resampler:
             resampled_data = self.pd.DataFrame(resampled_data, columns=self.X.drop("classes", axis=1).columns)
 
         # Return the correct X and Y
-        if type(self.target) == int:
+        if type(self.target) is int:
             # return resampled_data.drop("target", axis=1).values, resampled_data["target"].values
             return resampled_data.drop(self.target, axis=1).values, resampled_data[self.target].values
         else:
